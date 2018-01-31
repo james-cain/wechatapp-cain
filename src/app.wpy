@@ -90,7 +90,7 @@ page{
 }
 
 .weui-loadmore__tips_in-line {
-    font-size: 20rpx;
+    font-size: 24rpx;
     background-color: rgba(255, 255, 255, 0);
     top: 0em;
 }

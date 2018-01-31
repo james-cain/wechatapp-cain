@@ -54,7 +54,7 @@
             </view>
             <view class="weui-search-bar__cancel-btn" hidden="{{!inputShowed}}" bindtap="hideInput">取消</view>
         </view>
-        <view class="weui-cells searchbar-result" wx:if="{{inputShowed}}" style="height: {{searchHeight}}px; overflow-y: auto;">
+        <scroll-view scroll-y lower-threshold="{{100}}" class="weui-cells searchbar-result" wx:if="{{inputShowed && !openResult}}" style="height: {{searchHeight}}px; overflow-y: auto;" @scrolltolower="refreshHistory">
             <view class="weui-cell">
                 <view class="weui-cell__bd">
                     <view class="fl">搜索历史</view>
@@ -63,154 +63,49 @@
                     <view class="fr">清除记录</view>
                 </view>
             </view>
-            <navigator url="" class="weui-cell" hover-class="weui-cell_active">
+            <view class="weui-cell" hover-class="weui-cell_active">
                 <view class="weui-cell__bd">
                     <view>400g</view>
                 </view>
                 <view class="icon-nav">
                     <icon type="cancel" size="15"></icon>
                 </view>
-            </navigator>
-            <navigator url="" class="weui-cell" hover-class="weui-cell_active">
-                <view class="weui-cell__bd">
-                    <view>400g</view>
-                </view>
-                <view class="icon-nav">
-                    <icon type="cancel" size="15"></icon>
-                </view>
-            </navigator>
-            <navigator url="" class="weui-cell" hover-class="weui-cell_active">
-                <view class="weui-cell__bd">
-                    <view>400g</view>
-                </view>
-                <view class="icon-nav">
-                    <icon type="cancel" size="15"></icon>
-                </view>
-            </navigator>
-            <navigator url="" class="weui-cell" hover-class="weui-cell_active">
-                <view class="weui-cell__bd">
-                    <view>400g</view>
-                </view>
-                <view class="icon-nav">
-                    <icon type="cancel" size="15"></icon>
-                </view>
-            </navigator>
-            <navigator url="" class="weui-cell" hover-class="weui-cell_active">
-                <view class="weui-cell__bd">
-                    <view>400g</view>
-                </view>
-                <view class="icon-nav">
-                    <icon type="cancel" size="15"></icon>
-                </view>
-            </navigator>
-            <navigator url="" class="weui-cell" hover-class="weui-cell_active">
-                <view class="weui-cell__bd">
-                    <view>400g</view>
-                </view>
-                <view class="icon-nav">
-                    <icon type="cancel" size="15"></icon>
-                </view>
-            </navigator>
-            <navigator url="" class="weui-cell" hover-class="weui-cell_active">
-                <view class="weui-cell__bd">
-                    <view>400g</view>
-                </view>
-                <view class="icon-nav">
-                    <icon type="cancel" size="15"></icon>
-                </view>
-            </navigator>
-            <navigator url="" class="weui-cell" hover-class="weui-cell_active">
-                <view class="weui-cell__bd">
-                    <view>400g</view>
-                </view>
-                <view class="icon-nav">
-                    <icon type="cancel" size="15"></icon>
-                </view>
-            </navigator>
-            <navigator url="" class="weui-cell" hover-class="weui-cell_active">
-                <view class="weui-cell__bd">
-                    <view>400g</view>
-                </view>
-                <view class="icon-nav">
-                    <icon type="cancel" size="15"></icon>
-                </view>
-            </navigator>
-            <navigator url="" class="weui-cell" hover-class="weui-cell_active">
-                <view class="weui-cell__bd">
-                    <view>400g</view>
-                </view>
-                <view class="icon-nav">
-                    <icon type="cancel" size="15"></icon>
-                </view>
-            </navigator>
-            <navigator url="" class="weui-cell" hover-class="weui-cell_active">
-                <view class="weui-cell__bd">
-                    <view>400g</view>
-                </view>
-                <view class="icon-nav">
-                    <icon type="cancel" size="15"></icon>
-                </view>
-            </navigator>
-            <navigator url="" class="weui-cell" hover-class="weui-cell_active">
-                <view class="weui-cell__bd">
-                    <view>400g</view>
-                </view>
-                <view class="icon-nav">
-                    <icon type="cancel" size="15"></icon>
-                </view>
-            </navigator>
-            <navigator url="" class="weui-cell" hover-class="weui-cell_active">
-                <view class="weui-cell__bd">
-                    <view>400g</view>
-                </view>
-                <view class="icon-nav">
-                    <icon type="cancel" size="15"></icon>
-                </view>
-            </navigator>
-            <navigator url="" class="weui-cell" hover-class="weui-cell_active">
-                <view class="weui-cell__bd">
-                    <view>400g</view>
-                </view>
-                <view class="icon-nav">
-                    <icon type="cancel" size="15"></icon>
-                </view>
-            </navigator>
-            <navigator url="" class="weui-cell" hover-class="weui-cell_active">
-                <view class="weui-cell__bd">
-                    <view>400g</view>
-                </view>
-                <view class="icon-nav">
-                    <icon type="cancel" size="15"></icon>
-                </view>
-            </navigator>
-            <navigator url="" class="weui-cell" hover-class="weui-cell_active">
-                <view class="weui-cell__bd">
-                    <view>400g</view>
-                </view>
-                <view class="icon-nav">
-                    <icon type="cancel" size="15"></icon>
-                </view>
-            </navigator>
-            <navigator url="" class="weui-cell" hover-class="weui-cell_active">
-                <view class="weui-cell__bd">
-                    <view>400g</view>
-                </view>
-                <view class="icon-nav">
-                    <icon type="cancel" size="15"></icon>
-                </view>
-            </navigator>
-        </view>
+            </view>
+            <view class="weui-loadmore" wx:if="{{historyLoading}}">
+                <view class="weui-loading"></view>
+                <view class="weui-loadmore__tips weui-loadmore__tips_in-line">正在加载</view>
+            </view>
+            <view class="weui-loadmore" wx:if="{{noHistoryBackLog}}">
+                <view class="weui-loadmore__tips weui-loadmore__tips_in-line">没有了，别拉了~</view>
+            </view>
+        </scroll-view>
+        <scroll-view scroll-y lower-threshold="{{100}}" class="weui-cells searchbar-result" wx:if="{{inputShowed && openResult}}" style="height: {{searchHeight}}px; overflow-y: auto;" @scrolltolower="refreshResult">
+            <RepurchaseList :repurchaseList.sync="repurchaseList"></RepurchaseList>
+            <view class="weui-loadmore" wx:if="{{resultLoading}}">
+                <view class="weui-loading"></view>
+                <view class="weui-loadmore__tips weui-loadmore__tips_in-line">正在加载</view>
+            </view>
+            <view class="weui-loadmore" wx:if="{{noResultBackLog}}">
+                <view class="weui-loadmore__tips weui-loadmore__tips_in-line">没有了，别拉了~</view>
+            </view>
+        </scroll-view>
     </view>
 </template>
 
 <script>
     import wepy from 'wepy';
+    import RepurchaseList from './repurchaseList';
 
     export default class Search extends wepy.component {
 
         data = {
             inputVal: '',
-            searchHeight: ''
+            searchHeight: '',
+            historyLoading: false,
+            noHistoryBackLog: false,
+            resultLoading: false,
+            noResultBackLog: false,
+            openResult: false
         };
 
         props = {
@@ -227,7 +122,12 @@
             placeholder: {
                 type: String,
                 default: '搜索'
-            }
+            },
+            repurchaseList: {}
+        };
+
+        components = {
+            RepurchaseList: RepurchaseList
         };
 
         watch = {
@@ -243,6 +143,7 @@
             hideInput () {
                 this.inputVal = '';
                 this.inputShowed = false;
+                this.openResult = false;
             },
             clearInput () {
                 this.inputVal = '';
@@ -252,11 +153,54 @@
             },
             inputConfirm (e) {
                 console.log(e.detail.value);
+                this.openResult = true;
+                this.refreshResult();
+            },
+            // 调用方法下拉刷新--搜索历史
+            refreshHistory(e) {
+                console.log('refresh');
+                console.log(e);
+                this.getHistory();
+            },
+            // 调用方法下拉刷新--搜索结果
+            refreshResult(e) {
+                console.log('refresh');
+                console.log(e);
+            }
+        };
+
+        refreshResult(e) {
+            console.log('refresh2');
+            console.log(e);
+        };
+
+        getHistory() {
+            if (!this.noHistoryBackLog) {
+                this.historyLoading = true;
+                setTimeout(() => {
+                    this.historyLoading = false;
+                }, 1000);
+                setTimeout(() => {
+                    this.noHistoryBackLog = true;
+                }, 2000);
+            }
+        };
+
+        getResult() {
+            if (!this.noResultBackLog) {
+                this.resultLoading = true;
+                setTimeout(() => {
+                    this.resultLoading = false;
+                }, 1000);
+                setTimeout(() => {
+                    this.noResultBackLog = true;
+                }, 2000);
             }
         };
 
         onLoad () {
             this.searchHeight = wx.getStorageSync('windowH') - 45;
+            this.getHistory();
         };
     }
 </script>

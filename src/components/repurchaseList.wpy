@@ -112,7 +112,7 @@
         </view>
         <view class="weui-cells weui-cells_after-title">
             <view class="weui-cell">
-                <view class="weui-cell__ft" style="text-align: right;">
+                <view class="weui-cell__ft" style="text-align: right; background: #fff;">
                     <!-- 业务员相关操作流程 -->
                     <button class="weui-btn mini-btn" type="default" size="mini" wx:if="{{permission === 'ywy' && item.logisticsState == '1'}}">催签收</button>
                     <button class="weui-btn mini-btn" type="default" size="mini" wx:if="{{permission === 'ywy' && item.logisticsState == '2'}}">催发料</button>
