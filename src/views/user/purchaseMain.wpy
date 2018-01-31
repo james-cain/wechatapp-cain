@@ -10,7 +10,7 @@
 </style>
 <template>
     <view class="page" style="padding-bottom: 40px;">
-        <Search :inputShowed.sync="inputShowed" :clear.sync="clear" placeholder="搜索客户、业务员、日期、金额、重量" :repurchaseList.sync="allOrderList"></Search>
+        <Search :inputShowed.sync="inputShowed" :clear.sync="clear" placeholder="搜索客户、业务员、日期、金额、重量" :repurchaseList.sync="searchOrderList" :searchHistoryPage.sync="searchHistoryPage" :searchResultPage.sync="searchResultPage" :resultLoading.sync="resultLoading" :noResultBackLog.sync="noResultBackLog" :hasNoSearchResult.sync="hasNoSearchResult"></Search>
         <view class="weui-tab {{inputShowed ? 'close' : ''}}">
             <Tab :activeIndex.sync="activeIndex" :sliderWidth.sync="sliderWidth" :tabs.sync="tabs"></Tab>
             <view class="weui-tab__panel">
@@ -141,7 +141,17 @@
             page: [1, 1, 1, 1, 1],
             limit: 10,
             noBackLog: [false, false, false, false, false],
-            loading: [false, false, false, false, false]
+            loading: [false, false, false, false, false],
+            // 搜索中历史和结果限制每页10条记录
+            searchLimit: 10,
+            // 搜索中历史记录的当前页数
+            searchHistoryPage: 1,
+            // 搜索中结果记录的当前页数
+            searchOrderList: [],
+            searchResultPage: 1,
+            resultLoading: false,
+            noResultBackLog: false,
+            hasNoSearchResult: false
         };
 
         methods = {
@@ -245,6 +255,39 @@
                         this.updateBuybackOrder();
                     }
                 });
+            },
+            // 更新搜索结果历史记录
+            refreshSearchResult(searchCondition, searchResultPage) {
+                // 通过页数为第一页判断是不是第一次加载数据，若是，删除之前的查询list
+                if (searchResultPage === 1) {
+                    this.searchOrderList.length = 0;
+                    this.noResultBackLog = false;
+                    this.hasNoSearchResult = false;
+                }
+                if (!this.noResultBackLog) {
+                    this.resultLoading = true;
+                    utils.ajax({
+                        url: `/order/search?key=${searchCondition}&page=${searchResultPage}&limit=${this.searchLimit}`,
+                        method: 'GET',
+                        success: (data) => {
+                            console.log('搜索结果');
+                            console.log(data);
+                            const currentData = data.data;
+                            const currentDataHandle = this.changeCurrentData(currentData.list);
+                            this.searchResultPage += 1;
+                            this.searchOrderList = this.searchOrderList.concat(currentDataHandle);
+                            if (currentData.totalCount <= this.limit || currentData.list.length < this.limit) {
+                                if (1 * currentData.totalCount === 0) {
+                                    this.hasNoSearchResult = true;
+                                }
+                                this.noResultBackLog = true;
+                            }
+                            console.log(this.hasNoSearchResult);
+                            this.resultLoading = false;
+                            this.$apply();
+                        }
+                    });
+                }
             }
         };
 

@@ -34,6 +34,31 @@
     .icon-nav {
         width: 48rpx;
     }
+    .search-title {
+        height: 80rpx;
+        line-height: 80rpx;
+        font-size: 20rpx;
+        color: #403e40;
+        padding-left: 20rpx;
+        text {
+            color: #C4261D;
+        }
+    }
+    .search-no-result {
+        text-align: center;
+        font-size: 24rpx;
+        color: #403e40;
+        padding-top: 140rpx;
+        box-sizing: border-box;
+        text {
+            color: #C4261D;
+        }
+        &__tip {
+            margin-top: 20rpx;
+            color: #101010;
+            font-size: 20rpx;
+        }
+    }
 }
 </style>
 <template>
@@ -42,17 +67,17 @@
             <view class="weui-search-bar__form">
                 <view class="weui-search-bar__box">
                     <icon class="weui-icon-search_in-box" type="search" size="14"></icon>
-                    <input type="text" class="weui-search-bar__input" placeholder="{{placeholder}}" value="{{inputVal}}" focus="{{inputShowed}}" bindinput="inputTyping" bindconfirm="inputConfirm" confirm-type="search"/>
-                    <view class="weui-icon-clear" wx:if="{{inputVal.length > 0}}" bindtap="clearInput">
+                    <input type="text" class="weui-search-bar__input" placeholder="{{placeholder}}" value="{{inputVal}}" focus="{{inputShowed}}" @input="inputTyping" @confirm="inputConfirm" confirm-type="search"/>
+                    <view class="weui-icon-clear" wx:if="{{inputVal.length > 0}}" @tap="clearInput">
                         <icon type="clear" size="14"></icon>
                     </view>
                 </view>
-                <label class="weui-search-bar__label" hidden="{{inputShowed}}" bindtap="showInput">
+                <label class="weui-search-bar__label" hidden="{{inputShowed}}" @tap="showInput">
                     <icon class="weui-icon-search" type="search" size="14"></icon>
                     <view class="weui-search-bar__text">{{placeholder}}</view>
                 </label>
             </view>
-            <view class="weui-search-bar__cancel-btn" hidden="{{!inputShowed}}" bindtap="hideInput">取消</view>
+            <view class="weui-search-bar__cancel-btn" hidden="{{!inputShowed}}" @tap="hideInput">取消</view>
         </view>
         <scroll-view scroll-y lower-threshold="{{100}}" class="weui-cells searchbar-result" wx:if="{{inputShowed && !openResult}}" style="height: {{searchHeight}}px; overflow-y: auto;" @scrolltolower="refreshHistory">
             <view class="weui-cell">
@@ -64,8 +89,16 @@
                 </view>
             </view>
             <view class="weui-cell" hover-class="weui-cell_active">
-                <view class="weui-cell__bd">
-                    <view>400g</view>
+                <view class="weui-cell__bd" @tap="searchByHistory(james)">
+                    <view>james</view>
+                </view>
+                <view class="icon-nav">
+                    <icon type="cancel" size="15"></icon>
+                </view>
+            </view>
+            <view class="weui-cell" hover-class="weui-cell_active">
+                <view class="weui-cell__bd" @tap="searchByHistory(sdf)">
+                    <view>sdf</view>
                 </view>
                 <view class="icon-nav">
                     <icon type="cancel" size="15"></icon>
@@ -80,13 +113,20 @@
             </view>
         </scroll-view>
         <scroll-view scroll-y lower-threshold="{{100}}" class="weui-cells searchbar-result" wx:if="{{inputShowed && openResult}}" style="height: {{searchHeight}}px; overflow-y: auto;" @scrolltolower="refreshResult">
+            <view class="search-title" wx:if="{{!hasNoSearchResult}}">
+                "<text>{{inputVal}}</text>"搜索结果
+            </view>
             <RepurchaseList :repurchaseList.sync="repurchaseList"></RepurchaseList>
             <view class="weui-loadmore" wx:if="{{resultLoading}}">
                 <view class="weui-loading"></view>
                 <view class="weui-loadmore__tips weui-loadmore__tips_in-line">正在加载</view>
             </view>
-            <view class="weui-loadmore" wx:if="{{noResultBackLog}}">
+            <view class="weui-loadmore" wx:if="{{noResultBackLog && !hasNoSearchResult}}">
                 <view class="weui-loadmore__tips weui-loadmore__tips_in-line">没有了，别拉了~</view>
+            </view>
+            <view class="search-no-result" wx:if="{{hasNoSearchResult}}">
+                <view>没有"<text>{{inputVal}}</text>"相关记录</view>
+                <view class="search-no-result__tip">请尝试重新输入搜索条件</view>
             </view>
         </scroll-view>
     </view>
@@ -103,8 +143,8 @@
             searchHeight: '',
             historyLoading: false,
             noHistoryBackLog: false,
-            resultLoading: false,
-            noResultBackLog: false,
+            // resultLoading: false,
+            // noResultBackLog: false,
             openResult: false
         };
 
@@ -123,7 +163,32 @@
                 type: String,
                 default: '搜索'
             },
-            repurchaseList: {}
+            repurchaseList: {},
+            searchHistoryPage: {
+                type: Number,
+                default: 1,
+                twoWay: true
+            },
+            searchResultPage: {
+                type: Number,
+                default: 1,
+                twoWay: true
+            },
+            resultLoading: {
+                type: Boolean,
+                default: false,
+                twoWay: true
+            },
+            noResultBackLog: {
+                type: Boolean,
+                default: false,
+                twoWay: true
+            },
+            hasNoSearchResult: {
+                type: Boolean,
+                default: false,
+                twoWay: true
+            }
         };
 
         components = {
@@ -147,31 +212,37 @@
             },
             clearInput () {
                 this.inputVal = '';
+                this.openResult = false;
             },
             inputTyping (e) {
                 this.inputVal = e.detail.value;
+                this.openResult = false;
             },
             inputConfirm (e) {
-                console.log(e.detail.value);
                 this.openResult = true;
-                this.refreshResult();
+                this.refreshResult(this.inputVal);
             },
-            // 调用方法下拉刷新--搜索历史
+            searchByHistory (value) {
+                this.inputVal = value;
+                this.openResult = true;
+                this.refreshResult(this.inputVal);
+            },
+            // 调用方法上拉刷新--搜索历史
             refreshHistory(e) {
                 console.log('refresh');
                 console.log(e);
                 this.getHistory();
             },
-            // 调用方法下拉刷新--搜索结果
+            // 调用方法上拉刷新--搜索结果
             refreshResult(e) {
-                console.log('refresh');
-                console.log(e);
+                this.$emit('refreshSearchResult', this.inputVal, this.searchResultPage);
             }
         };
 
-        refreshResult(e) {
-            console.log('refresh2');
-            console.log(e);
+        // 点击搜索按钮初始加载第一页的数据
+        refreshResult(searchCondition) {
+            this.searchResultPage = 1;
+            this.$emit('refreshSearchResult', searchCondition, this.searchResultPage);
         };
 
         getHistory() {
@@ -182,18 +253,6 @@
                 }, 1000);
                 setTimeout(() => {
                     this.noHistoryBackLog = true;
-                }, 2000);
-            }
-        };
-
-        getResult() {
-            if (!this.noResultBackLog) {
-                this.resultLoading = true;
-                setTimeout(() => {
-                    this.resultLoading = false;
-                }, 1000);
-                setTimeout(() => {
-                    this.noResultBackLog = true;
                 }, 2000);
             }
         };
