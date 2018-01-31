@@ -116,7 +116,7 @@
         data = {
             img: '',
             name: '',
-            username: 'guanliyuan',
+            username: 'yewuyuan',
             password: 'hello123',
             canLogin: false
         };

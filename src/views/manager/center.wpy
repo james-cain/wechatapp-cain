@@ -53,6 +53,17 @@
             border-right: 0px;
         }
     }
+
+    .unbind-btn {
+        width: 184rpx;
+        height: 58rpx;
+        border-radius: 1px solid #878787;
+        font-size: 24rpx;
+    }
+
+    .red {
+        background-color: #C4261D;
+    }
 }
 </style>
 
@@ -70,7 +81,9 @@
         <Centerbar2 title="本月订单" :showRank.sync="showRank" :time.sync="monthTime" :sum.sync="monthSum" type="2"></Centerbar2>
         <Centerbar3 title="全部订单" :time.sync="allTime" :sum.sync="allSum" type="3"></Centerbar3>
 
-        <view class="weui-footer weui-footer_fixed-bottom" style="bottom: 65px">
+        <button class="weui-btn unbind-btn red" type="primary" @tap="unBundle">解绑</button>
+
+        <view class="weui-footer" style="bottom: 65px; display: absolute; margin-top: 20rpx; margin-bottom: 20rpx;">
             <view class="weui-footer__links">
                 <text class="weui-footer__link">公司联系电话</text>
             </view>
@@ -87,6 +100,7 @@
     import wepy from 'wepy';
     import TabBar from '../../components/tabBar';
     import Centerbar from '../../components/centerbar';
+    import utils from '../../utils/index';
 
     export default class Center extends wepy.page {
         config = {
@@ -161,7 +175,23 @@
         };
 
         methods = {
-
+            unBundle() {
+                utils.ajax({
+                    url: `/app/unbundle?openid=${this.account.id}`,
+                    method: 'GET',
+                    success: (data) => {
+                        console.log(data);
+                        console.log('注销后先把weChatAccount和session信息清除。。。');
+                        console.log('weChatAccount:', wx.getStorageSync('weChatAccount'));
+                        console.log('session:', wx.getStorageSync('session'));
+                        wx.setStorageSync('weChatAccount', '');
+                        wx.setStorageSync('session', '');
+                        wx.redirectTo({
+                            url: '/views/login'
+                        });
+                    }
+                });
+            },
         };
 
         events = {
