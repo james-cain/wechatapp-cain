@@ -374,6 +374,9 @@
                         // 返回选定照片的本地文件路径列表，tempFilePath可以作为img标签的src属性显示图片
                         self.tempFilePaths = res.tempFilePaths;
                         self.usingCamera = false;
+                        wx.showLoading({
+                            title: '正在上传'
+                        });
                         wx.uploadFile({
                             url: utils.server_url + '/order/uploadimg',
                             filePath: self.tempFilePaths[0],
@@ -383,10 +386,25 @@
                                 'content-type': 'multipart/form-data'
                             },
                             success(res) {
-                                let data = JSON.parse(res.data);
-                                console.log(data.fid);
-                                self.materialAddr = data.fid;
-                                self.$apply();
+                                console.log(res);
+                                wx.hideLoading();
+                                const data = JSON.parse(res.data);
+                                if (data.code === 500) {
+                                    wx.showToast({
+                                        title: data.msg,
+                                        image: '../../images/warn.png',
+                                        duration: 2000
+                                    });
+                                } else {
+                                    let data = JSON.parse(res.data);
+                                    wx.showToast({
+                                        title: '上传成功',
+                                        duration: 2000
+                                    });
+                                    console.log(data.fid);
+                                    self.materialAddr = data.fid;
+                                    self.$apply();
+                                }
                             }
                         });
                     }
@@ -420,7 +438,7 @@
                 toSubmitOrder.inChargePrice = this.chargePerPrice;
                 toSubmitOrder.inChargeAmount = this.chargeAmountPrice;
                 toSubmitOrder.confirmationAddr = this.confirmationAddr;
-                toSubmitOrder.materialAddr = this.materialAddr;
+                toSubmitOrder.materialImg = this.materialAddr;
                 toSubmitOrder.receivablesAccount = this.payeeName;
                 toSubmitOrder.openBank = this.payeeBankName;
                 toSubmitOrder.cardNumber = this.payeeBankNo;

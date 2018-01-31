@@ -182,6 +182,9 @@
                         // 返回选定照片的本地文件路径列表，tempFilePath可以作为img标签的src属性显示图片
                         self.tempFilePaths = res.tempFilePaths;
                         console.log(self.tempFilePaths);
+                        wx.showLoading({
+                            title: '正在上传'
+                        });
                         wx.uploadFile({
                             url: utils.server_url + '/order/uploadimg',
                             filePath: self.tempFilePaths[0],
@@ -192,6 +195,7 @@
                             },
                             success(res) {
                                 console.log(res);
+                                wx.hideLoading();
                                 const data = JSON.parse(res.data);
                                 if (data.code === 500) {
                                     wx.showToast({
@@ -201,7 +205,10 @@
                                     });
                                 } else {
                                     console.log(data.fid);
-
+                                    wx.showToast({
+                                        title: '上传成功',
+                                        duration: 2000
+                                    });
                                     self.fid = data.fid;
                                     self.isPhoto = true;
                                     self.usingCamera = false;

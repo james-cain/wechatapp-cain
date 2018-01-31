@@ -54,6 +54,9 @@
                         const tmp = JSON.parse(wx.getStorageSync('purchaseOrder'));
                         self.tempFilePaths.length = 0;
                         self.tempFilePaths = res.tempFilePaths;
+                        wx.showLoading({
+                            title: '正在上传'
+                        });
                         wx.uploadFile({
                             url: utils.server_url + '/order/uploadimg',
                             filePath: self.tempFilePaths[0],
@@ -64,13 +67,26 @@
                             },
                             success(res) {
                                 console.log(res);
-                                let data = JSON.parse(res.data);
-                                console.log(data.fid);
-                                tmp.fid = data.fid;
-                                tmp.tempFilePaths = self.tempFilePaths;
-                                self.$apply();
-                                wx.setStorageSync('purchaseOrder', JSON.stringify(tmp));
-                                wx.navigateBack();
+                                wx.hideLoading();
+                                const data = JSON.parse(res.data);
+                                if (data.code === 500) {
+                                    wx.showToast({
+                                        title: data.msg,
+                                        image: '../../images/warn.png',
+                                        duration: 2000
+                                    });
+                                } else {
+                                    console.log(data.fid);
+                                    tmp.fid = data.fid;
+                                    wx.showToast({
+                                        title: '上传成功',
+                                        duration: 2000
+                                    });
+                                    tmp.tempFilePaths = self.tempFilePaths;
+                                    self.$apply();
+                                    wx.setStorageSync('purchaseOrder', JSON.stringify(tmp));
+                                    wx.navigateBack();
+                                }
                             }
                         });
                     }

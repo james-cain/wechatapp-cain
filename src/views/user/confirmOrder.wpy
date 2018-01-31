@@ -103,8 +103,8 @@
                             duration: 2000
                         });
                         setTimeout(() => {
-                            wx.redirectTo({
-                                url: 'main'
+                            wx.navigateBack({
+                                delta: 10
                             });
                         }, 2000);
                     }
