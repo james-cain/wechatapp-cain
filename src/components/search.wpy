@@ -229,8 +229,6 @@
             },
             // 调用方法上拉刷新--搜索历史
             refreshHistory(e) {
-                console.log('refresh');
-                console.log(e);
                 this.getHistory();
             },
             // 调用方法上拉刷新--搜索结果

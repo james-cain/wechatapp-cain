@@ -54,7 +54,6 @@ class Utils {
         const self = this;
         let errorTipImg = '../../images/warn.png';
         let param = Object.assign({}, init, args);
-        console.log(param.url);
         if (/login/g.test(param.url)) {
             errorTipImg = '../images/warn.png';
         }
@@ -68,7 +67,7 @@ class Utils {
                 'content-type': param.contentType
             },
             success: (data) => {
-                console.log(data);
+                // console.log(data);
                 wx.hideLoading();
                 if (data.data.code === 401) {
                     wx.showToast({
@@ -107,7 +106,7 @@ class Utils {
                 openid: this.wechatAccount.id
             },
             success(data) {
-                console.log(data);
+                // console.log(data);
                 if (data.code === 0) {
                     wx.setStorageSync('session', data.token);
                     wx.setStorageSync('userType', data.userType);
@@ -131,7 +130,7 @@ class Utils {
 
     checkSession () {
         const session = wx.getStorageSync('session');
-        console.log('checkSession', session);
+        // console.log('checkSession', session);
         if (!session) {
             const wechatAccount = wx.getStorageSync('weChatAccount') ? JSON.parse(wx.getStorageSync('weChatAccount')) : '';
             this.ajax({
@@ -142,7 +141,7 @@ class Utils {
                 },
                 from: 'checksession',
                 success(data) {
-                    console.log(data);
+                    // console.log(data);
                     if (data.code === 0) {
                         wx.setStorageSync('session', data.token);
                         wx.setStorageSync('userType', data.userType);

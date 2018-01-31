@@ -116,8 +116,8 @@
         data = {
             img: '',
             name: '',
-            username: 'yewuyuan',
-            password: 'hello123',
+            username: '',
+            password: '',
             canLogin: false
         };
 
@@ -222,18 +222,12 @@
             }
             wx.login({
                 success: (res) => {
-                    console.log('login');
-                    console.log(res);
                     let weChatAccount = {};
                     const self = this;
                     const params = {
                         jscode: res.code
                     };
                     // 清除weChatAccount和session
-                    console.log('每次登陆之前先把weChatAccount和session信息清除。。。');
-                    console.log('weChatAccount:', wx.getStorageSync('weChatAccount'));
-                    console.log('session:', wx.getStorageSync('session'));
-                    console.log('permissionType:', wx.getStorageSync('permissionType'));
                     wx.setStorageSync('weChatAccount', '');
                     wx.setStorageSync('session', '');
                     wx.setStorageSync('permissionType', '');
@@ -251,8 +245,6 @@
                         dataType: 'json',
                         params,
                         success: (e) => {
-                            console.log('获取微信用户openid和sessionkey：');
-                            console.log(e);
                             if (e.code === 0) {
                                 wx.getUserInfo({
                                     success (res) {
@@ -262,8 +254,8 @@
                                         weChatAccount.gender = userInfo.gender;
                                         weChatAccount.id = e.openid;
                                         wx.setStorageSync('weChatAccount', JSON.stringify(weChatAccount));
-                                        console.log('获取到微信信息：');
-                                        console.log(weChatAccount);
+                                        // console.log('获取到微信信息：');
+                                        // console.log(weChatAccount);
                                         try {
                                             self.img = userInfo.avatarUrl;
                                         } catch (e) {
@@ -287,8 +279,8 @@
                             }
                         },
                         fail: (e) => {
-                            console.log('获取微信用户失败：');
-                            console.log(e);
+                            // console.log('获取微信用户失败：');
+                            // console.log(e);
                         }
                     });
                 }

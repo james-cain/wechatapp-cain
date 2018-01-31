@@ -181,7 +181,6 @@
                     success: (res) => {
                         // 返回选定照片的本地文件路径列表，tempFilePath可以作为img标签的src属性显示图片
                         self.tempFilePaths = res.tempFilePaths;
-                        console.log(self.tempFilePaths);
                         wx.showLoading({
                             title: '正在上传'
                         });
@@ -194,7 +193,6 @@
                                 'content-type': 'multipart/form-data'
                             },
                             success(res) {
-                                console.log(res);
                                 wx.hideLoading();
                                 const data = JSON.parse(res.data);
                                 if (data.code === 500) {
@@ -204,7 +202,6 @@
                                         duration: 2000
                                     });
                                 } else {
-                                    console.log(data.fid);
                                     wx.showToast({
                                         title: '上传成功',
                                         duration: 2000
@@ -241,7 +238,7 @@
                 this.isConfirm = false;
                 this.isInput = false;
                 this.isPhoto = false;
-                this.weight = '200';
+                this.weight = '';
                 this.tempFilePaths.length = 0;
             }
         }

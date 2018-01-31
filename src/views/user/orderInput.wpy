@@ -207,27 +207,25 @@
             navigationBarTitleText: '回购订单录入'
         };
         data = {
-            customerName: 'james',
-            customerId: '350825199212238793',
+            customerName: '',
+            customerId: '',
             date: '',
             time: '',
             perPrice: '',
             weight: '',
             amountPrice: '',
-            chargePerPrice: '0.78',
+            chargePerPrice: '',
             chargeAmountPrice: '',
             confirmationAddr: '',
             materialAddr: '',
-            payeeName: 'cain',
-            payeeBankName: '中国银行',
-            payeeBankNo: '2343543546',
+            payeeName: '',
+            payeeBankName: '',
+            payeeBankNo: '',
             usingCamera: false,
             tempFilePaths: [],
 
             beginDate: '',
             endDate: '',
-            countries: ['中国', '美国', '英国'],
-            countryIndex: 0,
 
             productType: ['99.9%', '99.99%'],
             productIndex: 0,
@@ -247,7 +245,6 @@
         watch = {
             chargePerPrice (val) {
                 this.chargeAmountPrice = 1 * val * this.weight;
-                console.log(this.chargeAmountPrice);
             }
         };
         computed = {
@@ -370,7 +367,6 @@
                     count: 1,
                     sizeType: ['original', 'compressed'],
                     success: (res) => {
-                        console.log(res);
                         // 返回选定照片的本地文件路径列表，tempFilePath可以作为img标签的src属性显示图片
                         self.tempFilePaths = res.tempFilePaths;
                         self.usingCamera = false;
@@ -386,7 +382,6 @@
                                 'content-type': 'multipart/form-data'
                             },
                             success(res) {
-                                console.log(res);
                                 wx.hideLoading();
                                 const data = JSON.parse(res.data);
                                 if (data.code === 500) {
@@ -401,7 +396,6 @@
                                         title: '上传成功',
                                         duration: 2000
                                     });
-                                    console.log(data.fid);
                                     self.materialAddr = data.fid;
                                     self.$apply();
                                 }
@@ -443,7 +437,6 @@
                 toSubmitOrder.openBank = this.payeeBankName;
                 toSubmitOrder.cardNumber = this.payeeBankNo;
                 wx.setStorageSync('toSubmitOrder', JSON.stringify(toSubmitOrder));
-                console.log(toSubmitOrder);
                 wx.navigateTo({
                     url: 'confirmOrder'
                 });

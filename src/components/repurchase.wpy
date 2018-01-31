@@ -405,7 +405,7 @@
                 this.$emit('changeLogisticsState', logisticsStateType);
             },
             read (fid) {
-                console.log(fid);
+                // console.log(fid);
                 // const imgUrl = ''
                 // wx.previewImage({
                 //     urls: []

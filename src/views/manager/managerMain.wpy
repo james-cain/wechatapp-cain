@@ -125,19 +125,15 @@
         };
         events = {
             tabChange (id, e) {
-                console.log(id, e);
+                // console.log(id, e);
             }
         };
         onShow () {
             this.activeIndex = 0;
         };
         onLoad() {
-            console.log(wx.getStorageSync('session'));
             this.permission = wx.getStorageSync('permissionType');
             const windowW = wx.getStorageSync('windowW');
-            console.log(windowW);
-            console.log(wx.getStorageSync('permissionType'));
-            console.log(this.permission);
             this.columnChart = new Charts({
                 canvasId: 'columnCanvas',
                 type: 'column',

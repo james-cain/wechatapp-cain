@@ -148,12 +148,10 @@
         }
 
         onLoad(option) {
-            console.log(option);
             this.type = option.type;
             this.customerName = option.name;
             this.orderNo = option.no;
             if (option.type === 'mod') {
-                console.log(JSON.parse(wx.getStorageSync('modExpress')));
                 this.express = JSON.parse(wx.getStorageSync('modExpress'));
                 this.expressNo = this.express.expressNo;
                 this.expressName.forEach((e, idx) => {

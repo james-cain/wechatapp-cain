@@ -183,10 +183,6 @@
                     url: `/app/unbundle?openid=${this.account.id}`,
                     method: 'GET',
                     success: (data) => {
-                        console.log(data);
-                        console.log('注销后先把weChatAccount和session信息清除。。。');
-                        console.log('weChatAccount:', wx.getStorageSync('weChatAccount'));
-                        console.log('session:', wx.getStorageSync('session'));
                         wx.setStorageSync('weChatAccount', '');
                         wx.setStorageSync('session', '');
                         wx.redirectTo({
@@ -204,9 +200,7 @@
 
         events = {
             next(type) {
-                console.log(type, '跳转到sumary');
                 const index = (1 * type) - 1;
-                console.log(index);
                 wx.navigateTo({
                     url: `purchaseSumary?index=${index}`
                 });
@@ -226,7 +220,6 @@
                 url: '/my/statistics/survey',
                 method: 'GET',
                 success: (data) => {
-                    console.log(data);
                     const currentData = data.data;
                     this.weekTitle = currentData[0].x1;
                     this.monthTitle = currentData[2].x1;

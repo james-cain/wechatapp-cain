@@ -275,14 +275,11 @@
                     url: `/order/backlog?userType=${userType}&page=${this.page}&limit=${this.limit}`,
                     method: 'GET',
                     success: (data) => {
-                        console.log(data);
                         const currentData = data.data;
                         this.totalCount = currentData.totalCount;
                         this.page += 1;
                         this.backLogList = this.backLogList.concat(currentData.list);
                         wx.setStorageSync('backLogList', JSON.stringify(this.backLogList));
-                        console.log('待办事项：');
-                        console.log(this.backLogList);
                         if (this.totalCount <= this.limit || currentData.list.length < this.limit) {
                             this.noBackLog = true;
                         }

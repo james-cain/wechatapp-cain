@@ -154,9 +154,7 @@ export default class PurchaseSumary extends wepy.page {
             });
         },
         tabChange (id, e) {
-            console.log(id, e);
             this.changNavigationBarTitle(1 * id);
-            console.log(this.titleName);
             wx.setNavigationBarTitle({
                 title: this.titleName
             });
@@ -180,7 +178,6 @@ export default class PurchaseSumary extends wepy.page {
     }
 
     onLoad(option) {
-        console.log(option);
         this.activeIndex = 1 * option.index;
         this.changNavigationBarTitle(this.activeIndex);
         wx.setNavigationBarTitle({

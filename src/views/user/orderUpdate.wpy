@@ -194,11 +194,9 @@
         watch = {
             perPrice (val) {
                 this.amountPrice = 1 * val * this.weight;
-                console.log(this.amountPrice);
             },
             chargePerPrice (val) {
                 this.chargeAmountPrice = 1 * val * this.weight;
-                console.log(this.chargeAmountPrice);
             }
         };
         methods = {
@@ -338,7 +336,6 @@
                     });
                 } else {
                     wx.setStorageSync('toUpdateOrder', JSON.stringify(toUpdateOrder));
-                    console.log(toUpdateOrder);
                     wx.navigateBack();
                 }
             }
@@ -346,7 +343,6 @@
 
         onShow() {
             const purchaseOrder = JSON.parse(wx.getStorageSync('currentPurchase'));
-            console.log(purchaseOrder);
             switch (this.modifyType) {
             case 'customerName':
                 this.customerName = purchaseOrder.name;
@@ -412,7 +408,6 @@
 
         onLoad(option) {
             this.modifyType = option.modifyType;
-            console.log(this.modifyType);
             this.cacheNetworkBank = JSON.parse(wx.getStorageSync('networkBank'));
             this.cacheNetworkBank.forEach(element => {
                 this.bankNetType.push(element.name);

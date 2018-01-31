@@ -193,12 +193,10 @@
             },
             // 状态变更
             changeState (order, state) {
-                console.log('状态转换', state);
                 utils.ajax({
                     url: `/order/state/change/to/${state}?orderNo=${order.orderNo}`,
                     method: 'GET',
                     success: (data) => {
-                        console.log(data);
                         let stateDesc = '';
                         switch (state) {
                         case '1':
@@ -227,12 +225,10 @@
             },
             // 物流状态变更
             changeLogisticsState (order, state) {
-                console.log('物流状态转换', state);
                 utils.ajax({
                     url: `/order/logistics/state/change/to/${state}?orderNo=${order.orderNo}`,
                     method: 'GET',
                     success: (data) => {
-                        console.log(data);
                         let stateDesc = '';
                         switch (state) {
                         case '2':
@@ -270,8 +266,6 @@
                         url: `/order/search?key=${searchCondition}&page=${searchResultPage}&limit=${this.searchLimit}`,
                         method: 'GET',
                         success: (data) => {
-                            console.log('搜索结果');
-                            console.log(data);
                             const currentData = data.data;
                             const currentDataHandle = this.changeCurrentData(currentData.list);
                             this.searchResultPage += 1;
@@ -282,7 +276,6 @@
                                 }
                                 this.noResultBackLog = true;
                             }
-                            console.log(this.hasNoSearchResult);
                             this.resultLoading = false;
                             this.$apply();
                         }
@@ -417,8 +410,6 @@
                     url: `/order/state/${type}?page=${this.page[idx]}&limit=${this.limit}`,
                     method: 'GET',
                     success: (data) => {
-                        console.log('回购单');
-                        console.log(data);
                         const currentData = data.data;
                         const currentDataHandle = this.changeCurrentData(currentData.list);
                         this.page[idx] += 1;

@@ -77,7 +77,6 @@
         };
 
         onLoad (option) {
-            console.log(option);
             this.needTabBar = option.needTabBar;
             this.height = wx.getStorageSync('windowH');
         }

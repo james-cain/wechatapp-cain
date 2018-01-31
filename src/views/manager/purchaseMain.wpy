@@ -211,8 +211,6 @@
                         url: `/order/search?key=${searchCondition}&page=${searchResultPage}&limit=${this.searchLimit}`,
                         method: 'GET',
                         success: (data) => {
-                            console.log('搜索结果');
-                            console.log(data);
                             const currentData = data.data;
                             const currentDataHandle = this.changeCurrentData(currentData.list);
                             this.searchResultPage += 1;
@@ -223,7 +221,6 @@
                                 }
                                 this.noResultBackLog = true;
                             }
-                            console.log(this.hasNoSearchResult);
                             this.resultLoading = false;
                             this.$apply();
                         }
@@ -234,7 +231,7 @@
 
         events = {
             tabChange (id, e) {
-                console.log(id, e);
+                // console.log(id, e);
             }
         };
 
@@ -246,11 +243,10 @@
 
         onLoad () {
             this.permission = wx.getStorageSync('permissionType');
-            console.log(wx.getStorageSync('permissionType'));
         }
 
-        onPageScroll (e) {
-            console.log(e);
-        }
+        // onPageScroll (e) {
+        //     console.log(e);
+        // }
     }
 </script>

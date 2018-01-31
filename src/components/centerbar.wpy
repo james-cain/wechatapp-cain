@@ -136,7 +136,6 @@
 
         methods = {
             next () {
-                console.log('next');
                 this.$emit('next', this.type);
             },
             goToRank() {
