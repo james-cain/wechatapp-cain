@@ -161,10 +161,15 @@ class Utils {
                             wx.setStorageSync('permissionType', 'ywy');
                         }
                         this.session = data.token;
-                        wx.redirectTo({
-                            url: 'user/main'
-                            // url: 'user/purchaseMain'
-                        });
+                        if (userType === '6') {
+                            wx.redirectTo({
+                                url: 'manager/managerMain'
+                            });
+                        } else {
+                            wx.redirectTo({
+                                url: 'user/main'
+                            });
+                        }
                     }
                 }
             });

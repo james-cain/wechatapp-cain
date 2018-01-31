@@ -116,7 +116,7 @@
         data = {
             img: '',
             name: '',
-            username: 'yewuyuan',
+            username: 'guanliyuan',
             password: 'hello123',
             canLogin: false
         };
@@ -186,9 +186,15 @@
                                 icon: 'success',
                                 duraction: 2000
                             });
-                            wx.redirectTo({
-                                url: 'user/main'
-                            });
+                            if (data.data.userType === '6') {
+                                wx.redirectTo({
+                                    url: 'manager/managerMain'
+                                });
+                            } else {
+                                wx.redirectTo({
+                                    url: 'user/main'
+                                });
+                            }
                         } else {
                             wx.showLoading({
                                 title: data.msg
