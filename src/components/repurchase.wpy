@@ -27,6 +27,7 @@
         color: #403E40;
         height: 34rpx;
         line-height: 34rpx;
+        padding: 2rpx;
     }
     .weui-cell {
         padding: 24rpx 30rpx;
@@ -56,8 +57,8 @@
         color: #C4261D;
         height: 30rpx;
         line-height: 30rpx;
-        padding: 4rpx 4rpx;
         border-radius: 2px;
+        margin-right: 6rpx;
     }
     .state {
         font-size: 20rpx;
@@ -80,7 +81,7 @@
         font-size: 24rpx;
     }
     .price {
-        font-size: 34rpx;
+        font-size: 26rpx;
     }
     .btn-area {
         margin: 10px 0;
@@ -122,7 +123,7 @@
     </view>
     <view url="" class="weui-media-box weui-media-box_appmsg" hover-class="weui-cell_active">
         <view class="weui-media-box__hd weui-media-box__hd_in-appmsg">
-            <image class="weui-media-box__thumb" src="../images/gold.webp" />
+            <image class="weui-media-box__thumb" src="../images/gold.jpg" />
         </view>
         <view class="weui-media-box__bd weui-media-box__bd_in-appmsg appmsg-nav" style="flex: 3;">
             <view class="weui-media-box__desc">回购日期：{{currentPurchaseDate}}</view>
@@ -130,7 +131,7 @@
                 <text class="flag" wx:if="{{purchase.totalWeight > 500}}">超500g</text>
                 <text class="flag">{{currentLogisticsState}}</text>
             </view>
-            <view class="weui-media-box__desc">
+            <view class="weui-media-box__desc" style="margin-top: 4rpx;">
                 <text class="state">{{currentStateDesc}}</text>
             </view>
         </view>

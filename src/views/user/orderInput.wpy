@@ -50,7 +50,7 @@
                 <view class="weui-label">客户姓名</view>
             </view>
             <view class="weui-cell__bd">
-                <input class="weui-input" value="{{customerName}}" placeholder="请输入姓名" @confirm="confirmName" @blur="blurName"/>
+                <input class="weui-input" value="{{customerName}}" placeholder="请输入姓名" @confirm="confirmName" @blur="blurName" @input="inputName"/>
             </view>
         </view>
         <view class="weui-cell weui-cell_input weui-cell_vcode">
@@ -58,7 +58,7 @@
                 <view class="weui-label">身份证号码</view>
             </view>
             <view class="weui-cell__bd">
-                <input class="weui-input" value="{{customerId}}" placeholder="请输入身份证号码" @blur="blurId" />
+                <input class="weui-input" value="{{customerId}}" placeholder="请输入身份证号码" @blur="blurId" @input="inputId"/>
             </view>
         </view>
         <view class="weui-cell weui-cell_input">
@@ -139,7 +139,7 @@
             </view>
             <view class="weui-cell__bd flex-bd">
                 <text>￥</text>
-                <input class="weui-input" type="digit" value="{{chargePerPrice}}" placeholder="请输入中收费单价" @blur="blurChargePerPrice" style="flex: 1;"/>
+                <input class="weui-input" type="digit" value="{{chargePerPrice}}" placeholder="请输入中收费单价" @blur="blurChargePerPrice" @input="inputChargePerPrice" style="flex: 1;"/>
                 <text>元/克</text>
             </view>
         </view>
@@ -172,7 +172,7 @@
                 <view class="weui-label">户名</view>
             </view>
             <view class="weui-cell__bd">
-                <input class="weui-input" value="{{payeeName}}" placeholder="收款人姓名" @confirm="confirmPayeeName" @blur="blurPayeeName"/>
+                <input class="weui-input" value="{{payeeName}}" placeholder="收款人姓名" @confirm="confirmPayeeName" @blur="blurPayeeName" @input="inputPayeeName"/>
             </view>
         </view>
         <view class="weui-cell weui-cell_input">
@@ -180,7 +180,7 @@
                 <view class="weui-label">开户行</view>
             </view>
             <view class="weui-cell__bd">
-                <input class="weui-input" value="{{payeeBankName}}" placeholder="请认真填写开户行信息" @confirm="confirmPayeeBankName" @blur="blurPayeeBankName"/>
+                <input class="weui-input" value="{{payeeBankName}}" placeholder="请认真填写开户行信息" @confirm="confirmPayeeBankName" @blur="blurPayeeBankName" @input="inputPayeeBankName"/>
             </view>
         </view>
         <view class="weui-cell weui-cell_input">
@@ -188,7 +188,7 @@
                 <view class="weui-label">卡号</view>
             </view>
             <view class="weui-cell__bd">
-                <input class="weui-input" type="number" value="{{payeeBankNo}}" placeholder="收款人储蓄卡号" @blur="blurPayeeBankNo"/>
+                <input class="weui-input" type="number" value="{{payeeBankNo}}" placeholder="收款人储蓄卡号" @blur="blurPayeeBankNo" @input="inputPayeeBankNo"/>
             </view>
         </view>
     </view>
@@ -253,6 +253,24 @@
             }
         };
         methods = {
+            inputName (e) {
+                this.customerName = e.detail.value;
+            },
+            inputId (e) {
+                this.customerId = e.detail.value;
+            },
+            inputChargePerPrice (e) {
+                this.chargePerPrice = '' + e.detail.value;
+            },
+            inputPayeeName (e) {
+                this.payeeName = e.detail.value;
+            },
+            inputPayeeBankName (e) {
+                this.payeeBankName = e.detail.value;
+            },
+            inputPayeeBankNo (e) {
+                this.payeeBankNo = e.detail.value;
+            },
             bindDateChange (e) {
                 this.date = e.detail.value;
             },

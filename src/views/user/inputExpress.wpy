@@ -62,7 +62,7 @@
                     <view class="weui-label">快递单号</view>
                 </view>
                 <view class="weui-cell__bd flex-bd">
-                    <input class="weui-input" type="text" value="{{expressNo}}" placeholder="请输入快递单号" @blur="blurExpressNo" style="flex: 1;"/>
+                    <input class="weui-input" type="text" value="{{expressNo}}" placeholder="请输入快递单号" @blur="blurExpressNo" @input="inputExpressNo" style="flex: 1;"/>
                 </view>
             </view>
         </view>
@@ -93,6 +93,9 @@
                 this.expressIndex = e.detail.value;
             },
             blurExpressNo (e) {
+                this.expressNo = e.detail.value;
+            },
+            inputExpressNo (e) {
                 this.expressNo = e.detail.value;
             },
             ok () {

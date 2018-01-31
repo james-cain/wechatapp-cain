@@ -50,7 +50,7 @@
                 <view class="weui-label">客户姓名</view>
             </view>
             <view class="weui-cell__bd">
-                <input class="weui-input" value="{{customerName}}" placeholder="请输入姓名" @confirm="confirmName" @blur="blurName"/>
+                <input class="weui-input" value="{{customerName}}" placeholder="请输入姓名" @confirm="confirmName" @blur="blurName" @input="inputName"/>
             </view>
         </view>
         <view class="weui-cell weui-cell_input weui-cell_vcode" wx:if="{{modifyType === 'customerId'}}">
@@ -58,7 +58,7 @@
                 <view class="weui-label">身份证号码</view>
             </view>
             <view class="weui-cell__bd">
-                <input class="weui-input" value="{{customerId}}" placeholder="请输入身份证号码" @blur="blurId" />
+                <input class="weui-input" value="{{customerId}}" placeholder="请输入身份证号码" @blur="blurId" @input="inputId" />
             </view>
         </view>
         <view class="weui-cell weui-cell_select" wx:if="{{modifyType === 'productType'}}">
@@ -77,7 +77,7 @@
             </view>
             <view class="weui-cell__bd flex-bd">
                 <text>￥</text>
-                <input class="weui-input" type="digit" value="{{perPrice}}" placeholder="请输入回购单价" @blur="blurPerPrice" style="flex: 1;"/>
+                <input class="weui-input" type="digit" value="{{perPrice}}" placeholder="请输入回购单价" @blur="blurPerPrice" @input="inputPerPrice" style="flex: 1;"/>
                 <text>元/克</text>
             </view>
         </view>
@@ -108,7 +108,7 @@
             </view>
             <view class="weui-cell__bd flex-bd">
                 <text>￥</text>
-                <input class="weui-input" type="digit" value="{{chargePerPrice}}" placeholder="请输入中收费单价" @blur="blurChargePerPrice" style="flex: 1;"/>
+                <input class="weui-input" type="digit" value="{{chargePerPrice}}" placeholder="请输入中收费单价" @blur="blurChargePerPrice" @input="inputChargePerPrice" style="flex: 1;"/>
                 <text>元/克</text>
             </view>
         </view>
@@ -118,7 +118,7 @@
             </view>
             <view class="weui-cell__bd flex-bd">
                 <text>￥</text>
-                <input class="weui-input" type="digit" value="{{lockPrice}}" placeholder="请输入锁价单价" @blur="blurLockPrice" style="flex: 1;"/>
+                <input class="weui-input" type="digit" value="{{lockPrice}}" placeholder="请输入锁价单价" @blur="blurLockPrice" @input="inputLockPrice" style="flex: 1;"/>
                 <text>元/克</text>
             </view>
         </view>
@@ -127,7 +127,7 @@
                 <view class="weui-label">户名</view>
             </view>
             <view class="weui-cell__bd">
-                <input class="weui-input" value="{{payeeName}}" placeholder="收款人姓名" @confirm="confirmPayeeName" @blur="blurPayeeName"/>
+                <input class="weui-input" value="{{payeeName}}" placeholder="收款人姓名" @confirm="confirmPayeeName" @input="inputPayeeName" @blur="blurPayeeName"/>
             </view>
         </view>
         <view class="weui-cell weui-cell_input" wx:if="{{modifyType === 'payeeBankName'}}">
@@ -135,7 +135,7 @@
                 <view class="weui-label">开户行</view>
             </view>
             <view class="weui-cell__bd">
-                <input class="weui-input" value="{{payeeBankName}}" placeholder="请认真填写开户行信息" @confirm="confirmPayeeBankName" @blur="blurPayeeBankName"/>
+                <input class="weui-input" value="{{payeeBankName}}" placeholder="请认真填写开户行信息" @confirm="confirmPayeeBankName" @input="inputPayeeBankName" @blur="blurPayeeBankName"/>
             </view>
         </view>
         <view class="weui-cell weui-cell_input" wx:if="{{modifyType === 'payeeBankNo'}}">
@@ -143,7 +143,7 @@
                 <view class="weui-label">卡号</view>
             </view>
             <view class="weui-cell__bd">
-                <input class="weui-input" type="number" value="{{payeeBankNo}}" placeholder="收款人储蓄卡号" @blur="blurPayeeBankNo"/>
+                <input class="weui-input" type="number" value="{{payeeBankNo}}" placeholder="收款人储蓄卡号" @input="inputPayeeBankNo" @blur="blurPayeeBankNo"/>
             </view>
         </view>
     </view>
@@ -200,6 +200,30 @@
             }
         };
         methods = {
+            inputName (e) {
+                this.customerName = e.detail.value;
+            },
+            inputId (e) {
+                this.customerId = e.detail.value;
+            },
+            inputPerPrice (e) {
+                this.perPrice = e.detail.value;
+            },
+            inputChargePerPrice (e) {
+                this.chargePerPrice = '' + e.detail.value;
+            },
+            inputLockPrice (e) {
+                this.lockPrice = '' + e.detail.value;
+            },
+            inputPayeeName (e) {
+                this.payeeName = e.detail.value;
+            },
+            inputPayeeBankName (e) {
+                this.payeeBankName = e.detail.value;
+            },
+            inputPayeeBankNo (e) {
+                this.payeeBankNo = e.detail.value;
+            },
             bindProductChange (e) {
                 this.productIndex = e.detail.value;
             },

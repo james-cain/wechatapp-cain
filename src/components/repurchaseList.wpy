@@ -27,6 +27,7 @@
             color: #403E40;
             height: 34rpx;
             line-height: 34rpx;
+            padding: 2rpx;
         }
         .weui-cell {
             padding: 0;
@@ -47,10 +48,10 @@
             font-size: 20rpx;
             border: 1px solid #C4261D;
             color: #C4261D;
-            height: 30rpx;
-            line-height: 30rpx;
-            padding: 4rpx 4rpx;
+            height: 26rpx;
+            line-height: 26rpx;
             border-radius: 2px;
+            margin-right: 6rpx;
         }
         .state {
             font-size: 20rpx;
@@ -76,7 +77,7 @@
             font-size: 24rpx;
         }
         .price {
-            font-size: 34rpx;
+            font-size: 26rpx;
         }
         .weui-btn {
             margin: 10px 10px 9px 0;
@@ -93,19 +94,19 @@
         </view>
         <view url="" class="weui-media-box weui-media-box_appmsg" hover-class="weui-cell_active">
             <view class="weui-media-box__hd weui-media-box__hd_in-appmsg">
-                <image class="weui-media-box__thumb" src="../images/gold.webp" />
+                <image class="weui-media-box__thumb" src="../images/gold.jpg" />
             </view>
-            <view class="weui-media-box__bd weui-media-box__bd_in-appmsg appmsg-nav">
+            <view class="weui-media-box__bd weui-media-box__bd_in-appmsg appmsg-nav" style="flex: 3;">
                 <view class="weui-media-box__desc">回购日期：{{item.purchaseDate}}</view>
                 <view class="weui-media-box__desc">
                     <text class="flag" wx:if="{{item.totalWeight > 500}}">超500g</text>
                     <text class="flag">{{item.logisticsStateDesc}}</text>
                 </view>
-                <view class="weui-media-box__desc">
+                <view class="weui-media-box__desc" style="margin-top: 4rpx;">
                     <text class="state">{{item.stateDescDesc}}</text>
                 </view>
             </view>
-            <view class="weui-media-box__bd weui-media-box__bd_in-appmsg right-item">
+            <view class="weui-media-box__bd weui-media-box__bd_in-appmsg right-item" style="flex: 2;">
                 <view class="weui-media-box__desc fr">黄金重量：{{item.totalWeight}}g</view>
                 <view class="weui-media-box__desc fr">合计：<text class="unit">￥</text><text class="price">{{item.totalAmount}}</text></view>
             </view>
