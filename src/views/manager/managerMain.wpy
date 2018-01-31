@@ -1,15 +1,22 @@
 <style type="less">
 @import '../../style/base/mixin/text.less';
-.banner {
-    width: 100%;
-    height: 258rpx;
-    position: relative;
+.manager-main {
+    .banner {
+        width: 100%;
+        height: 258rpx;
+        position: relative;
+    }
+    .canvas {
+        width: 100%;
+        height: 200px;
+        background: #fff;
+    }
 }
 </style>
 <template>
-    <view class="" style="padding-bottom: 40px;">
+    <view class="manager-main" style="padding-bottom: 40px;">
         <image src="../../images/banner.png" lazy-load="true" class="banner">
-
+        <canvas canvas-id="columnCanvas" class="canvas"></canvas>
         <TabBar :tabBar.sync="tabBarList"></TabBar>
     </view>
 </template>
@@ -17,6 +24,7 @@
 <script>
     import wepy from 'wepy';
     import TabBar from '../../components/tabBar';
+    import Charts from '../../charts/wxcharts';
 
     export default class ManagerMain extends wepy.page {
         config = {
@@ -58,6 +66,14 @@
                     }
                 ],
                 position: 'bottom'
+            },
+            columnChart: null,
+            chartData: {
+                main: {
+                    title: '总成交量',
+                    data: [15, 20, 45, 37],
+                    categories: ['2012', '2013', '2014', '2015']
+                }
             }
         };
         methods = {
@@ -76,8 +92,41 @@
         onLoad() {
             console.log(wx.getStorageSync('session'));
             this.permission = wx.getStorageSync('permissionType');
+            const windowW = wx.getStorageSync('windowW');
+            console.log(windowW);
             console.log(wx.getStorageSync('permissionType'));
             console.log(this.permission);
+            this.columnChart = new Charts({
+                canvasId: 'columnCanvas',
+                type: 'column',
+                animation: true,
+                categories: this.chartData.main.categories,
+                series: [{
+                    name: '成交量',
+                    data: this.chartData.main.data,
+                    format: function (val, name) {
+                        return val.toFixed(2) + '万';
+                    }
+                }],
+                yAxis: {
+                    format: function (val) {
+                        return val + '万';
+                    },
+                    title: 'hello',
+                    min: 0
+                },
+                xAxis: {
+                    disableGrid: false,
+                    type: 'calibration'
+                },
+                extra: {
+                    column: {
+                        width: 15
+                    }
+                },
+                width: windowW,
+                height: 200,
+            });
         };
     }
 </script>
