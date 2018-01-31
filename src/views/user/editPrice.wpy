@@ -81,14 +81,6 @@
     <view class="weui-flex" style="margin: 40rpx 15px; justify-content: left;">
         <text class="iconfont icon-shizhong" style="color: #C4261D; margin-right: 20rpx;"></text>
         <text>{{currentTime}}</text>
-        <!-- <view class="weui-cell__bd flex-bd">
-            <picker mode="date" value="{{date}}" start="2015-09-01" end="2017-09-01" @change="bindDateChange" style="flex: 1;">
-                <view class="weui-input">{{date}}</view>
-            </picker>
-            <picker mode="time" value="{{time}}" start="00:00" end="23:59" @change="bindTimeChange" style="flex: 1;">
-                <view class="weui-input">{{time}}</view>
-            </picker>
-        </view> -->
     </view>
     <view class="weui-flex" style="padding-bottom: 50rpx;">
         <button class="weui-btn authenticate-btn1" type="default" @tap="finish">发布</button>
@@ -108,8 +100,8 @@
             date: '',
             time: '',
             currentTime: '',
-            purchasePrice: '267.78',
-            lockPrice: '260'
+            purchasePrice: '',
+            lockPrice: ''
         };
 
         methods = {
@@ -142,22 +134,22 @@
                 });
             },
             finish () {
-                const params = {
-                    price: this.purchasePrice,
-                    lockPrice: this.lockPrice
-                };
                 if (!utils.beforeSubmit(this.purchasePrice, '回购单价不能空')) return;
                 if (!utils.beforeSubmit(this.lockPrice, '锁价单价不能空')) return;
                 utils.ajax({
-                    url: '/gold/update',
+                    url: `/gold/update?price=${this.purchasePrice}&&lockPrice=${this.lockPrice}`,
                     method: 'POST',
                     success: (data) => {
                         // 更新金价
-                        console.log(data);
-                    },
-                    params
+                        wx.showToast({
+                            title: '价格更新成功',
+                            duration: 2000
+                        });
+                        setTimeout(() => {
+                            wx.navigateBack();
+                        }, 2000);
+                    }
                 });
-                // wx.navigateBack();
             }
         };
 

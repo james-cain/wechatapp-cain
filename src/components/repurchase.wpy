@@ -8,9 +8,9 @@
         background-color: #fff;
         font-size: 24rpx;
         padding: 5rpx 30rpx;
-        &__name {
+        /* &__name {
             width: 100rpx;
-        }
+        } */
         &__purchase {
             flex: 1;
         }
