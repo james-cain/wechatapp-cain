@@ -1,22 +1,51 @@
 <style type="less">
 @import '../../style/base/mixin/text.less';
 .manager-main {
-    .banner {
+    .manager-nav {
         width: 100%;
         height: 258rpx;
-        position: relative;
+        top: 0;
+        left: 0;
+        position: fixed;
+        z-index: 100;
+        .banner {
+            width: 100%;
+            height: inherit;
+        }
+    }
+    .tab {
+        position: fixed;
+        top: 258rpx;
+        left: 0;
+        height: 86rpx;
+        background-color: #fff;
+        z-index: 100;
     }
     .canvas {
         width: 100%;
         height: 200px;
         background: #fff;
     }
+    .weui-tab__panel {
+        padding-top: 0px;
+        margin-top: 364rpx;
+    }
 }
 </style>
 <template>
     <view class="manager-main" style="padding-bottom: 40px;">
-        <image src="../../images/banner.png" lazy-load="true" class="banner">
-        <canvas canvas-id="columnCanvas" class="canvas"></canvas>
+        <view class="manager-nav">
+            <image src="../../images/banner.png" lazy-load="true" class="banner">
+        </view>
+        <Tab :activeIndex.sync="activeIndex" :sliderWidth.sync="sliderWidth" :tabs.sync="tabs" class="tab"></Tab>
+        <view class="weui-tab__panel">
+            <view class="weui-tab__content" hidden="{{activeIndex != 0}}">
+                <canvas canvas-id="columnCanvas" class="canvas"></canvas>
+            </view>
+            <view class="weui-tab__content" hidden="{{activeIndex != 1}}">
+                <!-- <canvas canvas-id="columnCanvas" class="canvas"></canvas> -->
+            </view>
+        </view>
         <TabBar :tabBar.sync="tabBarList"></TabBar>
     </view>
 </template>
@@ -25,13 +54,15 @@
     import wepy from 'wepy';
     import TabBar from '../../components/tabBar';
     import Charts from '../../charts/wxcharts';
+    import Tab from '../../components/tab';
 
     export default class ManagerMain extends wepy.page {
         config = {
             navigationBarTitleText: '黄金回购'
         };
         components = {
-            TabBar: TabBar
+            TabBar: TabBar,
+            Tab: Tab
         };
         data = {
             tabBarList: {
@@ -70,11 +101,14 @@
             columnChart: null,
             chartData: {
                 main: {
-                    title: '总成交量',
-                    data: [15, 20, 45, 37],
-                    categories: ['2012', '2013', '2014', '2015']
+                    // title: '总成交量',
+                    data: [15, 20, 45, 37, 68, 34, 12],
+                    categories: ['1/26', '1/27', '1/28', '1/29', '1/30', '1/31', '2/1']
                 }
-            }
+            },
+            tabs: ['今日回购数据', '本周回购数据'],
+            activeIndex: 0,
+            sliderWidth: 187.5, // 需要设置slider的宽度，用于计算中间位置
         };
         methods = {
             launchRepurchase () {
@@ -89,6 +123,14 @@
                 }
             }
         };
+        events = {
+            tabChange (id, e) {
+                console.log(id, e);
+            }
+        };
+        onShow () {
+            this.activeIndex = 0;
+        };
         onLoad() {
             console.log(wx.getStorageSync('session'));
             this.permission = wx.getStorageSync('permissionType');
@@ -102,17 +144,17 @@
                 animation: true,
                 categories: this.chartData.main.categories,
                 series: [{
-                    name: '成交量',
+                    name: '回购笔数',
                     data: this.chartData.main.data,
                     format: function (val, name) {
-                        return val.toFixed(2) + '万';
+                        return val + '笔';
                     }
                 }],
                 yAxis: {
                     format: function (val) {
-                        return val + '万';
+                        return val;
                     },
-                    title: 'hello',
+                    title: '回购笔数(笔)',
                     min: 0
                 },
                 xAxis: {
