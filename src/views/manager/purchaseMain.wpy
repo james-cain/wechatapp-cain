@@ -10,7 +10,7 @@
 </style>
 <template>
     <view class="page" style="padding-bottom: 40px;">
-        <Search :inputShowed.sync="inputShowed" :clear.sync="clear" placeholder="搜索营业部、业务员、日期、客户"></Search>
+        <Search :inputShowed.sync="inputShowed" :clear.sync="clear" placeholder="搜索营业部、业务员、日期、客户" :repurchaseList.sync="tableList" :searchHistoryPage.sync="searchHistoryPage" :searchResultPage.sync="searchResultPage" :resultLoading.sync="resultLoading" :noResultBackLog.sync="noResultBackLog" :hasNoSearchResult.sync="hasNoSearchResult"></Search>
         <Tab :activeIndex.sync="activeIndex" :sliderWidth.sync="sliderWidth" :tabs.sync="tabs"></Tab>
         <view class="weui-tab__panel {{inputShowed ? 'close' : ''}}">
             <view class="weui-tab__content" hidden="{{activeIndex != 0}}">
@@ -36,6 +36,7 @@
     import Table from '../../components/table';
     import TabBar from '../../components/tabBar';
     import Tab from '../../components/tab';
+    import utils from '../../utils/index';
 
     export default class PurchaseMain extends wepy.page {
         config = {
@@ -115,38 +116,38 @@
             tableValueList2: [
                 {
                     id: 1,
-                    name: '邓泽灵2',
+                    row1: '邓泽灵2',
                     date: '2017/11/08',
-                    heavy: '400',
-                    price: '陈晓晓',
-                    state: '武汉',
+                    row2: '400',
+                    row3: '陈晓晓',
+                    row4: '武汉',
                     type: ''
                 },
                 {
                     id: 2,
-                    name: '欧阳姗姗2',
+                    row1: '欧阳姗姗2',
                     date: '2017/11/08',
-                    heavy: '200',
-                    price: '王霞',
-                    state: '郑州',
+                    row2: '200',
+                    row3: '王霞',
+                    row4: '郑州',
                     type: ''
                 },
                 {
                     id: 1,
-                    name: '邓志帆2',
+                    row1: '邓志帆2',
                     date: '2017/11/08',
-                    heavy: '400',
-                    price: '李辉',
-                    state: '上海',
+                    row2: '400',
+                    row3: '李辉',
+                    row4: '上海',
                     type: ''
                 },
                 {
                     id: 1,
-                    name: '李子青2',
+                    row1: '李子青2',
                     date: '2017/11/08',
-                    heavy: '400',
-                    price: '陈菲琳',
-                    state: '深圳',
+                    row2: '400',
+                    row3: '陈菲琳',
+                    row4: '深圳',
                     type: ''
                 }
             ],
@@ -182,11 +183,53 @@
                     }
                 ],
                 position: 'bottom'
-            }
+            },
+            // 搜索中历史和结果限制每页10条记录
+            searchLimit: 10,
+            // 搜索中历史记录的当前页数
+            searchHistoryPage: 1,
+            // 搜索中结果记录的当前页数
+            searchOrderList: [],
+            searchResultPage: 1,
+            resultLoading: false,
+            noResultBackLog: false,
+            hasNoSearchResult: false
         };
 
         methods = {
-
+            // 更新搜索结果历史记录
+            refreshSearchResult(searchCondition, searchResultPage) {
+                // 通过页数为第一页判断是不是第一次加载数据，若是，删除之前的查询list
+                if (searchResultPage === 1) {
+                    this.searchOrderList.length = 0;
+                    this.noResultBackLog = false;
+                    this.hasNoSearchResult = false;
+                }
+                if (!this.noResultBackLog) {
+                    this.resultLoading = true;
+                    utils.ajax({
+                        url: `/order/search?key=${searchCondition}&page=${searchResultPage}&limit=${this.searchLimit}`,
+                        method: 'GET',
+                        success: (data) => {
+                            console.log('搜索结果');
+                            console.log(data);
+                            const currentData = data.data;
+                            const currentDataHandle = this.changeCurrentData(currentData.list);
+                            this.searchResultPage += 1;
+                            this.searchOrderList = this.searchOrderList.concat(currentDataHandle);
+                            if (currentData.totalCount <= this.limit || currentData.list.length < this.limit) {
+                                if (1 * currentData.totalCount === 0) {
+                                    this.hasNoSearchResult = true;
+                                }
+                                this.noResultBackLog = true;
+                            }
+                            console.log(this.hasNoSearchResult);
+                            this.resultLoading = false;
+                            this.$apply();
+                        }
+                    });
+                }
+            }
         };
 
         events = {
