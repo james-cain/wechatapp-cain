@@ -1,0 +1,122 @@
+<style>
+    .menu-item{  
+        width: 32%;  
+        float: left;  
+        text-align: center;  
+        padding-top: 8px;  
+    }  
+    .menu-item2{  
+        width: 24%;  
+        float: left;  
+        text-align: center;  
+        padding-top: 8px;  
+    }  
+    .img{  
+        width: 20px;  
+        height: 20px;  
+        display: block;  
+        margin:auto;  
+    }  
+    .clear{  
+        clear: both;  
+    }  
+    .tab-bar{  
+        position: fixed;  
+        width: 100%;  
+        padding: 0px 2%;  
+        font-size: 20rpx;
+    }  
+</style>
+
+<template>    
+    <view class="tab-bar"
+        style="color: {{tabBar.color}}; background: {{tabBar.backgroundColor}}; {{tabBar.position=='top'? 'top: 0' : 'bottom: 0'}}; {{tabBar.borderStyle? (tabBar.position=='top'? 'border-bottom: solid 1px '+tabBar.borderStyle + ';' : 'border-top: solid 1px '+tabBar.borderStyle + ';' ) : ''}}">    
+        <navigator  wx:for="{{tabBar.list}}" wx:key="pagePath"
+            url="{{item.pagePath}}"
+            open-type="redirect"
+            class="{{item.clas}}"
+            style="{{item.active? 'color: '+(item.selectedColor? item.selectedColor : tabBar.selectedColor) : ''}}">    
+            <image src="{{item.selectedIconPath}}" wx:if="{{item.active}}" class="img"/>
+            <image src="{{item.iconPath}}" wx:if="{{!item.active}}" class="img"/>
+            <text>{{item.text}}</text>    
+        </navigator>
+        <view class="clear"></view>    
+    </view>    
+</template>
+
+<script>
+    import wepy from 'wepy';
+    export default class TabBar extends wepy.component {
+        data = {
+            tabBarTemplate: [{
+                color: '#403E40',
+                selectedColor: '#C4261D',
+                backgroundColor: '#fff',
+                borderStyle: '#ccc',
+                list: [
+                    {
+                        pagePath: '/views/user/main',
+                        text: '首页',
+                        iconPath: '../../images/home.png',
+                        selectedIconPath: '../../images/home_sel.png',
+                        clas: 'menu-item',
+                        active: true
+                    },
+                    {
+                        pagePath: '/views/user/purchaseList',
+                        text: '回购单',
+                        iconPath: '../../images/purchase.png',
+                        selectedIconPath: '../../images/purchase_sel.png',
+                        clas: 'menu-item',
+                        active: false
+                    },
+                    {
+                        pagePath: '/example/index',
+                        text: '我',
+                        iconPath: '../../images/me.png',
+                        selectedIconPath: '../../images/me_sel.png',
+                        clas: 'menu-item',
+                        active: false
+                    }
+                ],
+                position: 'bottom'
+            }, {
+                color: '#403E40',
+                selectedColor: '#C4261D',
+                backgroundColor: '#fff',
+                borderStyle: '#ccc',
+                list: [
+                    {
+                        pagePath: '/example/used',
+                        text: '数据统计',
+                        iconPath: '../../images/up.png',
+                        selectedIconPath: '../../images/up_sel.png',
+                        clas: 'menu-item',
+                        active: true
+                    },
+                    {
+                        pagePath: '/example/used2',
+                        text: '回购单',
+                        iconPath: '../../images/purchase.png',
+                        selectedIconPath: '../../images/purchase_sel.png',
+                        clas: 'menu-item',
+                        active: false
+                    },
+                    {
+                        pagePath: '/example/index',
+                        text: '排行榜',
+                        iconPath: '../../images/rank.png',
+                        selectedIconPath: '../../images/rank_sel.png',
+                        clas: 'menu-item',
+                        active: false
+                    }
+                ],
+                position: 'bottom'
+            }]
+        };
+
+        props = {
+            tabBar: {}
+        };
+    }
+</script>

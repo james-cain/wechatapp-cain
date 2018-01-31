@@ -1,0 +1,242 @@
+<style type="less">
+@import '../../style/base/mixin/text.less';
+.confirm {
+    .placeholder{
+        margin: 5px;
+        padding: 0 10px;
+        text-align: center;
+        background-color: #fff;
+        height: 128rpx;
+        line-height: 128rpx;
+        color: #403E40;
+        .hLayout();
+        border-radius: 10rpx;
+    }
+    .item-flex {
+        .hLayout(row, left, center);
+    }
+    .item-flex2 {
+        .hLayout(column, center, left);
+    }
+    .title {
+        color: #262626;
+        font-weight: bold;
+        font-size: 28rpx;
+        height: 32rpx;
+        line-height: 32rpx;
+    }
+    .desc {
+        color: #403E40;
+        font-size: 20rpx;
+        height: 32rpx;
+        line-height: 32rpx;
+    }
+    .red {
+        background-color: #C4261D !important;
+        color: #fff !important;
+    }
+    .btn {
+        width: 106rpx;
+        height: 58rpx;
+        color: #C4261D;
+        font-size: 20rpx;
+        border: 1px solid #C4261D;
+        margin-top: 0px;
+        margin-right: 20rpx;
+    }
+    .input {
+        width: 106rpx;
+        height: 58rpx;
+        min-height: 58rpx;
+        color: #000;
+        font-size: 20rpx;
+        border: 1px solid #000;
+        margin-top: 0px;
+        border-radius: 5px;
+    }
+    .gou-nav {
+        width: 80rpx;
+        text-align: center;
+        line-height: 128rpx;
+        margin: 5px;
+    }
+    .next-btn {
+        width: 184rpx;
+        height: 58rpx;
+        color: #878787;
+        border-radius: 1px solid #878787;
+        font-size: 24rpx;
+    }
+    .hide {
+        display: none;
+    }
+}
+</style>
+<template>
+  <view class="confirm">
+    <view class="weui-flex">
+        <view class="weui-flex__item">
+            <view class="placeholder">
+                <view class="weui-flex__item item-flex">
+                    <view class="weui-flex__item item-flex2">
+                        <text class="title">客户资料验证</text>
+                        <text class="desc">核对姓名、产品配套证书、发票信息是否一致？</text>
+                    </view>
+                    <button class="weui-btn mini-btn btn {{isConfirm ? 'red' : ''}}" type="default" size="mini" @tap="confirm">是</button>
+                </view>
+            </view>
+        </view>
+        <view class="gou-nav">
+            <text class="iconfont icon-gou {{isConfirm ? '' : 'hide'}}" style="color: #C4261D;"></text>
+        </view>
+    </view>
+    <view class="weui-flex">
+        <view class="weui-flex__item">
+            <view class="placeholder">
+                <view class="weui-flex__item item-flex">
+                    <view class="weui-flex__item item-flex2">
+                        <text class="title">黄金称重</text>
+                        <text class="desc">请进行称重并输入重量</text>
+                    </view>
+                    <input class="input" type="digit" value="{{weight}}" placeholder="黄金重量" confirm-type="done" bindblur="blurWeight"/>
+                    <text style="color: #403E40; font-size: 24rpx;">g</text>
+                </view>
+            </view>
+        </view>
+        <view class="gou-nav">
+            <text class="iconfont icon-gou {{isInput ? '' : 'hide'}}" style="color: #C4261D;"></text>
+        </view>
+    </view>
+    <view class="weui-flex">
+        <view class="weui-flex__item">
+            <view class="placeholder">
+                <view class="weui-flex__item item-flex">
+                    <view class="weui-flex__item item-flex2">
+                        <text class="title">回购意向书</text>
+                        <text class="desc">请拍照上传已签署的回购意向书</text>
+                    </view>
+                    <text class="iconfont icon-zhaoxiangji" style="color: #C4261D; margin-right: 54rpx;" @tap="openCamera"></text>
+                </view>
+            </view>
+        </view>
+        <view class="gou-nav">
+            <text class="iconfont icon-gou {{isPhoto ? '' : 'hide'}}" style="color: #C4261D;"></text>
+        </view>
+    </view>
+    <image src="{{'https://eim.online/buyback/order/view/img/' + fid}}" lazy-load="true" style="height: 100px; width: 100px;">
+    <view class="weui-flex" style="margin-top: 200rpx;">
+        <button class="weui-btn next-btn {{isNext ? 'red' : ''}}" type="default" disabled="{{!isNext}}" @tap="next">下一步</button>
+    </view>
+  </view>
+</template>
+
+<script>
+    import wepy from 'wepy';
+    import utils from '../../utils/index';
+
+    export default class BusinessConfirm extends wepy.page {
+        config = {
+            navigationBarTitleText: '业务核对确认'
+        };
+        data = {
+            isConfirm: false,
+            isInput: false,
+            isPhoto: false,
+            weight: '',
+            fid: '',
+            tempFilePaths: [],
+            usingCamera: false
+        };
+        computed = {
+            isNext () {
+                return this.isConfirm && this.isInput && this.isPhoto;
+                // return this.isConfirm;
+            }
+        };
+        methods = {
+            confirm () {
+                this.isConfirm = true;
+            },
+            // inputWeight (e) {
+            //     this.weight = e.detail.value;
+            // },
+            blurWeight (e) {
+                this.weight = '' + e.detail.value;
+                if (this.weight !== '') {
+                    if (/^[0-9]*(\.[0-9]{1,6})?$/.test(this.weight)) {
+                        this.isInput = true;
+                    } else {
+                        this.isInput = false;
+                    }
+                } else {
+                    this.isInput = false;
+                }
+            },
+            openCamera () {
+                const self = this;
+                this.usingCamera = true;
+                wx.chooseImage({
+                    count: 1,
+                    sizeType: ['original', 'compressed'],
+                    success: (res) => {
+                        // 返回选定照片的本地文件路径列表，tempFilePath可以作为img标签的src属性显示图片
+                        self.tempFilePaths = res.tempFilePaths;
+                        console.log(self.tempFilePaths);
+                        wx.uploadFile({
+                            url: utils.server_url + '/order/uploadimg',
+                            filePath: self.tempFilePaths[0],
+                            name: 'file',
+                            header: {
+                                'token': wx.getStorageSync('session'),
+                                'content-type': 'multipart/form-data'
+                            },
+                            success(res) {
+                                console.log(res);
+                                const data = JSON.parse(res.data);
+                                if (data.code === 500) {
+                                    wx.showToast({
+                                        title: data.msg,
+                                        image: '../../images/warn.png',
+                                        duration: 2000
+                                    });
+                                } else {
+                                    console.log(data.fid);
+
+                                    self.fid = data.fid;
+                                    self.isPhoto = true;
+                                    self.usingCamera = false;
+                                    self.$apply();
+                                }
+                            }
+                        });
+                    }
+                });
+            },
+            next () {
+                const order = {};
+                order.weight = this.weight;
+                order.tempFilePaths = this.tempFilePaths;
+                order.fid = this.fid;
+                wx.setStorageSync('purchaseOrder', JSON.stringify(order));
+                if (this.weight <= 500) {
+                    wx.navigateTo({
+                        url: 'orderInput'
+                    });
+                } else {
+                    wx.navigateTo({
+                        url: 'authenticate'
+                    });
+                }
+            }
+        }
+        onShow () {
+            if (!this.usingCamera) {
+                this.isConfirm = false;
+                this.isInput = false;
+                this.isPhoto = false;
+                this.weight = '200';
+                this.tempFilePaths.length = 0;
+            }
+        }
+    }
+</script>

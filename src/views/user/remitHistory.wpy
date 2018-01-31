@@ -1,0 +1,82 @@
+<style lang="less">
+    .remit-history .weui-tab__panel {
+        padding-top: 0 !important;
+    }
+</style>
+
+<template>
+    <view class="remit-history">
+        <view class="weui-tab__panel">
+            <view class="weui-tab__content">
+                <HistoryTable :tableList="tableList" :tableValueList="tableValueList"></HistoryTable>
+                <view class="weui-loadmore">
+                    <view class="weui-loadmore__tips weui-loadmore__tips_in-line">没有了，别拉了~</view>
+                </view>
+            </view>
+        </view>
+    </view>
+</template>
+
+<script>
+import wepy from 'wepy';
+import HistoryTable from '../../components/historyTable';
+
+export default class RemitHistory extends wepy.page {
+    config = {
+        navigationBarTitleText: '历史汇款记录'
+    };
+    components = {
+        HistoryTable
+    };
+    data = {
+        tableList: [
+            {
+                id: 1,
+                name: '汇款日期'
+            },
+            {
+                id: 2,
+                name: '汇款时间'
+            },
+            {
+                id: 3,
+                name: '汇款金额'
+            },
+            {
+                id: 4,
+                name: '汇款状态'
+            },
+        ],
+        tableValueList: [
+            {
+                id: 1,
+                row1: '2017/11/08',
+                row2: '09:36',
+                row3: '92,070',
+                row4: '待确认'
+            },
+            {
+                id: 2,
+                row1: '2017/11/08',
+                row2: '09:36',
+                row3: '46,070',
+                row4: '已确认'
+            },
+            {
+                id: 1,
+                row1: '2017/11/08',
+                row2: '09:36',
+                row3: '92,070',
+                row4: '已确认'
+            },
+            {
+                id: 1,
+                row1: '2017/11/08',
+                row2: '09:36',
+                row3: '92,070',
+                row4: '已确认'
+            }
+        ]
+    };
+}
+</script>

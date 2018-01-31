@@ -1,0 +1,423 @@
+<style type="less">
+    .weui-tab {
+        .weui-tab__panel {
+            padding-top: 53px;
+        }
+    }
+    .close {
+        display: none;
+    }
+</style>
+<template>
+    <view class="page" style="padding-bottom: 40px;">
+        <Search :inputShowed.sync="inputShowed" :clear.sync="clear" placeholder="搜索客户、业务员、日期、金额、重量"></Search>
+        <view class="weui-tab {{inputShowed ? 'close' : ''}}">
+            <Tab :activeIndex.sync="activeIndex" :sliderWidth.sync="sliderWidth" :tabs.sync="tabs"></Tab>
+            <view class="weui-tab__panel">
+                <view class="weui-tab__content" hidden="{{activeIndex != 0}}">
+                    <RepurchaseList :repurchaseList.sync="allOrderList" id="purchase1" tabIndex="0"></RepurchaseList>
+                    <view class="weui-loadmore" wx:if="{{noBackLog[0]}}">
+                        <view class="weui-loadmore__tips weui-loadmore__tips_in-line">没有了，别拉了~</view>
+                    </view>
+                </view>
+                <view class="weui-tab__content" hidden="{{activeIndex != 1}}">
+                    <RepurchaseList2 :repurchaseList.sync="type1OrderList" id="purchase2" tabIndex="1"></RepurchaseList2>
+                    <view class="weui-loadmore" wx:if="{{noBackLog[1]}}">
+                        <view class="weui-loadmore__tips weui-loadmore__tips_in-line">没有了，别拉了~</view>
+                    </view>
+                </view>
+                <view class="weui-tab__content" hidden="{{activeIndex != 2}}">
+                    <RepurchaseList3 :repurchaseList.sync="type2OrderList" id="purchase3" tabIndex="2"></RepurchaseList3>
+                    <view class="weui-loadmore" wx:if="{{noBackLog[2]}}">
+                        <view class="weui-loadmore__tips weui-loadmore__tips_in-line">没有了，别拉了~</view>
+                    </view>
+                </view>
+                <view class="weui-tab__content" hidden="{{activeIndex != 3}}" wx:if="{{permission !== 'zhl'}}">
+                    <RepurchaseList4 :repurchaseList.sync="type3OrderList" id="purchase4" tabIndex="3"></RepurchaseList4>
+                    <view class="weui-loadmore" wx:if="{{noBackLog[3]}}">
+                        <view class="weui-loadmore__tips weui-loadmore__tips_in-line">没有了，别拉了~</view>
+                    </view>
+                </view>
+                <view class="weui-tab__content" hidden="{{activeIndex != 4}}" wx:if="{{permission !== 'zhl'}}">
+                    <RepurchaseList5 :repurchaseList.sync="type4OrderList" id="purchase5" tabIndex="4"></RepurchaseList5>
+                    <view class="weui-loadmore" wx:if="{{noBackLog[4]}}">
+                        <view class="weui-loadmore__tips weui-loadmore__tips_in-line">没有了，别拉了~</view>
+                    </view>
+                </view>
+            </view>
+        </view>
+        <TabBar :tabBar.sync="tabBarList"></TabBar>
+    </view>
+</template>
+
+<script>
+    import wepy from 'wepy';
+    import Search from '../../components/search';
+    import Tab from '../../components/tab';
+    import RepurchaseList from '../../components/repurchaseList';
+    import TabBar from '../../components/tabBar';
+    import utils from '../../utils/index';
+
+    export default class PurchaseMain extends wepy.page {
+        config = {
+            navigationBarTitleText: '回购单'
+        };
+        components = {
+            Search: Search,
+            Tab: Tab,
+            RepurchaseList: RepurchaseList,
+            RepurchaseList2: RepurchaseList,
+            RepurchaseList3: RepurchaseList,
+            RepurchaseList4: RepurchaseList,
+            RepurchaseList5: RepurchaseList,
+            TabBar: TabBar
+        };
+
+        data = {
+            inputShowed: false,
+            clear: false,
+            tabs: ['全部', '待申请付款', '待财务审核', '待打款', '待确认收货'],
+            activeIndex: 0,
+            sliderWidth: 64, // 需要设置slider的宽度，用于计算中间位置
+            permission: '',
+            allOrderList: [],
+            type1OrderList: [],
+            type2OrderList: [],
+            type3OrderList: [],
+            type4OrderList: [],
+            tabBarList: {
+                color: '#403E40',
+                selectedColor: '#C4261D',
+                backgroundColor: '#fff',
+                borderStyle: '#ccc',
+                list: [
+                    {
+                        pagePath: '/views/user/main',
+                        text: '首页',
+                        iconPath: '../../images/home.png',
+                        selectedIconPath: '../../images/home_sel.png',
+                        clas: 'menu-item',
+                        active: false
+                    },
+                    {
+                        pagePath: '/views/user/purchaseMain',
+                        text: '回购单',
+                        iconPath: '../../images/purchase.png',
+                        selectedIconPath: '../../images/purchase_sel.png',
+                        clas: 'menu-item',
+                        active: true
+                    },
+                    {
+                        pagePath: '/views/user/center',
+                        text: '我',
+                        iconPath: '../../images/me.png',
+                        selectedIconPath: '../../images/me_sel.png',
+                        clas: 'menu-item',
+                        active: false
+                    }
+                ],
+                position: 'bottom'
+            },
+            page: [1, 1, 1, 1, 1],
+            limit: 10,
+            noBackLog: [false, false, false, false, false]
+        };
+
+        methods = {
+
+        };
+
+        getType(id) {
+            let type = '';
+            switch (this.tabs[id]) {
+            case '全部':
+                type = 'all';
+                break;
+            case '待申请付款':
+                type = '0';
+                break;
+            case '待财务审核':
+                type = '1';
+                break;
+            case '待打款':
+                type = '2';
+                break;
+            case '待确认收货':
+                type = '3';
+                break;
+            default:
+                type = 'all';
+            }
+            return type;
+        }
+        events = {
+            tabChange (id, e) {
+                this.activeIndex = 1 * id;
+                this.qryBuybackOrder(this.getType(id), (1 * id));
+            },
+            goToInputExpress(order) {
+                wx.navigateTo({
+                    url: `inputExpress?name=${order.name}&&no=${order.orderNo}`
+                });
+            },
+            // 状态变更
+            changeState (order, state) {
+                console.log('状态转换', state);
+                utils.ajax({
+                    url: `/order/state/change/to/${state}?orderNo=${order.orderNo}`,
+                    method: 'GET',
+                    success: (data) => {
+                        console.log(data);
+                        let stateDesc = '';
+                        switch (state) {
+                        case '1':
+                            stateDesc = '申请付款成功';
+                            break;
+                        case '2':
+                            stateDesc = '审核成功';
+                            break;
+                        case '3':
+                            stateDesc = '打款成功';
+                            break;
+                        case '4':
+                            stateDesc = '收款成功';
+                            break;
+                        default:
+                            stateDesc = '系统异常';
+                        }
+                        wx.showToast({
+                            title: stateDesc,
+                            icon: 'success',
+                            duraction: 2000
+                        });
+                        this.updateBuybackOrder();
+                    }
+                });
+            },
+            // 物流状态变更
+            changeLogisticsState (order, state) {
+                console.log('物流状态转换', state);
+                utils.ajax({
+                    url: `/order/logistics/state/change/to/${state}?orderNo=${order.orderNo}`,
+                    method: 'GET',
+                    success: (data) => {
+                        console.log(data);
+                        let stateDesc = '';
+                        switch (state) {
+                        case '2':
+                            stateDesc = '签收成功';
+                            break;
+                        case '3':
+                            stateDesc = '发料成功';
+                            break;
+                        case '4':
+                            stateDesc = '收料成功';
+                            break;
+                        default:
+                            stateDesc = '系统异常';
+                        }
+                        wx.showToast({
+                            title: stateDesc,
+                            icon: 'success',
+                            duraction: 2000
+                        });
+                        this.updateBuybackOrder();
+                    }
+                });
+            }
+        };
+
+        currentStateDesc (stateDesc) {
+            let tmp = '';
+            switch (stateDesc) {
+            case '0':
+                tmp = '待申请付款';
+                break;
+            case '1':
+                tmp = '已申请付款';
+                break;
+            case '2':
+                tmp = '财务已审核';
+                break;
+            case '3':
+                tmp = '众恒隆已打款';
+                break;
+            case '4':
+                tmp = '业务员已确认';
+                break;
+            default:
+                tmp = '暂无状态';
+            }
+            return tmp;
+        }
+        currentState (state) {
+            let tmp = '';
+            switch (state) {
+            case '0':
+                tmp = '待申请付款';
+                break;
+            case '1':
+                tmp = '待财务审核';
+                break;
+            case '2':
+                tmp = '待众恒隆打款';
+                break;
+            case '3':
+                tmp = '待业务员确认';
+                break;
+            case '4':
+                tmp = '流程结束';
+                break;
+            default:
+                tmp = '暂无状态';
+            }
+            return tmp;
+        }
+        currentLogisticsState (logisticsState) {
+            let tmp = '';
+            switch (logisticsState) {
+            case '0':
+                tmp = '待邮寄';
+                break;
+            case '1':
+                tmp = '待回购员签收';
+                break;
+            case '2':
+                tmp = '待移交众恒隆';
+                break;
+            case '3':
+                tmp = '待众恒隆签收';
+                break;
+            case '4':
+                tmp = '众恒隆已签收';
+                break;
+            default:
+                tmp = '暂无物流状态';
+            }
+            return tmp;
+        }
+        currentPurchaseDate (date) {
+            if (date) {
+                return date.slice(0, 16);
+            }
+            return '';
+        }
+
+        updateBuybackOrder() {
+            // this.page[this.activeIndex] = 1;
+            // this.noBackLog[this.activeIndex] = false;
+            // switch (this.activeIndex) {
+            // case 0:
+            //     this.allOrderList.length = 0;
+            //     break;
+            // case 1:
+            //     this.type1OrderList.length = 0;
+            //     break;
+            // case 2:
+            //     this.type2OrderList.length = 0;
+            //     break;
+            // case 3:
+            //     this.type3OrderList.length = 0;
+            //     break;
+            // case 4:
+            //     this.type4OrderList.length = 0;
+            //     break;
+            // default:
+            //     this.allOrderList.length = 0;
+            // }
+            this.page = [1, 1, 1, 1, 1];
+            this.noBackLog = [false, false, false, false, false];
+            this.allOrderList.length = 0;
+            this.type1OrderList.length = 0;
+            this.type2OrderList.length = 0;
+            this.type3OrderList.length = 0;
+            this.type4OrderList.length = 0;
+            this.qryBuybackOrder(this.getType(this.activeIndex), this.activeIndex);
+        }
+
+        changeCurrentData(dataList) {
+            dataList.forEach(e => {
+                e.purchaseDate = this.currentPurchaseDate(e.buybackDate);
+                e.logisticsStateDesc = this.currentLogisticsState(e.logisticsState);
+                e.stateDesc = this.currentState(e.state);
+                e.stateDescDesc = this.currentStateDesc(e.state);
+            });
+            return dataList;
+        }
+        // 查询待办处理事项
+        qryBuybackOrder(type, idx) {
+            if (!this.noBackLog[idx]) {
+                utils.ajax({
+                    url: `/order/state/${type}?page=${this.page[idx]}&limit=${this.limit}`,
+                    method: 'GET',
+                    success: (data) => {
+                        console.log('回购单');
+                        console.log(data);
+                        const currentData = data.data;
+                        const currentDataHandle = this.changeCurrentData(currentData.list);
+                        this.page[idx] += 1;
+                        switch (idx) {
+                        case 0:
+                            this.allOrderList = this.allOrderList.concat(currentDataHandle);
+                            break;
+                        case 1:
+                            this.type1OrderList = this.type1OrderList.concat(currentDataHandle);
+                            break;
+                        case 2:
+                            this.type2OrderList = this.type2OrderList.concat(currentDataHandle);
+                            break;
+                        case 3:
+                            this.type3OrderList = this.type3OrderList.concat(currentDataHandle);
+                            break;
+                        case 4:
+                            this.type4OrderList = this.type4OrderList.concat(currentDataHandle);
+                            break;
+                        }
+                        if (currentData.totalCount <= this.limit || currentData.list.length < this.limit) {
+                            this.noBackLog[idx] = true;
+                        }
+                        this.$apply();
+                    }
+                });
+            }
+        }
+
+        onShow () {
+            this.inputShowed = false;
+            this.clear = true;
+            this.activeIndex = 0;
+            this.page = [1, 1, 1, 1, 1];
+            this.noBackLog = [false, false, false, false, false];
+            this.allOrderList.length = 0;
+            this.type1OrderList.length = 0;
+            this.type2OrderList.length = 0;
+            this.type3OrderList.length = 0;
+            this.type4OrderList.length = 0;
+            this.qryBuybackOrder('all', 0);
+        };
+
+        onLoad () {
+            this.permission = wx.getStorageSync('permissionType');
+            switch (this.permission) {
+            case 'ywy':
+            case 'hgy':
+            case 'cw':
+                this.tabs = ['全部', '待申请付款', '待财务审核', '待打款', '待确认收货'];
+                this.sliderWidth = 64;
+                break;
+            case 'zhl':
+                this.tabs = ['全部', '待打款', '待确认收货'];
+                this.sliderWidth = 106.6667;
+                break;
+            default:
+                this.tabs = ['全部', '待申请付款', '待财务审核', '待打款', '待确认收货'];
+                this.sliderWidth = 64;
+            }
+            this.$apply();
+        }
+
+        onReachBottom () {
+            this.qryBuybackOrder(this.getType(this.activeIndex), this.activeIndex);
+        }
+    }
+</script>

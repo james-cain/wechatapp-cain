@@ -1,0 +1,76 @@
+<style type="less">
+@import '../../style/base/mixin/text.less';
+.confirming {
+    .authenticate-btn {
+        height: 58rpx;
+        color: #C4261D !important;
+        border: 1px solid #C4261D !important;
+        font-size: 24rpx;
+    }
+    .authenticate-btn2 {
+        height: 58rpx;
+        color: #fff !important;
+        border: 1px solid #C4261D !important;
+        background-color: #C4261D !important;
+        font-size: 24rpx;
+    }
+    .tip-nav {
+        height: 40rpx;
+        line-height: 40rpx;
+        width: 100%;
+        text-align: center;
+    }
+}
+</style>
+<template>
+  <view class="confirming">
+    <view class="tip-nav" style="margin-top: 240rpx;">
+        <text style="font-size: 24rpx; color: #403E40;">当前实时保证金：</text>
+        <text style="font-size: 56rpx; color: #C4261D; font-weight: bold;">121,300</text>
+        <text style="font-size: 24rpx; color: #403E40;">元</text>
+    </view>
+    <view class="tip-nav" style="margin-top: 20rpx;">
+        <text style="font-size: 24rpx; color: #403E40;">建议补齐保证金：</text>
+        <text style="font-size: 56rpx; color: #403E40; font-weight: bold;">373,300</text>
+        <text style="font-size: 24rpx; color: #403E40;">元</text>
+    </view>
+    <view class="weui-flex" style="margin-top: 200rpx;">
+        <button class="weui-btn authenticate-btn" type="default" @tap="ok" wx:if="{{!isConfirm}}">通知国礼财务打款</button>
+        <button class="weui-btn authenticate-btn2" type="default" @tap="back" wx:if="{{isConfirm}}">已通知财务</button>
+    </view>
+  </view>
+</template>
+
+<script>
+    import wepy from 'wepy';
+
+    export default class Deposit extends wepy.page {
+        config = {
+            navigationBarTitleText: '保证金'
+        };
+        data = {
+            isConfirm: false
+        };
+        methods = {
+            ok () {
+                wx.showToast({
+                    title: '已发送通知信息',
+                    icon: 'success',
+                    duration: 2000
+                });
+                setTimeout(function changeConfirm() {
+                    this.isConfirm = true;
+                    this.$apply();
+                }.bind(this), 1000);
+                // this.isConfirm = true;
+            },
+            back () {
+                wx.navigateBack();
+            }
+        };
+
+        onShow () {
+            this.isConfirm = false;
+        }
+    }
+</script>

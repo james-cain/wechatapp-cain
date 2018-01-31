@@ -1,0 +1,83 @@
+<style type="less">
+@import '../../style/base/mixin/text.less';
+.banner {
+    width: 100%;
+    height: 258rpx;
+    position: relative;
+}
+</style>
+<template>
+    <view class="" style="padding-bottom: 40px;">
+        <image src="../../images/banner.png" lazy-load="true" class="banner">
+
+        <TabBar :tabBar.sync="tabBarList"></TabBar>
+    </view>
+</template>
+
+<script>
+    import wepy from 'wepy';
+    import TabBar from '../../components/tabBar';
+
+    export default class ManagerMain extends wepy.page {
+        config = {
+            navigationBarTitleText: '黄金回购'
+        };
+        components = {
+            TabBar: TabBar
+        };
+        data = {
+            tabBarList: {
+                color: '#403E40',
+                selectedColor: '#C4261D',
+                backgroundColor: '#fff',
+                borderStyle: '#ccc',
+                list: [
+                    {
+                        pagePath: '/views/manager/manager',
+                        text: '首页',
+                        iconPath: '../../images/home.png',
+                        selectedIconPath: '../../images/home_sel.png',
+                        clas: 'menu-item',
+                        active: true
+                    },
+                    {
+                        pagePath: '/views/manager/purchaseMain',
+                        text: '回购单',
+                        iconPath: '../../images/purchase.png',
+                        selectedIconPath: '../../images/purchase_sel.png',
+                        clas: 'menu-item',
+                        active: false
+                    },
+                    {
+                        pagePath: '/views/manager/center',
+                        text: '我',
+                        iconPath: '../../images/me.png',
+                        selectedIconPath: '../../images/me_sel.png',
+                        clas: 'menu-item',
+                        active: false
+                    }
+                ],
+                position: 'bottom'
+            }
+        };
+        methods = {
+            launchRepurchase () {
+                if (this.permission === 'ywy') {
+                    wx.navigateTo({
+                        url: 'businessConfirm'
+                    });
+                } else {
+                    wx.navigateTo({
+                        url: 'editPrice'
+                    });
+                }
+            }
+        };
+        onLoad() {
+            console.log(wx.getStorageSync('session'));
+            this.permission = wx.getStorageSync('permissionType');
+            console.log(wx.getStorageSync('permissionType'));
+            console.log(this.permission);
+        };
+    }
+</script>

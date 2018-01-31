@@ -1,0 +1,91 @@
+<style type="less">
+@import '../../style/base/mixin/text.less';
+.confirm-pic {
+    .authenticate-btn1 {
+        width: 184rpx;
+        height: 58rpx;
+        background-color: #C4261D !important;
+        border: 1px solid #C4261D !important;
+        color: #fff;
+        font-size: 24rpx;
+    }
+    .authenticate-btn2 {
+        width: 184rpx;
+        height: 58rpx;
+        color: #C4261D !important;
+        border: 1px solid #C4261D !important;
+        font-size: 24rpx;
+    }
+}
+</style>
+<template>
+  <view class="confirm-pic">
+    <view wx:for="{{tempFilePaths}}">
+        <image mode="widthFix" src="{{item}}" lazy-load="true" style="width: 100%;">
+    </view>
+    <view class="weui-flex" style="margin-top: 50rpx;">
+        <button class="weui-btn authenticate-btn1" type="default" @tap="back">确定</button>
+    </view>
+    <view class="weui-flex" style="margin-top: 50rpx;">
+        <button class="weui-btn authenticate-btn2" type="default" @tap="openCamera">重拍</button>
+    </view>
+  </view>
+</template>
+
+<script>
+    import wepy from 'wepy';
+    import utils from '../../utils/index';
+
+    export default class ConfirmPic extends wepy.page {
+        config = {
+            navigationBarTitleText: '上传回购确认书'
+        };
+        data = {
+            tempFilePaths: []
+        };
+        methods = {
+            openCamera () {
+                const self = this;
+                wx.chooseImage({
+                    count: 1,
+                    sizeType: ['original', 'compressed'],
+                    success: (res) => {
+                        // 返回选定照片的本地文件路径列表，tempFilePath可以作为img标签的src属性显示图片
+                        const tmp = JSON.parse(wx.getStorageSync('purchaseOrder'));
+                        self.tempFilePaths.length = 0;
+                        self.tempFilePaths = res.tempFilePaths;
+                        wx.uploadFile({
+                            url: utils.server_url + '/order/uploadimg',
+                            filePath: self.tempFilePaths[0],
+                            name: 'file',
+                            header: {
+                                'token': wx.getStorageSync('session'),
+                                'content-type': 'multipart/form-data'
+                            },
+                            success(res) {
+                                console.log(res);
+                                let data = JSON.parse(res.data);
+                                console.log(data.fid);
+                                tmp.fid = data.fid;
+                                tmp.tempFilePaths = self.tempFilePaths;
+                                self.$apply();
+                                wx.setStorageSync('purchaseOrder', JSON.stringify(tmp));
+                                wx.navigateBack();
+                            }
+                        });
+                    }
+                });
+            },
+            back () {
+                wx.navigateBack();
+            }
+        };
+        onShow () {
+            try {
+                this.tempFilePaths = JSON.parse(wx.getStorageSync('purchaseOrder')).tempFilePaths;
+            } catch (e) {
+                this.tempFilePaths = [];
+            }
+        }
+    }
+</script>

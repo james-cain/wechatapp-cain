@@ -1,0 +1,139 @@
+<style type="less">
+.progressbar {
+  height: 216rpx;
+  width: 100%;
+  font-size: 20rpx;
+  display: flex;
+  background-color: #262626;
+  padding: 70rpx 40rpx;
+  box-sizing: border-box;
+  .selected {
+    color: #EBC725 !important;
+  }
+  .step {
+    flex-basis: 20%;
+    color: #fff;
+    position: relative;
+    flex-shrink: 1;
+    display: inline-block;
+    margin-right: 0px;
+  }
+  .step:last-child .step-line {
+    display: none;
+  }
+  .is-process {
+    background-color: #EBC725 !important;
+    border-color: #EBC725 !important;
+  }
+  .step-head {
+    position: relative;
+    width: 100%;
+    text-align: center;
+  }
+  .step-line {
+    position: absolute;
+    background-color: #fff;
+    height: 4rpx;
+    top: 5px;
+    left: 50%;
+    right: -50%;
+  }
+  .step-icon {
+    width: 24rpx;
+    height: 24rpx;
+    border-radius: 50%;
+    background-color: #fff;
+    position: absolute;
+    left: 40%;
+  }
+  .step-main {
+    text-align: center;
+    height: 50rpx;
+    line-height: 50rpx;
+    position: relative;
+  }
+  .step-main-selected {
+      position: absolute;
+      top: -30rpx;
+      left: 0;
+      right: 0;
+  }
+  .express-info {
+    position: absolute;
+    top: 156rpx;
+    left: 76rpx;
+    color: #fff;
+    .icon-bianji1 {
+      height: 30rpx;
+      width: 30rpx;
+    }
+  }
+}
+</style>
+<template>
+  <view class="progressbar">
+    <view class="express-info" wx:if="{{purchase.logisticsState !== '0'}}">
+      <text style="margin-right: 20rpx;">{{express.expressName}}</text>
+      <text style="margin-right: 20rpx;">快递单号：{{express.expressNo}}</text>
+      <text style="margin-left: 40rpx;" wx:if="{{prepareMod}}" @tap="modExpress">
+        <text class="iconfont icon-bianji1"></text>
+        <text>修改邮寄信息</text>
+      </text>
+    </view>
+    <view wx:for="{{progressList}}" wx:key="id" class="{{item.selected ? 'selected' : ''}} step">
+      <view class="step-main">
+        <view>
+            <view class="{{item.selected ? 'step-main-selected' : ''}}">{{item.name}}</view>
+            <text class="iconfont icon-dingwei" wx:if="{{item.selected}}"></text>
+        </view>
+      </view>
+      <view class="step-head">
+        <view class="step-line"></view>
+        <view class="{{item.selected ? 'is-process' : ''}} step-icon"></view>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+    import wepy from 'wepy';
+    // import utils from '../utils/index';
+
+    export default class Progressbar extends wepy.component {
+        props = {
+            progressList: {},
+            currentPurchase: {},
+            permission: '',
+            express: {}
+        };
+        computed = {
+            purchase () {
+                if (Array.isArray(this.currentPurchase) && this.currentPurchase[0]) {
+                    return this.currentPurchase[0];
+                }
+                return {};
+            },
+            // 对业务员的待修改单独处理
+            // 待修改的逻辑判断
+            // 物流状态不为0，即业务员发出快递
+            // 且付款状态小于2，即财务已审核之前
+            // 都可以修改回购客户的姓名和快递信息
+            prepareMod () {
+                const permission = wx.getStorageSync('permissionType');
+                if (permission === 'ywy' &&
+                    (Array.isArray(this.currentPurchase) && this.currentPurchase[0])) {
+                    const tmp = this.currentPurchase[0];
+                    if ((tmp.state === '0' || tmp.state === '1') && tmp.logisticsState !== '0') {
+                        return true;
+                    }
+                }
+                return false;
+            }
+        };
+        methods = {
+            modExpress () {
+                this.$emit('goToModExpress');
+            }
+        }
+    }
+</script>

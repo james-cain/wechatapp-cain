@@ -1,0 +1,262 @@
+<style type="less">
+.search-nav {
+    height: 48px;
+    .weui-cell{
+        padding: 12px 15px 12px 15px;
+        &:before {
+            border-top: 0px;
+        }
+    }
+    .weui-cells {
+        background-color: #F0F0F0;
+        z-index: 501;
+        &:after {
+            border-bottom: 0px;
+        }
+    }
+    .weui-search-bar {
+        position: fixed;
+        top: 0;
+        width: 100%;
+        z-index: 501;
+    }
+    .weui-search-bar__cancel-btn {
+        color: #C4261D;
+    }
+    .searchbar-result{
+        margin-top: 45px;
+        font-size: 20rpx;
+        color: #403E40;
+    }
+    .searchbar-result:before{
+        display: none;
+    }
+    .icon-nav {
+        width: 48rpx;
+    }
+}
+</style>
+<template>
+    <view class="search-nav">
+        <view class="weui-search-bar">
+            <view class="weui-search-bar__form">
+                <view class="weui-search-bar__box">
+                    <icon class="weui-icon-search_in-box" type="search" size="14"></icon>
+                    <input type="text" class="weui-search-bar__input" placeholder="{{placeholder}}" value="{{inputVal}}" focus="{{inputShowed}}" bindinput="inputTyping" bindconfirm="inputConfirm" confirm-type="search"/>
+                    <view class="weui-icon-clear" wx:if="{{inputVal.length > 0}}" bindtap="clearInput">
+                        <icon type="clear" size="14"></icon>
+                    </view>
+                </view>
+                <label class="weui-search-bar__label" hidden="{{inputShowed}}" bindtap="showInput">
+                    <icon class="weui-icon-search" type="search" size="14"></icon>
+                    <view class="weui-search-bar__text">{{placeholder}}</view>
+                </label>
+            </view>
+            <view class="weui-search-bar__cancel-btn" hidden="{{!inputShowed}}" bindtap="hideInput">取消</view>
+        </view>
+        <view class="weui-cells searchbar-result" wx:if="{{inputShowed}}" style="height: {{searchHeight}}px; overflow-y: auto;">
+            <view class="weui-cell">
+                <view class="weui-cell__bd">
+                    <view class="fl">搜索历史</view>
+                </view>
+                <view class="weui-cell__bd">
+                    <view class="fr">清除记录</view>
+                </view>
+            </view>
+            <navigator url="" class="weui-cell" hover-class="weui-cell_active">
+                <view class="weui-cell__bd">
+                    <view>400g</view>
+                </view>
+                <view class="icon-nav">
+                    <icon type="cancel" size="15"></icon>
+                </view>
+            </navigator>
+            <navigator url="" class="weui-cell" hover-class="weui-cell_active">
+                <view class="weui-cell__bd">
+                    <view>400g</view>
+                </view>
+                <view class="icon-nav">
+                    <icon type="cancel" size="15"></icon>
+                </view>
+            </navigator>
+            <navigator url="" class="weui-cell" hover-class="weui-cell_active">
+                <view class="weui-cell__bd">
+                    <view>400g</view>
+                </view>
+                <view class="icon-nav">
+                    <icon type="cancel" size="15"></icon>
+                </view>
+            </navigator>
+            <navigator url="" class="weui-cell" hover-class="weui-cell_active">
+                <view class="weui-cell__bd">
+                    <view>400g</view>
+                </view>
+                <view class="icon-nav">
+                    <icon type="cancel" size="15"></icon>
+                </view>
+            </navigator>
+            <navigator url="" class="weui-cell" hover-class="weui-cell_active">
+                <view class="weui-cell__bd">
+                    <view>400g</view>
+                </view>
+                <view class="icon-nav">
+                    <icon type="cancel" size="15"></icon>
+                </view>
+            </navigator>
+            <navigator url="" class="weui-cell" hover-class="weui-cell_active">
+                <view class="weui-cell__bd">
+                    <view>400g</view>
+                </view>
+                <view class="icon-nav">
+                    <icon type="cancel" size="15"></icon>
+                </view>
+            </navigator>
+            <navigator url="" class="weui-cell" hover-class="weui-cell_active">
+                <view class="weui-cell__bd">
+                    <view>400g</view>
+                </view>
+                <view class="icon-nav">
+                    <icon type="cancel" size="15"></icon>
+                </view>
+            </navigator>
+            <navigator url="" class="weui-cell" hover-class="weui-cell_active">
+                <view class="weui-cell__bd">
+                    <view>400g</view>
+                </view>
+                <view class="icon-nav">
+                    <icon type="cancel" size="15"></icon>
+                </view>
+            </navigator>
+            <navigator url="" class="weui-cell" hover-class="weui-cell_active">
+                <view class="weui-cell__bd">
+                    <view>400g</view>
+                </view>
+                <view class="icon-nav">
+                    <icon type="cancel" size="15"></icon>
+                </view>
+            </navigator>
+            <navigator url="" class="weui-cell" hover-class="weui-cell_active">
+                <view class="weui-cell__bd">
+                    <view>400g</view>
+                </view>
+                <view class="icon-nav">
+                    <icon type="cancel" size="15"></icon>
+                </view>
+            </navigator>
+            <navigator url="" class="weui-cell" hover-class="weui-cell_active">
+                <view class="weui-cell__bd">
+                    <view>400g</view>
+                </view>
+                <view class="icon-nav">
+                    <icon type="cancel" size="15"></icon>
+                </view>
+            </navigator>
+            <navigator url="" class="weui-cell" hover-class="weui-cell_active">
+                <view class="weui-cell__bd">
+                    <view>400g</view>
+                </view>
+                <view class="icon-nav">
+                    <icon type="cancel" size="15"></icon>
+                </view>
+            </navigator>
+            <navigator url="" class="weui-cell" hover-class="weui-cell_active">
+                <view class="weui-cell__bd">
+                    <view>400g</view>
+                </view>
+                <view class="icon-nav">
+                    <icon type="cancel" size="15"></icon>
+                </view>
+            </navigator>
+            <navigator url="" class="weui-cell" hover-class="weui-cell_active">
+                <view class="weui-cell__bd">
+                    <view>400g</view>
+                </view>
+                <view class="icon-nav">
+                    <icon type="cancel" size="15"></icon>
+                </view>
+            </navigator>
+            <navigator url="" class="weui-cell" hover-class="weui-cell_active">
+                <view class="weui-cell__bd">
+                    <view>400g</view>
+                </view>
+                <view class="icon-nav">
+                    <icon type="cancel" size="15"></icon>
+                </view>
+            </navigator>
+            <navigator url="" class="weui-cell" hover-class="weui-cell_active">
+                <view class="weui-cell__bd">
+                    <view>400g</view>
+                </view>
+                <view class="icon-nav">
+                    <icon type="cancel" size="15"></icon>
+                </view>
+            </navigator>
+            <navigator url="" class="weui-cell" hover-class="weui-cell_active">
+                <view class="weui-cell__bd">
+                    <view>400g</view>
+                </view>
+                <view class="icon-nav">
+                    <icon type="cancel" size="15"></icon>
+                </view>
+            </navigator>
+        </view>
+    </view>
+</template>
+
+<script>
+    import wepy from 'wepy';
+
+    export default class Search extends wepy.component {
+
+        data = {
+            inputVal: '',
+            searchHeight: ''
+        };
+
+        props = {
+            inputShowed: {
+                type: Boolean,
+                default: false,
+                twoWay: true
+            },
+            clear: {
+                type: Boolean,
+                default: false,
+                twoWay: true
+            },
+            placeholder: {
+                type: String,
+                default: '搜索'
+            }
+        };
+
+        watch = {
+            clear (newValue) {
+                this.inputVal = newValue ? '' : this.inputVal;
+            }
+        }
+        methods = {
+            showInput () {
+                this.inputShowed = true;
+                this.clear = false;
+            },
+            hideInput () {
+                this.inputVal = '';
+                this.inputShowed = false;
+            },
+            clearInput () {
+                this.inputVal = '';
+            },
+            inputTyping (e) {
+                this.inputVal = e.detail.value;
+            },
+            inputConfirm (e) {
+                console.log(e.detail.value);
+            }
+        };
+
+        onLoad () {
+            this.searchHeight = wx.getStorageSync('windowH') - 45;
+        };
+    }
+</script>

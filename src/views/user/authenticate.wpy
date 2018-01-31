@@ -1,0 +1,44 @@
+<style type="less">
+@import '../../style/base/mixin/text.less';
+.confirming {
+    .authenticate-btn {
+        width: 184rpx;
+        height: 58rpx;
+        color: #C4261D !important;
+        border: 1px solid #C4261D !important;
+        font-size: 24rpx;
+    }
+    .tip-nav {
+        height: 40rpx;
+        line-height: 40rpx;
+        width: 100%;
+        text-align: center;
+    }
+}
+</style>
+<template>
+  <view class="confirming">
+    <view class="tip-nav" style="margin-top: 430rpx;"><text style="font-size: 36rpx; font-weight: bold;">请对实物黄金进行检查</text></view>
+    <view class="tip-nav" style="margin-top: 20rpx;"><text style="font-size: 28rpx;">请对实物黄金进行检查</text></view>
+    <view class="weui-flex" style="margin-top: 200rpx;">
+        <button class="weui-btn authenticate-btn" type="default" @tap="next">已鉴定</button>
+    </view>
+  </view>
+</template>
+
+<script>
+    import wepy from 'wepy';
+
+    export default class Authenticate extends wepy.page {
+        config = {
+            navigationBarTitleText: '鉴定黄金成色'
+        };
+        methods = {
+            next () {
+                wx.navigateTo({
+                    url: 'orderInput'
+                });
+            }
+        }
+    }
+</script>

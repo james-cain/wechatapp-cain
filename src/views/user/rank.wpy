@@ -1,0 +1,130 @@
+<style type="less">
+@import '../../style/base/mixin/text.less';
+.rank {
+    .banner {
+        width: 100%;
+        height: 258rpx;
+        top: 0;
+        left: 0;
+        position: fixed;
+        &-img {
+            width: 100%;
+            height: inherit;
+        }
+    }
+    .tab-nav {
+        position: absolute;
+        top: 160rpx;
+        left: 0px;
+        height: 98rpx;
+        width: 100%;
+        line-height: 98rpx;
+        font-size: 24rpx;
+        color: #BFBDBF;
+        .hLayout(row, center, center);
+        view {
+            flex: 1;
+            text-align: center;
+            border-bottom: 2px solid #000;
+        }
+        &-selected {
+            color: #fff;
+            border-bottom: 2px solid #fff !important;
+        }
+    }
+    .rank-nav {
+        padding-top: 258rpx;
+    }
+    .rank-nav__list {
+        width: 100%;
+        height: 120rpx;
+        .hLayout(row, space-between, center);
+        color: #101010;
+        border-bottom: 1px solid #F0F0F0;
+        &-no {
+            width: 86rpx;
+            height: inherit;
+            text-align: center;
+            font-size: 28rpx;
+            line-height: 120rpx;
+        }
+        image {
+            width: 80rpx;
+            height: 80rpx;
+            border-radius: 50%;
+        }
+        &-name {
+            height: inherit;
+            font-size: 24rpx;
+            flex: 1;
+            padding-top: 48rpx;
+            padding-left: 20rpx;
+            .name {
+                font-size: 28rpx;
+            }
+        }
+        &-money {
+            width: 250rpx;
+            height: inherit;
+            color: #C4261D;
+            font-size: 36rpx;
+            line-height: 120rpx;
+        }
+    }
+}
+
+</style>
+<template>
+    <view class="rank">
+        <view class="banner">
+            <image src="../../images/banner.png" lazy-load="true" class="banner-img"/>
+            <view class="tab-nav">
+                <view @tap="changeTab(1)" class="{{tab == 1 ? 'tab-nav-selected' : ''}}">本周排行</view>
+                <view @tap="changeTab(2)" class="{{tab == 2 ? 'tab-nav-selected' : ''}}">本月排行</view>
+            </view>
+        </view>
+        <view class="rank-nav" wx:if="{{tab==1}}">
+            <view class="rank-nav__list" wx:for="{{[1, 2, 3, 4, 5, 6, 7, 8, 9]}}">
+                <view class="rank-nav__list-no">{{item}}</view>
+                <image src="../../images/banner.png" lazy-load="true" class="avatar"/>
+                <view class="rank-nav__list-name">
+                    <view class="name">陈小波</view>
+                    <view>济南营业部</view>
+                </view>
+                <view class="rank-nav__list-money">￥968200</view>
+            </view>
+        </view>
+        <view class="rank-nav" wx:if="{{tab==2}}">
+            <view class="rank-nav__list" wx:for="{{[1, 2, 3, 4, 5, 6, 7, 8, 9]}}">
+                <view class="rank-nav__list-no">{{item}}</view>
+                <image src="../../images/banner.png" lazy-load="true" class="avatar"/>
+                <view class="rank-nav__list-name">
+                    <view class="name">谢磊</view>
+                    <view>济南营业部</view>
+                </view>
+                <view class="rank-nav__list-money">￥968200</view>
+            </view>
+        </view>
+    </view>
+</template>
+
+<script>
+    import wepy from 'wepy';
+
+    export default class Rank extends wepy.page {
+        config = {
+            navigationBarTitleText: '回购金额排行榜'
+        };
+        data = {
+            tab: 1
+        };
+        methods = {
+            changeTab(id) {
+                this.tab = id;
+            }
+        };
+        onLoad(option) {
+            this.tab = option.type || 1;
+        };
+    }
+</script>

@@ -1,0 +1,147 @@
+<style lang="less">
+@import '../style/base/mixin/text.less';
+  .center-bar {
+    height: 200rpx;
+    z-index: 10;
+    &.weui-cells {
+        margin-top: 30rpx;
+    }
+
+    .weui-cell {
+        &.special-cell {
+            padding: 6px 15px;
+        }
+
+        &.special-cell2 {
+            padding: 10px 0px;
+        }
+
+        &:before {
+            right: 15px;
+        }
+        
+        .title {
+            color: #262626;
+            font-size: 28rpx;
+            float: left;
+            font-weight: bold;
+        }
+
+        .time {
+            font-size: 20rpx;
+            color: #262626;
+            margin-left: 70rpx;
+        }
+
+        .rank {
+            font-size: 20rpx;
+            color: #262626;
+            .percent {
+                color: #C4261D;
+            }
+        }
+
+        .placeholder{
+            text-align: center;
+            box-sizing: border-box;
+            position: relative;
+        }
+
+        .content {
+            color: #262626;
+            font-size: 28rpx;
+            height: 100rpx;
+            .hLayout(column, space-between, center);
+            &__name {
+                color: 24rpx;
+            }
+            &__sum {
+                font-size: 36rpx;
+                color: #C4261D;
+                font-weight: bold;
+            }
+        }
+
+        .content__in-access {
+            position: absolute;
+            height: 12rpx;
+            width: 12rpx;
+            border-width: 4rpx 4rpx 0 0;
+            border-color: #C8C8CD;
+            border-style: solid;
+            transform: rotate(45deg);
+            top: 50%;
+            margin-top: -7rpx;
+            right: 26rpx;
+        }
+    }
+
+    &.weui-cells:after {
+        border-bottom: 0px;
+    }
+
+    &.weui-cells:before {
+        border-top: 0px;
+    }
+  }
+</style>
+
+<template>
+    <view class="center-bar weui-cells weui-cells_after-title">
+          <view class="weui-cell special-cell">
+              <view class="weui-cell__hd title">
+                  {{title}}
+              </view>
+              <view class="weui-cell__bd time">{{time}}</view>
+              <view class="weui-cell__ft rank" wx:if="{{showRank}}" @tap="goToRank">您本{{type === '1' ? '周' : '月'}}战胜了<text class="percent">{{sum.percent ? sum.percent : 0}}</text>的业务员</view>
+          </view>
+          <view class="weui-cell special-cell2" @tap="next">
+              <view class="weui-flex__item">
+                  <view class="placeholder content">
+                      <view class="content__name">回购重量（g）</view>
+                      <view class="content__sum">{{sum.weight1}}</view>
+                  </view>
+              </view>
+              <view class="weui-flex__item">
+                  <view class="placeholder content">
+                      <view class="content__name">回购金额（g）</view>
+                      <view class="content__sum">{{sum.weight2}}</view>
+                  </view>
+              </view>
+              <view class="weui-flex__item">
+                  <view class="placeholder content">
+                      <view class="content__name">提成奖金（元）</view>
+                      <view class="content__sum">{{sum.weight3}}</view>
+                  </view>
+                  <view class="content__in-access" @tap="next"></view>
+              </view>
+          </view>
+      </view>
+</template>
+
+<script>
+    import wepy from 'wepy';
+
+    export default class Centerbar extends wepy.component {
+        props = {
+            title: String,
+            time: String,
+            showRank: {
+                type: Boolean,
+                default: false
+            },
+            sum: {},
+            type: String
+        };
+
+        methods = {
+            next () {
+                console.log('next');
+                this.$emit('next', this.type);
+            },
+            goToRank() {
+                this.$emit('goToRankEvent', this.type);
+            }
+        }
+    }
+</script>

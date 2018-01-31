@@ -1,0 +1,213 @@
+<style type="less">
+    .weui-tab {
+        .weui-tab__panel {
+            padding-top: 53px;
+        }
+    }
+    .close {
+        display: none;
+    }
+</style>
+<template>
+    <view class="page" style="padding-bottom: 40px;">
+        <Search :inputShowed.sync="inputShowed" :clear.sync="clear" placeholder="搜索营业部、业务员、日期、客户"></Search>
+        <Tab :activeIndex.sync="activeIndex" :sliderWidth.sync="sliderWidth" :tabs.sync="tabs"></Tab>
+        <view class="weui-tab__panel {{inputShowed ? 'close' : ''}}">
+            <view class="weui-tab__content" hidden="{{activeIndex != 0}}">
+                <Table :tableList="tableList" :tableType="tableType" :tableValueList="tableValueList"></Table>
+                <view class="weui-loadmore">
+                    <view class="weui-loadmore__tips weui-loadmore__tips_in-line">没有了，别拉了~</view>
+                </view>
+            </view>
+            <view class="weui-tab__content" hidden="{{activeIndex != 1}}">
+                <Table2 :tableList="tableList" :tableType="tableType" :tableValueList="tableValueList2"></Table2>
+                <view class="weui-loadmore">
+                    <view class="weui-loadmore__tips weui-loadmore__tips_in-line">没有了，别拉了~</view>
+                </view>
+            </view>
+        </view>
+        <TabBar :tabBar.sync="tabBarList"></TabBar>
+    </view>
+</template>
+
+<script>
+    import wepy from 'wepy';
+    import Search from '../../components/search';
+    import Table from '../../components/table';
+    import TabBar from '../../components/tabBar';
+    import Tab from '../../components/tab';
+
+    export default class PurchaseMain extends wepy.page {
+        config = {
+            navigationBarTitleText: '回购单'
+        };
+        components = {
+            Search: Search,
+            TabBar: TabBar,
+            Table: Table,
+            Table2: Table,
+            Tab: Tab
+        };
+
+        data = {
+            inputShowed: false,
+            clear: false,
+            tabs: ['本周回购单明细', '本月回购单明细'],
+            activeIndex: 0,
+            sliderWidth: 187.5, // 需要设置slider的宽度，用于计算中间位置
+            tableType: 3,
+            tableList: [
+                {
+                    id: 1,
+                    name: '客户姓名'
+                },
+                {
+                    id: 2,
+                    name: '回购重量'
+                },
+                {
+                    id: 3,
+                    name: '业务员'
+                },
+                {
+                    id: 4,
+                    name: '营业部'
+                },
+            ],
+            tableValueList: [
+                {
+                    id: 1,
+                    row1: '邓泽灵',
+                    date: '2017/11/08',
+                    row2: '400',
+                    row3: '陈林飞',
+                    row4: '深圳',
+                    type: ''
+                },
+                {
+                    id: 2,
+                    row1: '欧阳姗姗',
+                    date: '2017/11/08',
+                    row2: '200',
+                    row3: '李清',
+                    row4: '南京',
+                    type: ''
+                },
+                {
+                    id: 1,
+                    row1: '邓志帆',
+                    date: '2017/11/08',
+                    row2: '400',
+                    row3: '黄海波',
+                    row4: '合肥',
+                    type: ''
+                },
+                {
+                    id: 1,
+                    row1: '李子青',
+                    date: '2017/11/08',
+                    row2: '400',
+                    row3: '王二东',
+                    row4: '海口',
+                    type: ''
+                }
+            ],
+            tableValueList2: [
+                {
+                    id: 1,
+                    name: '邓泽灵2',
+                    date: '2017/11/08',
+                    heavy: '400',
+                    price: '陈晓晓',
+                    state: '武汉',
+                    type: ''
+                },
+                {
+                    id: 2,
+                    name: '欧阳姗姗2',
+                    date: '2017/11/08',
+                    heavy: '200',
+                    price: '王霞',
+                    state: '郑州',
+                    type: ''
+                },
+                {
+                    id: 1,
+                    name: '邓志帆2',
+                    date: '2017/11/08',
+                    heavy: '400',
+                    price: '李辉',
+                    state: '上海',
+                    type: ''
+                },
+                {
+                    id: 1,
+                    name: '李子青2',
+                    date: '2017/11/08',
+                    heavy: '400',
+                    price: '陈菲琳',
+                    state: '深圳',
+                    type: ''
+                }
+            ],
+            tabBarList: {
+                color: '#403E40',
+                selectedColor: '#C4261D',
+                backgroundColor: '#fff',
+                borderStyle: '#ccc',
+                list: [
+                    {
+                        pagePath: '/views/manager/managerMain',
+                        text: '首页',
+                        iconPath: '../../images/home.png',
+                        selectedIconPath: '../../images/home_sel.png',
+                        clas: 'menu-item',
+                        active: false
+                    },
+                    {
+                        pagePath: '/views/manager/purchaseMain',
+                        text: '回购单',
+                        iconPath: '../../images/purchase.png',
+                        selectedIconPath: '../../images/purchase_sel.png',
+                        clas: 'menu-item',
+                        active: true
+                    },
+                    {
+                        pagePath: '/views/manager/center',
+                        text: '我',
+                        iconPath: '../../images/me.png',
+                        selectedIconPath: '../../images/me_sel.png',
+                        clas: 'menu-item',
+                        active: false
+                    }
+                ],
+                position: 'bottom'
+            }
+        };
+
+        methods = {
+
+        };
+
+        events = {
+            tabChange (id, e) {
+                console.log(id, e);
+            }
+        };
+
+        onShow () {
+            this.inputShowed = false;
+            this.clear = true;
+            this.activeIndex = 0;
+        };
+
+        onLoad () {
+            this.permission = wx.getStorageSync('permissionType');
+            console.log(wx.getStorageSync('permissionType'));
+        }
+
+        onPageScroll (e) {
+            console.log(e);
+        }
+    }
+</script>

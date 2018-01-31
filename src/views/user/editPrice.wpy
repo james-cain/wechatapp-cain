@@ -1,0 +1,168 @@
+<style type="less">
+@import '../../style/base/mixin/text.less';
+.edit-price {
+    padding: 60rpx;
+    .weui-edit-cells {
+      position: relative;
+      line-height: 1.41176471;
+      font-size: 17px;
+    }
+    .weui-cells__title {
+        color: #3B3B3B;
+        font-size: 24rpx;
+    }
+    .weui-label {
+        color: #262626;
+        font-size: 28rpx;
+        font-weight: bold;
+        width: 260rpx;
+    }
+    .weui-cell__bd {
+        color: #262626;
+        font-size: 28rpx;
+    }
+    .flex-bd {
+        .hLayout(row, right, center);
+    }
+    .weui-special {
+        .weui-select {
+            border-right: 0px;
+        }
+    }
+    .weui-flex {
+        margin: 40rpx 0px;
+        .hLayout(row, center, center);
+        text {
+            color:#262626;
+            font-size: 24rpx;
+        }
+    }
+    .authenticate-btn1 {
+        width: 184rpx;
+        height: 58rpx;
+        background-color: #C4261D !important;
+        border: 1px solid #C4261D !important;
+        color: #fff;
+        font-size: 24rpx;
+    }
+    .border-input {
+      border: 1px solid #9E8D9E;
+      border-radius: 6rpx;
+    }
+    .unit {
+      display: block;
+      width: 100rpx;
+      margin-left: 20rpx;
+      font-size: 24rpx;
+      color: #9E8D9E;
+    }
+}
+</style>
+<template>
+  <view class="edit-price">
+    <view class="weui-cells__title">回购单价</view>
+    <view class="weui-edit-cells weui-cells_after-title">
+        <view class="weui-cell weui-cell_input">
+            <view class="weui-cell__bd flex-bd">
+                <input class="weui-input border-input" type="digit" value="{{purchasePrice}}" placeholder="编辑黄金回购单价" @blur="blurPurchasePrice" style="flex: 1;"/>
+                <text class="unit">元/克</text>
+            </view>
+        </view>
+    </view>
+    <view class="weui-cells__title">锁价单价</view>
+    <view class="weui-edit-cells weui-cells_after-title">
+        <view class="weui-cell weui-cell_input">
+            <view class="weui-cell__bd flex-bd">
+                <input class="weui-input border-input" type="digit" value="{{lockPrice}}" placeholder="编辑锁价单价" @blur="blurLockPrice" style="flex: 1;"/>
+                <text class="unit">元/克</text>
+            </view>
+        </view>
+    </view>
+    <view class="weui-flex" style="margin: 40rpx 15px; justify-content: left;">
+        <text class="iconfont icon-shizhong" style="color: #C4261D; margin-right: 20rpx;"></text>
+        <text>{{currentTime}}</text>
+        <!-- <view class="weui-cell__bd flex-bd">
+            <picker mode="date" value="{{date}}" start="2015-09-01" end="2017-09-01" @change="bindDateChange" style="flex: 1;">
+                <view class="weui-input">{{date}}</view>
+            </picker>
+            <picker mode="time" value="{{time}}" start="00:00" end="23:59" @change="bindTimeChange" style="flex: 1;">
+                <view class="weui-input">{{time}}</view>
+            </picker>
+        </view> -->
+    </view>
+    <view class="weui-flex" style="padding-bottom: 50rpx;">
+        <button class="weui-btn authenticate-btn1" type="default" @tap="finish">发布</button>
+    </view>
+  </view>
+</template>
+
+<script>
+    import wepy from 'wepy';
+    import utils from '../../utils/index';
+
+    export default class EditPrice extends wepy.page {
+        config = {
+            navigationBarTitleText: '发布金价'
+        };
+        data = {
+            date: '',
+            time: '',
+            currentTime: '',
+            purchasePrice: '267.78',
+            lockPrice: '260'
+        };
+
+        methods = {
+            bindDateChange (e) {
+                this.data = e.detail.value;
+            },
+            bindTimeChange (e) {
+                this.time = e.detail.value;
+            },
+            blurPurchasePrice (e) {
+                this.purchasePrice = '' + e.detail.value;
+                const reg = /^[0-9]*(\.[0-9]{1,6})?$/;
+                utils.judge(this.purchasePrice, reg, '回购单价不合法', () => {
+                    this.purchasePrice = '';
+                    this.$apply();
+                    this.setData({
+                        purchasePrice: ''
+                    });
+                });
+            },
+            blurLockPrice (e) {
+                this.lockPrice = '' + e.detail.value;
+                const reg = /^[0-9]*(\.[0-9]{1,6})?$/;
+                utils.judge(this.lockPrice, reg, '锁价单价不合法', () => {
+                    this.lockPrice = '';
+                    this.$apply();
+                    this.setData({
+                        lockPrice: ''
+                    });
+                });
+            },
+            finish () {
+                const params = {
+                    price: this.purchasePrice,
+                    lockPrice: this.lockPrice
+                };
+                if (!utils.beforeSubmit(this.purchasePrice, '回购单价不能空')) return;
+                if (!utils.beforeSubmit(this.lockPrice, '锁价单价不能空')) return;
+                utils.ajax({
+                    url: '/gold/update',
+                    method: 'POST',
+                    success: (data) => {
+                        // 更新金价
+                        console.log(data);
+                    },
+                    params
+                });
+                // wx.navigateBack();
+            }
+        };
+
+        onShow () {
+            this.currentTime = utils.formatFunc(new Date(), 'YYYY-MM-dd HH:mm:ss');
+        }
+    }
+</script>

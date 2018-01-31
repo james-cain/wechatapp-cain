@@ -1,0 +1,209 @@
+<style type="less">
+
+</style>
+<template>
+  <view>
+    <Progressbar :progressList.sync="progressList" :currentPurchase.sync="currentPurchase" :express.sync="express"></Progressbar>
+    <Repurchase :currentPurchase.sync="currentPurchase"></Repurchase>
+  </view>
+</template>
+
+<script>
+    import wepy from 'wepy';
+    import Progressbar from '../../components/progressbar';
+    import Repurchase from '../../components/repurchase';
+    import utils from '../../utils/index';
+
+    export default class PurchaseList extends wepy.page {
+        config = {
+            navigationBarTitleText: '回购单'
+        };
+        components = {
+            Progressbar: Progressbar,
+            Repurchase: Repurchase
+        };
+        data = {
+            progressList: [
+                {
+                    id: 0,
+                    selected: false,
+                    name: '待邮寄'
+                },
+                {
+                    id: 1,
+                    selected: false,
+                    name: '待回购员签收'
+                },
+                {
+                    id: 2,
+                    selected: false,
+                    name: '已签收待移交'
+                },
+                {
+                    id: 3,
+                    selected: false,
+                    name: '待众恒隆签收'
+                },
+                {
+                    id: 4,
+                    selected: false,
+                    name: '众恒隆已签收'
+                }
+            ],
+            currentPurchase: [],
+            express: {},
+            orderNo: ''
+        };
+        events = {
+            goToUpdate(typeName) {
+                wx.navigateTo({
+                    url: `orderUpdate?modifyType=${typeName}`
+                });
+            },
+            goToInputExpress() {
+                wx.navigateTo({
+                    url: `inputExpress?name=${this.currentPurchase[0].name}&&no=${this.currentPurchase[0].orderNo}`
+                });
+            },
+            goToModExpress() {
+                wx.navigateTo({
+                    url: `inputExpress?name=${this.currentPurchase[0].name}&&no=${this.currentPurchase[0].orderNo}&&type=mod`
+                });
+            },
+            // 状态变更
+            changeState (state) {
+                console.log('状态转换', state);
+                utils.ajax({
+                    url: `/order/state/change/to/${state}?orderNo=${this.currentPurchase[0].orderNo}`,
+                    method: 'GET',
+                    success: (data) => {
+                        console.log(data);
+                        let stateDesc = '';
+                        switch (state) {
+                        case '1':
+                            stateDesc = '申请付款成功';
+                            break;
+                        case '2':
+                            stateDesc = '审核成功';
+                            break;
+                        case '3':
+                            stateDesc = '打款成功';
+                            break;
+                        case '4':
+                            stateDesc = '收款成功';
+                            break;
+                        default:
+                            stateDesc = '系统异常';
+                        }
+                        wx.showToast({
+                            title: stateDesc,
+                            icon: 'success',
+                            duraction: 2000
+                        });
+                        setTimeout(() => {
+                            wx.navigateBack();
+                        }, 2000);
+                    }
+                });
+            },
+            // 物流状态变更
+            changeLogisticsState (state) {
+                console.log('物流状态转换', state);
+                utils.ajax({
+                    url: `/order/logistics/state/change/to/${state}?orderNo=${this.currentPurchase[0].orderNo}`,
+                    method: 'GET',
+                    success: (data) => {
+                        console.log(data);
+                        let stateDesc = '';
+                        switch (state) {
+                        case '2':
+                            stateDesc = '签收成功';
+                            break;
+                        case '3':
+                            stateDesc = '发料成功';
+                            break;
+                        case '4':
+                            stateDesc = '收料成功';
+                            break;
+                        default:
+                            stateDesc = '系统异常';
+                        }
+                        wx.showToast({
+                            title: stateDesc,
+                            icon: 'success',
+                            duraction: 2000
+                        });
+                        setTimeout(() => {
+                            wx.navigateBack();
+                        }, 2000);
+                    }
+                });
+            }
+        };
+        getCurrentOrder(id) {
+            utils.ajax({
+                url: `/order/info/${id}`,
+                method: 'GET',
+                success: (data) => {
+                    // 获取订单信息
+                    console.log(data);
+                    wx.setStorageSync('currentPurchase', JSON.stringify(data.data));
+                    this.currentPurchase.push(data.data);
+                    console.log('当前订单');
+                    console.log(this.currentPurchase);
+                    this.progressList.forEach(e => {
+                        e.selected = (1 * this.currentPurchase[0].logisticsState) === e.id;
+                    });
+                    this.getExpressInfo();
+                    this.$apply();
+                }
+            });
+        };
+        getExpressInfo () {
+            if (this.currentPurchase[0].logisticsState !== '0') {
+                utils.ajax({
+                    url: `/expre/order/info?orderNo=${this.currentPurchase[0].orderNo}`,
+                    method: 'GET',
+                    success: (data) => {
+                        // 获取快递信息
+                        const currentData = data.data;
+                        this.express.expressNo = currentData.expressNo;
+                        this.express.expressName = currentData.name;
+                        wx.setStorageSync('modExpress', JSON.stringify(this.express));
+                        this.$apply();
+                    }
+                });
+            }
+        };
+        onShow () {
+            // 获取当前的回购单信息
+            this.currentPurchase.length = 0;
+            this.getCurrentOrder(this.orderNo);
+        };
+        onLoad(option) {
+            // const backLogList = JSON.parse(wx.getStorageSync('backLogList'));
+            this.orderNo = option.id;
+            // this.currentPurchase = backLogList.filter(e => {
+            //     return e.orderNo === option.id;
+            // });
+            // console.log(this.currentPurchase);
+            // this.progressList.forEach(e => {
+            //     e.selected = (1 * this.currentPurchase[0].logisticsState) === e.id;
+            // });
+            // if (this.currentPurchase[0].logisticsState !== '0') {
+            //     utils.ajax({
+            //         url: `/expre/order/info?orderNo=${this.currentPurchase[0].orderNo}`,
+            //         method: 'GET',
+            //         success: (data) => {
+            //             // 获取快递信息
+            //             const currentData = data.data;
+            //             this.express.expressNo = currentData.expressNo;
+            //             this.express.expressName = currentData.name;
+            //             wx.setStorageSync('modExpress', JSON.stringify(this.express));
+            //             this.$apply();
+            //         }
+            //     });
+            // }
+        }
+    }
+</script>

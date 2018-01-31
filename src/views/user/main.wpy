@@ -1,0 +1,372 @@
+<style type="less">
+@import '../../style/base/mixin/text.less';
+.banner {
+    width: 100%;
+    height: 258rpx;
+    position: relative;
+}
+.tooltip {
+    margin-top: 250rpx;
+    .item-flex {
+        .hLayout(row, left, center);
+    }
+}
+.func-button {
+    width: 100rpx;
+    height: 100rpx;
+    position: fixed;
+    bottom: 150rpx;
+    right: 50rpx;
+    background: #C4261D;
+    color: #fff;
+    font-size: 24rpx;
+    border-radius: 50%;
+    box-shadow: 2rpx 2rpx 4rpx 4rpx rgba(0, 0, 0, .3);
+    .desc {
+        padding: 16rpx 26rpx;
+        width: 52rpx;
+        height: 70rpx;
+        display: block;
+    }
+}
+.media-confirm {
+    .weui-cells:after {
+        border: 0px;
+    }
+    .weui-cell_access {
+        height: 76rpx;
+        box-sizing: border-box;
+        margin-bottom: 20rpx;
+        .title {
+            color: #262626;
+            font-weight: bold;
+            font-size: 24rpx;
+        }
+        .message {
+            color: #262626;
+            font-size: 24rpx;
+        }
+    }
+}
+</style>
+<template>
+    <view class="" style="padding-bottom: 40px;">
+        <image src="../../images/banner.png" lazy-load="true" class="banner">
+        <MainBanner :goldPrice.sync="goldPrice" :bannerIntroduce.sync="bannerIntroduce"></MainBanner>
+        <view class="weui-flex tooltip">
+            <view class="weui-flex__item item-flex">
+                <text class="iconfont icon-iconfont-tongzhi" style="margin-left: 40rpx;"></text>
+                <view style="position: relative;">
+                    <text style="color: #262626; font-size: 28rpx;">待处理事项</text>
+                    <view class="weui-badge" style="position: absolute;top: -.4em;right: -1.4em;">{{totalCount}}</view>
+                </view>
+            </view>
+        </view>
+        <view class="weui-media-box weui-media-box_small-appmsg media-confirm" wx:if="{{permission === 'cw'}}">
+            <view class="weui-cells weui-cells_in-small-appmsg">
+                <navigator url="/views/user/remitConfirm" class="weui-cell weui-cell_access" hover-class="weui-cell_active">
+                    <view class="weui-cell__hd" style="width: 100rpx;"><text class="title">汇款确认</text></view>
+                    <view class="weui-cell__bd weui-cell_primary">
+                        <text class="message">众恒隆已发起了1笔汇款，需要你进行确认</text>
+                    </view>
+                    <view class="weui-cell__ft weui-cell__ft_in-access"></view>
+                </navigator>
+            </view>
+        </view>
+        <Table :tableList="tableList" :tableType="tableType" :tableValueList.sync="tableValueList"></Table>
+        <view class="weui-loadmore" wx:if="{{noBackLog}}">
+            <view class="weui-loadmore__tips weui-loadmore__tips_in-line">没有了，别拉了~</view>
+        </view>
+        <view class="func-button" @tap="launchRepurchase" wx:if="{{permission === 'ywy' || permission === 'hgy'}}">
+            <text class="desc">{{permission === 'ywy' ? '发起回购' : '发布金价'}}</text>
+        </view>
+        <TabBar :tabBar.sync="tabBarList"></TabBar>
+    </view>
+</template>
+
+<script>
+    import wepy from 'wepy';
+    import Table from '../../components/table';
+    import MainBanner from '../../components/mainBanner';
+    import TabBar from '../../components/tabBar';
+    import utils from '../../utils/index';
+
+    export default class Main extends wepy.page {
+        config = {
+            navigationBarTitleText: '黄金回购'
+        };
+        components = {
+            Table: Table,
+            MainBanner: MainBanner,
+            TabBar: TabBar
+        };
+        data = {
+            tableType: 1,
+            tableList: [
+                {
+                    id: 1,
+                    name: '客户姓名'
+                },
+                {
+                    id: 2,
+                    name: '回购重量'
+                },
+                {
+                    id: 3,
+                    name: '回购金额'
+                },
+                {
+                    id: 4,
+                    name: '状态'
+                },
+            ],
+            backLogList: [],
+            goldPrice: {
+                price: '',
+                updateDate: ''
+            },
+            bannerIntroduce: [],
+            tabBarList: {
+                color: '#403E40',
+                selectedColor: '#C4261D',
+                backgroundColor: '#fff',
+                borderStyle: '#ccc',
+                list: [
+                    {
+                        pagePath: '/views/user/main',
+                        text: '首页',
+                        iconPath: '../../images/home.png',
+                        selectedIconPath: '../../images/home_sel.png',
+                        clas: 'menu-item',
+                        active: true
+                    },
+                    {
+                        pagePath: '/views/user/purchaseMain',
+                        text: '回购单',
+                        iconPath: '../../images/purchase.png',
+                        selectedIconPath: '../../images/purchase_sel.png',
+                        clas: 'menu-item',
+                        active: false
+                    },
+                    {
+                        pagePath: '/views/user/center',
+                        text: '我',
+                        iconPath: '../../images/me.png',
+                        selectedIconPath: '../../images/me_sel.png',
+                        clas: 'menu-item',
+                        active: false
+                    }
+                ],
+                position: 'bottom'
+            },
+            page: 1,
+            limit: 10,
+            permission: '',
+            noBackLog: false,
+            totalCount: 0
+        };
+        computed = {
+            tableValueList() {
+                const userType = wx.getStorageSync('userType');
+                let tmpList = [];
+                this.backLogList.forEach(e => {
+                    const tmp = {};
+                    let date = '暂无回购时间';
+                    if (e.buybackDate) {
+                        // 手机运行上面的会报NaN
+                        // date = utils.formatFunc(new Date(e.buybackDate), 'yyyy/MM/dd');
+                        date = e.buybackDate.slice(0, 10);
+                    }
+                    tmp.id = e.orderNo;
+                    tmp.date = date;
+                    tmp.row1 = e.name;
+                    tmp.row2 = e.totalWeight;
+                    tmp.row3 = e.totalAmount;
+                    tmp.row4 = '';
+                    // 用来存储物流状态和付款状态。之后转换成用"/"连接的字符串
+                    let stateArr = [];
+                    switch (userType) {
+                    // 业务员
+                    case '2':
+                        if (e.logisticsState === '0') {
+                            stateArr.push('待邮寄');
+                        }
+                        // 待修改的逻辑判断
+                        // 物流状态不为0，即业务员发出快递
+                        // 且付款状态小于2，即财务已审核之前
+                        // 都可以修改回购客户的姓名和快递信息
+                        // if (e.logisticsState !== '0' && (e.state === '0' || e.state === '1')) {
+                        //     stateArr.push('待修改');
+                        // }
+                        if (e.state === '3') {
+                            stateArr.push('确认收款');
+                        }
+                        tmp.row4 = stateArr.join('/');
+                        break;
+                    // 回购员
+                    case '3':
+                        if (e.logisticsState === '1') {
+                            stateArr.push('待签收');
+                        } else if (e.logisticsState === '2') {
+                            stateArr.push('待移交众恒隆');
+                        }
+                        if (e.state === '0') {
+                            stateArr.push('申请付款');
+                        }
+                        tmp.row4 = stateArr.join('/');
+                        break;
+                    // 财务
+                    case '4':
+                        if (e.state === '1') {
+                            stateArr.push('待财务审核');
+                        }
+                        tmp.row4 = stateArr.join('/');
+                        break;
+                    // 众恒隆
+                    case '5':
+                        if (e.state === '2') {
+                            stateArr.push('待付款');
+                        }
+                        if (e.logisticsState === '3') {
+                            stateArr.push('待收料');
+                        }
+                        tmp.row4 = stateArr.join('/');
+                        break;
+                    // 没有对应角色
+                    default:
+                        tmp.row4 = '';
+                    }
+                    tmpList.push(tmp);
+                });
+                return tmpList;
+            }
+        };
+        methods = {
+            launchRepurchase () {
+                if (this.permission === 'ywy') {
+                    wx.navigateTo({
+                        url: 'businessConfirm'
+                    });
+                } else {
+                    wx.navigateTo({
+                        url: 'editPrice'
+                    });
+                }
+            }
+        };
+        events = {
+            goToPurchase (id) {
+                wx.navigateTo({
+                    url: `purchaseList?id=${id}`
+                });
+            }
+        };
+        // 查询待办处理事项
+        qryBackLog() {
+            const userType = wx.getStorageSync('userType');
+            if (!this.noBackLog) {
+                utils.ajax({
+                    url: `/order/backlog?userType=${userType}&page=${this.page}&limit=${this.limit}`,
+                    method: 'GET',
+                    success: (data) => {
+                        console.log(data);
+                        const currentData = data.data;
+                        this.totalCount = currentData.totalCount;
+                        this.page += 1;
+                        this.backLogList = this.backLogList.concat(currentData.list);
+                        wx.setStorageSync('backLogList', JSON.stringify(this.backLogList));
+                        console.log('待办事项：');
+                        console.log(this.backLogList);
+                        if (this.totalCount <= this.limit || currentData.list.length < this.limit) {
+                            this.noBackLog = true;
+                        }
+                        this.$apply();
+                    }
+                });
+            }
+        }
+        onShow () {
+            this.page = 1;
+            this.noBackLog = false;
+            this.backLogList.length = 0;
+            utils.ajax({
+                url: '/gold/current',
+                method: 'GET',
+                success: (data) => {
+                    // 获取最新金价
+                    this.goldPrice.price = data.data.price;
+                    this.goldPrice.updateDate = data.data.updateDate;
+                    wx.setStorageSync('goldPrice', data.data.price);
+                    this.$apply();
+                }
+            });
+            this.qryBackLog();
+        };
+        // onLoad() wx.navigateBack()将不执行，
+        // onShow() wx.navigateBack()会执行
+        onLoad() {
+            this.permission = wx.getStorageSync('permissionType');
+            switch (this.permission) {
+            case 'ywy':
+                this.bannerIntroduce.length = 0;
+                this.bannerIntroduce = [{
+                    name: '业务指南',
+                    desc: '回购流程详解',
+                    url: '/views/building?needTabBar=false',
+                    imageUrl: '../../images/doc_icon1.png'
+                }, {
+                    name: '对客说明',
+                    desc: '回购相关事项',
+                    url: '/views/building?needTabBar=false',
+                    imageUrl: '../../images/doc_icon2.png'
+                }];
+                break;
+            case 'hgy':
+            case 'cw':
+            case 'zhl':
+                this.bannerIntroduce.length = 0;
+                this.bannerIntroduce = [{
+                    name: '521,300元',
+                    desc: '当前保证金',
+                    url: '/views/user/deposit',
+                    imageUrl: '../../images/doc_icon1.png'
+                }, {
+                    name: '历史账单',
+                    desc: '历史全部对账单',
+                    url: '/views/user/history',
+                    imageUrl: '../../images/doc_icon2.png'
+                }];
+                break;
+            default:
+                this.bannerIntroduce.length = 0;
+                this.bannerIntroduce = [{
+                    name: '业务指南',
+                    desc: '回购流程详解',
+                    url: '/views/building?needTabBar=false',
+                    imageUrl: '../../images/doc_icon1.png'
+                }, {
+                    name: '对客说明',
+                    desc: '回购相关事项',
+                    url: '/views/building?needTabBar=false',
+                    imageUrl: '../../images/doc_icon2.png'
+                }];
+            }
+            // 回购员和财务，当前保证金是不能点击跳转页面，要取消掉url链接
+            if (this.permission === 'hgy' || this.permission === 'cw') {
+                this.bannerIntroduce[0].url = '';
+            }
+            this.$apply();
+            utils.ajax({
+                url: '/sys/config/bank/network',
+                method: 'GET',
+                success: (data) => {
+                    wx.setStorageSync('networkBank', JSON.stringify(data.data));
+                }
+            });
+        };
+
+        onReachBottom (e) {
+            this.qryBackLog();
+        }
+    }
+</script>

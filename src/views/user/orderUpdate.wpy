@@ -1,0 +1,423 @@
+<style type="less">
+@import '../../style/base/mixin/text.less';
+.order {
+    .weui-cells__title {
+        color: #262626;
+        font-size: 24rpx;
+    }
+    .weui-label {
+        color: #262626;
+        font-size: 28rpx;
+        font-weight: bold;
+        width: 260rpx;
+    }
+    .weui-cell__bd {
+        color: #262626;
+        font-size: 28rpx;
+    }
+    .flex-bd {
+        .hLayout(row, right, center);
+    }
+    .weui-special {
+        .weui-select {
+            border-right: 0px;
+        }
+    }
+    .weui-flex {
+        margin: 40rpx 0px;
+        .hLayout(row, center, center);
+        text {
+            color:#262626;
+            font-size: 24rpx;
+        }
+    }
+    .authenticate-btn1 {
+        width: 184rpx;
+        height: 58rpx;
+        background-color: #C4261D !important;
+        border: 1px solid #C4261D !important;
+        color: #fff;
+        font-size: 24rpx;
+    }
+}
+</style>
+<template>
+  <view class="order">
+    <view class="weui-cells__title">订单信息</view>
+    <view class="weui-cells weui-cells_after-title">
+        <view class="weui-cell weui-cell_input" wx:if="{{modifyType === 'customerName'}}">
+            <view class="weui-cell__hd">
+                <view class="weui-label">客户姓名</view>
+            </view>
+            <view class="weui-cell__bd">
+                <input class="weui-input" value="{{customerName}}" placeholder="请输入姓名" @confirm="confirmName" @blur="blurName"/>
+            </view>
+        </view>
+        <view class="weui-cell weui-cell_input weui-cell_vcode" wx:if="{{modifyType === 'customerId'}}">
+            <view class="weui-cell__hd">
+                <view class="weui-label">身份证号码</view>
+            </view>
+            <view class="weui-cell__bd">
+                <input class="weui-input" value="{{customerId}}" placeholder="请输入身份证号码" @blur="blurId" />
+            </view>
+        </view>
+        <view class="weui-cell weui-cell_select" wx:if="{{modifyType === 'productType'}}">
+            <view class="weui-cell__hd weui-cell__hd_in-select-after">
+                <view class="weui-label">产品类型</view>
+            </view>
+            <view class="weui-cell__bd">
+                <picker @change="bindProductChange" value="{{productIndex}}" range="{{productType}}">
+                    <view class="weui-select weui-select_in-select-after">{{productType[productIndex]}}</view>
+                </picker>
+            </view>
+        </view>
+        <view class="weui-cell weui-cell_input" wx:if="{{modifyType === 'perPrice'}}">
+            <view class="weui-cell__hd">
+                <view class="weui-label">回购单价</view>
+            </view>
+            <view class="weui-cell__bd flex-bd">
+                <text>￥</text>
+                <input class="weui-input" type="digit" value="{{perPrice}}" placeholder="请输入回购单价" @blur="blurPerPrice" style="flex: 1;"/>
+                <text>元/克</text>
+            </view>
+        </view>
+        <view class="weui-cell weui-cell_input weui-special" wx:if="{{modifyType === 'counts'}}">
+            <view class="weui-cell__hd">
+                <view class="weui-label">金条件数</view>
+            </view>
+            <view class="weui-cell__bd flex-bd">
+                <picker @change="bindCountsChange" value="{{countsIndex}}" range="{{counts}}" style="flex: 1;">
+                    <view class="weui-select weui-select_in-select-after">{{counts[countsIndex]}}</view>
+                </picker>
+                <text>件</text>
+            </view>
+        </view>
+        <view class="weui-cell weui-cell_select" wx:if="{{modifyType === 'bankNetType'}}">
+            <view class="weui-cell__hd weui-cell__hd_in-select-after">
+                <view class="weui-label">回收银行网点</view>
+            </view>
+            <view class="weui-cell__bd">
+                <picker @change="bindBankNetChange" value="{{bankNetIndex}}" range="{{bankNetType}}">
+                    <view class="weui-select weui-select_in-select-after">{{bankNetType[bankNetIndex]}}</view>
+                </picker>
+            </view>
+        </view>
+        <view class="weui-cell weui-cell_input" wx:if="{{modifyType === 'chargePerPrice'}}">
+            <view class="weui-cell__hd">
+                <view class="weui-label">中收费单价</view>
+            </view>
+            <view class="weui-cell__bd flex-bd">
+                <text>￥</text>
+                <input class="weui-input" type="digit" value="{{chargePerPrice}}" placeholder="请输入中收费单价" @blur="blurChargePerPrice" style="flex: 1;"/>
+                <text>元/克</text>
+            </view>
+        </view>
+        <view class="weui-cell weui-cell_input" wx:if="{{modifyType === 'lockPrice'}}">
+            <view class="weui-cell__hd">
+                <view class="weui-label">锁价单价</view>
+            </view>
+            <view class="weui-cell__bd flex-bd">
+                <text>￥</text>
+                <input class="weui-input" type="digit" value="{{lockPrice}}" placeholder="请输入锁价单价" @blur="blurLockPrice" style="flex: 1;"/>
+                <text>元/克</text>
+            </view>
+        </view>
+        <view class="weui-cell weui-cell_input" wx:if="{{modifyType === 'payeeName'}}">
+            <view class="weui-cell__hd">
+                <view class="weui-label">户名</view>
+            </view>
+            <view class="weui-cell__bd">
+                <input class="weui-input" value="{{payeeName}}" placeholder="收款人姓名" @confirm="confirmPayeeName" @blur="blurPayeeName"/>
+            </view>
+        </view>
+        <view class="weui-cell weui-cell_input" wx:if="{{modifyType === 'payeeBankName'}}">
+            <view class="weui-cell__hd">
+                <view class="weui-label">开户行</view>
+            </view>
+            <view class="weui-cell__bd">
+                <input class="weui-input" value="{{payeeBankName}}" placeholder="请认真填写开户行信息" @confirm="confirmPayeeBankName" @blur="blurPayeeBankName"/>
+            </view>
+        </view>
+        <view class="weui-cell weui-cell_input" wx:if="{{modifyType === 'payeeBankNo'}}">
+            <view class="weui-cell__hd">
+                <view class="weui-label">卡号</view>
+            </view>
+            <view class="weui-cell__bd">
+                <input class="weui-input" type="number" value="{{payeeBankNo}}" placeholder="收款人储蓄卡号" @blur="blurPayeeBankNo"/>
+            </view>
+        </view>
+    </view>
+    <view class="weui-flex" style="padding-bottom: 50rpx;">
+        <button class="weui-btn authenticate-btn1" type="default" @tap="save">保存</button>
+    </view>
+  </view>
+</template>
+
+<script>
+    import wepy from 'wepy';
+    import utils from '../../utils/index';
+
+    export default class OrderUpdate extends wepy.page {
+        config = {
+            navigationBarTitleText: '修改订单信息'
+        };
+        data = {
+            modifyType: '',
+            error: false,
+            customerName: '',
+            customerId: '',
+            // 用于计算总金额
+            weight: '',
+            // perPrice,amountPrice绑定
+            perPrice: '',
+            amountPrice: '',
+            // chargePerPrice,chargeAmountPrice绑定
+            chargePerPrice: '',
+            chargeAmountPrice: '',
+            lockPrice: '',
+            payeeName: '',
+            payeeBankName: '',
+            payeeBankNo: '',
+
+            productType: ['99.9%', '99.99%'],
+            productIndex: 0,
+
+            bankNetType: [],
+            bankNetIndex: 0,
+
+            counts: [1, 2, 3, 4, 5, 6],
+            countsIndex: 0,
+
+            // 缓存中的值
+            cacheNetworkBank: {}
+        };
+        watch = {
+            perPrice (val) {
+                this.amountPrice = 1 * val * this.weight;
+                console.log(this.amountPrice);
+            },
+            chargePerPrice (val) {
+                this.chargeAmountPrice = 1 * val * this.weight;
+                console.log(this.chargeAmountPrice);
+            }
+        };
+        methods = {
+            bindProductChange (e) {
+                this.productIndex = e.detail.value;
+            },
+            bindCountsChange (e) {
+                this.countsIndex = e.detail.value;
+            },
+            bindBankNetChange (e) {
+                this.bankNetIndex = e.detail.value;
+            },
+            blurName (e) {
+                this.customerName = e.detail.value;
+            },
+            confirmName (e) {
+                this.customerName = e.detail.value;
+            },
+            blurId (e) {
+                this.customerId = e.detail.value;
+                const reg = /(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/;
+                utils.judge(this.customerId, reg, '身份证不合法', () => {
+                    this.customerId = '';
+                    this.$apply();
+                    this.setData({
+                        customerId: ''
+                    });
+                });
+            },
+            blurPerPrice (e) {
+                this.perPrice = '' + e.detail.value;
+                const reg = /^[0-9]*(\.[0-9]{1,6})?$/;
+                utils.judge(this.perPrice, reg, '回购单价不合法', () => {
+                    this.perPrice = '';
+                    this.$apply();
+                    this.setData({
+                        perPrice: ''
+                    });
+                });
+            },
+            blurChargePerPrice (e) {
+                this.chargePerPrice = '' + e.detail.value;
+                const reg = /^[0-9]*(\.[0-9]{1,6})?$/;
+                utils.judge(this.chargePerPrice, reg, '中收费单价不合法', () => {
+                    this.chargePerPrice = '';
+                    this.$apply();
+                    this.setData({
+                        chargePerPrice: ''
+                    });
+                });
+            },
+            blurLockPrice (e) {
+                this.lockPrice = '' + e.detail.value;
+                const reg = /^[0-9]*(\.[0-9]{1,6})?$/;
+                utils.judge(this.lockPrice, reg, '锁价单价不合法', () => {
+                    this.lockPrice = '';
+                    this.$apply();
+                    this.setData({
+                        lockPrice: ''
+                    });
+                });
+            },
+            blurPayeeName (e) {
+                this.payeeName = e.detail.value;
+            },
+            confirmPayeeName (e) {
+                this.payeeName = e.detail.value;
+            },
+            blurPayeeBankName (e) {
+                this.payeeBankName = e.detail.value;
+            },
+            confirmPayeeBankName (e) {
+                this.payeeBankName = e.detail.value;
+            },
+            blurPayeeBankNo (e) {
+                this.payeeBankNo = e.detail.value;
+            },
+            save () {
+                let toUpdateOrder = {};
+                switch (this.modifyType) {
+                case 'customerName':
+                    if (!utils.beforeSubmit(this.customerName, '姓名不能为空')) return;
+                    toUpdateOrder.name = this.customerName;
+                    break;
+                case 'perPrice':
+                    if (!utils.beforeSubmit(this.perPrice, '回购单价不能为空')) return;
+                    toUpdateOrder.buybackPrice = this.perPrice;
+                    toUpdateOrder.totalAmount = this.amountPrice;
+                    break;
+                case 'counts':
+                    toUpdateOrder.number = this.counts[this.countsIndex];
+                    break;
+                case 'customerId':
+                    if (!utils.beforeSubmit(this.customerId, '身份证不能为空')) return;
+                    toUpdateOrder.cardNo = this.customerId;
+                    break;
+                case 'productType':
+                    toUpdateOrder.type = this.productType[this.productIndex];
+                    break;
+                case 'bankNetType':
+                    toUpdateOrder.dot = this.bankNetType[this.bankNetIndex];
+                    this.cacheNetworkBank.forEach(element => {
+                        if (this.bankNetType[this.bankNetIndex] === element.name) {
+                            toUpdateOrder.dotKey = element.id;
+                        }
+                    });
+                    break;
+                case 'chargePerPrice':
+                    if (!utils.beforeSubmit(this.chargePerPrice, '中收费单价不能为空')) return;
+                    toUpdateOrder.inChargePrice = this.chargePerPrice;
+                    toUpdateOrder.inChargeAmount = this.chargeAmountPrice;
+                    break;
+                case 'lockPrice':
+                    if (!utils.beforeSubmit(this.lockPrice, '锁价单价不能为空')) return;
+                    toUpdateOrder.lockPrice = this.lockPrice;
+                    break;
+                case 'payeeName':
+                    if (!utils.beforeSubmit(this.payeeName, '户名不能为空')) return;
+                    toUpdateOrder.receivablesAccount = this.payeeName;
+                    break;
+                case 'payeeBankNo':
+                    if (!utils.beforeSubmit(this.payeeBankNo, '卡号不能为空')) return;
+                    toUpdateOrder.cardNumber = this.payeeBankNo;
+                    break;
+                case 'payeeBankName':
+                    if (!utils.beforeSubmit(this.payeeBankName, '开户行不能为空')) return;
+                    toUpdateOrder.openBank = this.payeeBankName;
+                    break;
+                default:
+                    this.error = true;
+                }
+                if (this.error) {
+                    wx.showToast({
+                        title: '数据出现异常',
+                        image: '../../images/warn.png',
+                        duration: 2000
+                    });
+                } else {
+                    wx.setStorageSync('toUpdateOrder', JSON.stringify(toUpdateOrder));
+                    console.log(toUpdateOrder);
+                    wx.navigateBack();
+                }
+            }
+        };
+
+        onShow() {
+            const purchaseOrder = JSON.parse(wx.getStorageSync('currentPurchase'));
+            console.log(purchaseOrder);
+            switch (this.modifyType) {
+            case 'customerName':
+                this.customerName = purchaseOrder.name;
+                break;
+            case 'perPrice':
+                this.perPrice = purchaseOrder.buybackPrice;
+                this.weight = purchaseOrder.totalWeight;
+                break;
+            case 'counts':
+                this.counts.forEach((e, idx) => {
+                    if (e === purchaseOrder.counts) {
+                        this.countsIndex = idx;
+                    }
+                });
+                break;
+            case 'customerId':
+                this.customerId = purchaseOrder.cardNo;
+                break;
+            case 'productType':
+                this.productType.forEach((e, idx) => {
+                    if (e === purchaseOrder.type) {
+                        this.productIndex = idx;
+                    }
+                });
+                break;
+            case 'bankNetType':
+                this.bankNetType.forEach((e, idx) => {
+                    if (e === purchaseOrder.dot) {
+                        this.bankNetIndex = idx;
+                    }
+                });
+                break;
+            case 'chargePerPrice':
+                this.chargePerPrice = purchaseOrder.inChargePrice;
+                this.weight = purchaseOrder.totalWeight;
+                break;
+            case 'lockPrice':
+                this.lockPrice = purchaseOrder.lockPrice;
+                break;
+            case 'payeeName':
+                this.payeeName = purchaseOrder.receivablesAccount;
+                break;
+            case 'payeeBankNo':
+                this.payeeBankNo = purchaseOrder.cardNumber;
+                break;
+            case 'payeeBankName':
+                this.payeeBankName = purchaseOrder.openBank;
+                break;
+            default:
+                this.error = true;
+            }
+            if (this.error) {
+                wx.showToast({
+                    title: '数据获取失败',
+                    image: '../../images/warn.png',
+                    duration: 2000
+                });
+                setTimeout(() => {
+                    wx.navigateBack();
+                }, 2000);
+            }
+        }
+
+        onLoad(option) {
+            this.modifyType = option.modifyType;
+            console.log(this.modifyType);
+            this.cacheNetworkBank = JSON.parse(wx.getStorageSync('networkBank'));
+            this.cacheNetworkBank.forEach(element => {
+                this.bankNetType.push(element.name);
+                this.$apply();
+            });
+        }
+    }
+</script>

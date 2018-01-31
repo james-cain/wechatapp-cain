@@ -1,0 +1,78 @@
+<style type="less">
+.weui-navbar {
+    margin-bottom: 20rpx;
+    position: fixed;
+    background: #fff;
+    top: 46px;
+    .weui-navbar__item.weui-bar__item_on {
+        color: #C4261D;
+    }
+    .weui-navbar__title {
+        font-size: 20rpx;
+    }
+    .weui-navbar__slider {
+        background-color: #C4261D;
+        width: 4em;
+    }
+}
+</style>
+<template>
+    <view class="weui-navbar">
+        <view wx:for="{{tabs}}" wx:key="*this" id="{{index}}" class="weui-navbar__item {{activeIndex == index ? 'weui-bar__item_on' : ''}}" @tap="tabClick">
+            <view class="weui-navbar__title">{{item}}</view>
+        </view>
+        <view class="weui-navbar__slider" style="width: {{sliderWidth/16}}em; left: {{sliderLeft}}px; transform: translateX({{sliderOffset}}px); -webkit-transform: translateX({{sliderOffset}}px);"></view>
+    </view>
+</template>
+
+<script>
+    import wepy from 'wepy';
+
+    export default class Tab extends wepy.component {
+
+        data = {
+            sliderOffset: 0,
+            sliderLeft: 0
+        };
+
+        props = {
+            activeIndex: {
+                type: Number,
+                default: 0,
+                twoWay: true
+            },
+            sliderWidth: {
+                type: Number,
+                default: 64
+            },
+            tabs: {},
+            init: false
+        };
+
+        watch = {
+            activeIndex (val) {
+                if (!this.init) {
+                    const res = wepy.getSystemInfoSync();
+                    this.sliderOffset = res.windowWidth / this.tabs.length * this.activeIndex;
+                    this.$apply();
+                    this.init = true;
+                }
+            }
+        };
+        methods = {
+            tabClick (e) {
+                this.sliderOffset = e.currentTarget.offsetLeft;
+                this.activeIndex = e.currentTarget.id;
+                this.$emit('tabChange', this.activeIndex);
+            }
+        };
+
+        onLoad () {
+            this.init = false;
+            const res = wepy.getSystemInfoSync();
+            this.sliderLeft = (res.windowWidth / this.tabs.length - this.sliderWidth) / 2;
+            this.sliderOffset = res.windowWidth / this.tabs.length * this.activeIndex;
+            this.$apply();
+        };
+    }
+</script>

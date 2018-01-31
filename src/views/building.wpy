@@ -1,0 +1,85 @@
+<style type="less">
+@import '../style/base/mixin/text.less';
+.building {
+    width: 100%;
+    height: 400rpx;
+    padding: 200rpx 0;
+    text-align: center;
+    .hLayout(column, center, center);
+    .building-img {
+        width: 200rpx;
+        height: 200rpx;
+        color: #C4261D;
+    }
+    .building-text {
+        font-size: 24rpx;
+        color: #878787;
+    }
+}
+</style>
+<template>
+    <view class="building">
+        <image src="../images/developing.png" class="building-img"/>
+        <text class="building-text">正在玩命开发中~</text>
+        <TabBar :tabBar.sync="tabBarList" wx:if="{{needTabBar === 'true'}}"></TabBar>
+    </view>
+</template>
+
+<script>
+    import wepy from 'wepy';
+    import TabBar from '../components/tabBar';
+
+    export default class Building extends wepy.page {
+        config = {
+            navigationBarTitleText: '正在开发中'
+        };
+
+        data = {
+            height: 0,
+            needTabBar: false,
+            tabBarList: {
+                color: '#403E40',
+                selectedColor: '#C4261D',
+                backgroundColor: '#fff',
+                borderStyle: '#ccc',
+                list: [
+                    {
+                        pagePath: '/views/user/main',
+                        text: '首页',
+                        iconPath: '../images/home.png',
+                        selectedIconPath: '../images/home_sel.png',
+                        clas: 'menu-item',
+                        active: false
+                    },
+                    {
+                        pagePath: '/views/user/purchaseMain',
+                        text: '回购单',
+                        iconPath: '../images/purchase.png',
+                        selectedIconPath: '../images/purchase_sel.png',
+                        clas: 'menu-item',
+                        active: false
+                    },
+                    {
+                        pagePath: '/views/building',
+                        text: '我',
+                        iconPath: '../images/me.png',
+                        selectedIconPath: '../images/me_sel.png',
+                        clas: 'menu-item',
+                        active: true
+                    }
+                ],
+                position: 'bottom'
+            }
+        };
+
+        components = {
+            TabBar: TabBar
+        };
+
+        onLoad (option) {
+            console.log(option);
+            this.needTabBar = option.needTabBar;
+            this.height = wx.getStorageSync('windowH');
+        }
+    }
+</script>

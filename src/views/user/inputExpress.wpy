@@ -1,0 +1,168 @@
+<style type="less">
+@import '../../style/base/mixin/text.less';
+.express {
+    .weui-cells__title {
+        color: #262626;
+        font-size: 24rpx;
+    }
+    .weui-label {
+        color: #262626;
+        font-size: 28rpx;
+        font-weight: bold;
+        width: 260rpx;
+    }
+    .weui-cell__bd {
+        color: #262626;
+        font-size: 28rpx;
+    }
+    .flex-bd {
+        .hLayout(row, right, center);
+    }
+    .weui-flex {
+        margin: 40rpx 0px;
+        .hLayout(row, center, center);
+        text {
+            color:#262626;
+            font-size: 24rpx;
+        }
+    }
+    .authenticate-btn1 {
+        width: 184rpx;
+        height: 58rpx;
+        background-color: #C4261D !important;
+        border: 1px solid #C4261D !important;
+        color: #fff;
+        font-size: 24rpx;
+    }
+}
+</style>
+<template>
+    <view class="express">
+        <view class="weui-cells weui-cells_after-title">
+            <view class="weui-cell weui-cell_input" style="height: 72rpx;">
+                <view class="weui-cell__hd">
+                    <view class="weui-label">客户姓名</view>
+                </view>
+                <view class="weui-cell__bd">
+                    <text>{{customerName}}</text>
+                </view>
+            </view>
+            <view class="weui-cell weui-cell_select">
+                <view class="weui-cell__hd weui-cell__hd_in-select-after">
+                    <view class="weui-label">快递公司</view>
+                </view>
+                <view class="weui-cell__bd">
+                    <picker @change="bindExpressNameChange" value="{{expressIndex}}" range="{{expressName}}">
+                        <view class="weui-select weui-select_in-select-after">{{expressName[expressIndex]}}</view>
+                    </picker>
+                </view>
+            </view>
+            <view class="weui-cell weui-cell_input">
+                <view class="weui-cell__hd">
+                    <view class="weui-label">快递单号</view>
+                </view>
+                <view class="weui-cell__bd flex-bd">
+                    <input class="weui-input" type="text" value="{{expressNo}}" placeholder="请输入快递单号" @blur="blurExpressNo" style="flex: 1;"/>
+                </view>
+            </view>
+        </view>
+        <view class="weui-flex" style="padding-bottom: 50rpx;">
+            <button class="weui-btn authenticate-btn1" type="default" @tap="ok">填好了</button>
+        </view>
+    </view>
+</template>
+
+<script>
+    import wepy from 'wepy';
+    import utils from '../../utils/index';
+
+    export default class InputExpress extends wepy.page {
+        config = {
+            navigationBarTitleText: '输入快递单号'
+        };
+        data = {
+            customerName: '',
+            orderNo: '',
+            expressNo: '',
+            expressName: ['顺丰快递', '圆通快递', '韵达快递'],
+            expressIndex: 0,
+            express: {}
+        };
+        methods = {
+            bindExpressNameChange (e) {
+                this.expressIndex = e.detail.value;
+            },
+            blurExpressNo (e) {
+                this.expressNo = e.detail.value;
+            },
+            ok () {
+                if (!utils.beforeSubmit(this.expressNo, '快递单号不能为空')) return;
+                let toSubmitExpress = {};
+                toSubmitExpress.name = this.expressName[this.expressIndex];
+                toSubmitExpress.expressNo = this.expressNo;
+                toSubmitExpress.orderNo = this.orderNo;
+                if (this.type === 'mod') {
+                    utils.ajax({
+                        url: '/expre/update',
+                        method: 'POST',
+                        params: toSubmitExpress,
+                        success: (data) => {
+                            wx.showToast({
+                                title: '更新成功',
+                                duration: 2000
+                            });
+                            setTimeout(() => {
+                                wx.navigateBack();
+                            }, 2000);
+                        }
+                    });
+                } else {
+                    utils.ajax({
+                        url: '/expre/save',
+                        method: 'POST',
+                        params: toSubmitExpress,
+                        success: (data) => {
+                            wx.showToast({
+                                title: '提交成功',
+                                duration: 2000
+                            });
+                            setTimeout(() => {
+                                wx.navigateBack();
+                            }, 2000);
+                        }
+                    });
+                }
+            }
+        };
+
+        beforeSubmit(data, title) {
+            if (!data) {
+                wx.showToast({
+                    title,
+                    image: '../../images/warn.png',
+                    duration: 2000
+                });
+                return false;
+            }
+            return true;
+        }
+
+        onLoad(option) {
+            console.log(option);
+            this.type = option.type;
+            this.customerName = option.name;
+            this.orderNo = option.no;
+            if (option.type === 'mod') {
+                console.log(JSON.parse(wx.getStorageSync('modExpress')));
+                this.express = JSON.parse(wx.getStorageSync('modExpress'));
+                this.expressNo = this.express.expressNo;
+                this.expressName.forEach((e, idx) => {
+                    if (e === this.express.expressName) {
+                        this.expressIndex = idx;
+                        this.$apply();
+                    }
+                });
+            }
+        }
+    }
+</script>

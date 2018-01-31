@@ -1,0 +1,424 @@
+<style type="less">
+@import '../style/base/mixin/text.less';
+.repurchase {
+    margin-top: 20rpx;
+    .repurchase-head {
+        .hLayout();
+        color: #262626;
+        background-color: #fff;
+        font-size: 24rpx;
+        padding: 5rpx 30rpx;
+        &__name {
+            width: 100rpx;
+        }
+        &__purchase {
+            flex: 1;
+        }
+        &__state {
+            width: 150rpx;
+            color: #C4261D;
+        }
+    }
+    .weui-media-box:before {
+        border-top: 0px;
+    }
+    .weui-media-box__desc {
+        font-size: 20rpx;
+        color: #403E40;
+        height: 34rpx;
+        line-height: 34rpx;
+    }
+    .weui-cell {
+        padding: 24rpx 30rpx;
+    }
+    .weui-cell__ft, .weui-cell__bd {
+        color: #262626;
+        font-size: 24rpx;
+    }
+    .weui-cell__ld {
+        color: #C4261D;
+        font-size: 24rpx;
+        width: 60rpx;
+        text-align: left;
+        float: right;
+    }
+    .weui-cell__bd {
+        width: 240rpx;
+        flex: 1;
+    }
+    .weui-cell__ft {
+        flex: 2;
+        text-align: left;
+    }
+    .flag {
+        font-size: 20rpx;
+        border: 1px solid #C4261D;
+        color: #C4261D;
+        height: 30rpx;
+        line-height: 30rpx;
+        padding: 4rpx 4rpx;
+        border-radius: 2px;
+    }
+    .state {
+        font-size: 20rpx;
+        background-color: #C4261D;
+        color: #fff;
+        height: 26rpx;
+        line-height: 26rpx;
+        display: block;
+        padding: 0 10rpx;
+        border-radius: 2px;
+    }
+    .appmsg-nav {
+        .hLayout(column, space-between, flex-start);
+        height: 55px;
+    }
+    .fr {
+        float: right;
+    }
+    .unit {
+        font-size: 24rpx;
+    }
+    .price {
+        font-size: 34rpx;
+    }
+    .btn-area {
+        margin: 10px 0;
+        .weui-btn {
+            margin-top: 8px;
+            margin-right: 10rpx;
+            /* &:last-child {
+                margin-right: 0px;
+            } */
+        }
+    }
+    .icon-bianji {
+        width: 50rpx;
+        height: 50rpx;
+        color: #C4261D;
+    }
+    .content__in-access {
+        position: absolute;
+        height: 12rpx;
+        width: 12rpx;
+        border-width: 4rpx 4rpx 0 0;
+        border-color: #C8C8CD;
+        border-style: solid;
+        transform: rotate(45deg);
+        top: 50%;
+        margin-top: -7rpx;
+        right: 20rpx;
+    }
+}
+</style>
+<template>
+  <view class="repurchase">
+    <view class="repurchase-head">
+        <view class="repurchase-head__name">{{purchase.name}}</view>
+         <!-- wx:if="{{prepareMod}}" -->
+        <text class="iconfont icon-bianji" wx:if="{{permission === 'ywy'}}" @tap="goToUpdate(customerName)"></text>
+        <view class="repurchase-head__purchase">订单号：{{purchase.orderNo}}</view>
+        <view class="repurchase-head__state">{{currentState}}</view>
+    </view>
+    <view url="" class="weui-media-box weui-media-box_appmsg" hover-class="weui-cell_active">
+        <view class="weui-media-box__hd weui-media-box__hd_in-appmsg">
+            <image class="weui-media-box__thumb" src="../images/gold.png" />
+        </view>
+        <view class="weui-media-box__bd weui-media-box__bd_in-appmsg appmsg-nav" style="flex: 3;">
+            <view class="weui-media-box__desc">回购日期：{{currentPurchaseDate}}</view>
+            <view class="weui-media-box__desc">
+                <text class="flag" wx:if="{{purchase.totalWeight > 500}}">超500g</text>
+                <text class="flag">{{currentLogisticsState}}</text>
+            </view>
+            <view class="weui-media-box__desc">
+                <text class="state">{{currentStateDesc}}</text>
+            </view>
+        </view>
+        <view class="weui-media-box__bd weui-media-box__bd_in-appmsg" style="flex: 2;">
+            <view class="weui-media-box__desc fr">黄金重量：{{purchase.totalWeight}}g</view>
+            <view class="weui-media-box__desc fr">合计：<text class="unit">￥</text><text class="price">{{purchase.totalAmount}}</text></view>
+        </view>
+    </view>
+    <view class="weui-cells weui-cells_after-title">
+        <view class="weui-cell" @tap="goToUpdate(perPrice)">
+            <view class="weui-cell__bd">回购单价</view>
+            <view class="weui-cell__ft">
+                ￥{{purchase.buybackPrice}}元/克
+                <text class="weui-cell__ld" wx:if="{{permission === 'hgy'}}" @tap="goToUpdate(perPrice)">修改</text>
+                <view class="content__in-access" wx:if="{{permission === 'ywy'}}"></view>
+            </view>
+        </view>
+        <view class="weui-cell" @tap="goToUpdate(counts)">
+            <view class="weui-cell__bd">金条件数</view>
+            <view class="weui-cell__ft">
+                {{purchase.number}}件
+                <view class="content__in-access" wx:if="{{permission === 'ywy'}}"></view>
+            </view>
+        </view>
+        <view class="weui-cell" @tap="goToUpdate(customerId)">
+            <view class="weui-cell__bd">客户身份证号码</view>
+            <view class="weui-cell__ft">
+                {{purchase.cardNo}}
+                <view class="content__in-access" wx:if="{{permission === 'ywy'}}"></view>
+            </view>
+        </view>
+        <view class="weui-cell" @tap="goToUpdate(productType)">
+            <view class="weui-cell__bd">产品类型</view>
+            <view class="weui-cell__ft">
+                {{purchase.type}}
+                <view class="content__in-access" wx:if="{{permission === 'ywy'}}"></view>
+            </view>
+        </view>
+        <view class="weui-cell" @tap="goToUpdate(bankNetType)">
+            <view class="weui-cell__bd">回收银行网点</view>
+            <view class="weui-cell__ft">
+                {{purchase.dot}}
+                <view class="content__in-access" wx:if="{{permission === 'ywy'}}"></view>
+            </view>
+        </view>
+        <view class="weui-cell" @tap="goToUpdate(chargePerPrice)">
+            <view class="weui-cell__bd">中收费单价</view>
+            <view class="weui-cell__ft">
+                {{purchase.inChargePrice}}元/g
+                <view class="content__in-access" wx:if="{{permission === 'ywy'}}"></view>
+            </view>
+        </view>
+        <view class="weui-cell">
+            <view class="weui-cell__bd">中收费合计金额</view>
+            <view class="weui-cell__ft">{{purchase.inChargeAmount}}元</view>
+        </view>
+        <view class="weui-cell" wx:if="{{permission !== 'ywy'}}" @tap="goToUpdate(lockPrice)">
+            <view class="weui-cell__bd">锁价单价</view>
+            <view class="weui-cell__ft">
+                {{purchase.lockPrice}}元/克
+                <text class="weui-cell__ld" wx:if="{{permission === 'hgy'}}" @tap="goToUpdate(lockPrice)">修改</text>
+            </view>
+        </view>
+        <view class="weui-cell" @tap="goToUpdate(payeeName)">
+            <view class="weui-cell__bd">收款户名</view>
+            <view class="weui-cell__ft">
+                {{purchase.receivablesAccount}}
+                <view class="content__in-access" wx:if="{{permission === 'ywy'}}"></view>
+            </view>
+        </view>
+        <view class="weui-cell" @tap="goToUpdate(payeeBankName)">
+            <view class="weui-cell__bd">收款开户行</view>
+            <view class="weui-cell__ft">
+                {{purchase.openBank}}
+                <view class="content__in-access" wx:if="{{permission === 'ywy'}}"></view>
+            </view>
+        </view>
+        <view class="weui-cell" @tap="goToUpdate(payeeBankNo)">
+            <view class="weui-cell__bd">收款号码</view>
+            <view class="weui-cell__ft">
+                {{purchase.cardNumber}}
+                <view class="content__in-access" wx:if="{{permission === 'ywy'}}"></view>
+            </view>
+        </view>
+        <view class="weui-cell">
+            <view class="weui-cell__bd">业务经办人</view>
+            <view class="weui-cell__ft">{{purchase.salesman}}</view>
+        </view>
+    </view>
+    <view class="weui-cells weui-cells_after-title btn-area">
+        <view class="weui-cell" style="padding: 0 0 8rpx 0;">
+            <view class="weui-cell__ft" style="text-align: right;">
+                <!-- 业务员相关操作流程 -->
+                <button class="weui-btn mini-btn" type="default" size="mini" wx:if="{{prepareMod}}">作废订单</button>
+                <button class="weui-btn mini-btn" type="default" size="mini" wx:if="{{permission === 'ywy'}}" @tap="read({{purchase.confirmationAddr}})">查看回购确认书</button>
+                <button class="weui-btn mini-btn" type="default" size="mini" wx:if="{{permission === 'ywy' && purchase.logisticsState == '1'}}">催签收</button>
+                <button class="weui-btn mini-btn" type="default" size="mini" wx:if="{{permission === 'ywy' && purchase.logisticsState == '2'}}">催发料</button>
+                <button class="weui-btn mini-btn" type="default" size="mini" wx:if="{{permission === 'ywy' && purchase.logisticsState == '3'}}">催收料</button>
+                <button class="weui-btn mini-btn" type="default" size="mini" wx:if="{{permission === 'ywy' && purchase.state == '0'}}">催申请付款</button>
+                <button class="weui-btn mini-btn" type="default" size="mini" wx:if="{{permission === 'ywy' && purchase.state == '1'}}">催财务审核</button>
+                <button class="weui-btn mini-btn" type="default" size="mini" wx:if="{{permission === 'ywy' && purchase.state == '2'}}">催打款</button>
+                <button class="weui-btn mini-btn red" type="default" size="mini" wx:if="{{permission === 'ywy' && purchase.logisticsState == '0'}}" @tap="goToInputExpress">邮寄</button>
+                <button class="weui-btn mini-btn red" type="default" size="mini" wx:if="{{permission === 'ywy' && purchase.state == '3'}}" @tap="changeState(4)">确认收款</button>
+                <!-- 业务员相关操作流程 -->
+                <!-- 回购员相关操作流程 -->
+                <button class="weui-btn mini-btn" type="default" size="mini" wx:if="{{permission === 'hgy' && purchase.state == '0'}}">驳回修改</button>
+                <button class="weui-btn mini-btn" type="default" size="mini" wx:if="{{permission === 'hgy'}}">查看回购确认书</button>
+                <button class="weui-btn mini-btn" type="default" size="mini" wx:if="{{permission === 'hgy' && purchase.logisticsState == '0'}}">催邮寄</button>
+                <button class="weui-btn mini-btn" type="default" size="mini" wx:if="{{permission === 'hgy' && purchase.logisticsState == '3'}}">催收料</button>
+                <button class="weui-btn mini-btn" type="default" size="mini" wx:if="{{permission === 'hgy' && purchase.state == '1'}}">催财务审核</button>
+                <button class="weui-btn mini-btn" type="default" size="mini" wx:if="{{permission === 'hgy' && purchase.state == '2'}}">催打款</button>
+                <button class="weui-btn mini-btn" type="default" size="mini" wx:if="{{permission === 'hgy' && purchase.state == '3'}}">催确认收款</button>
+                <button class="weui-btn mini-btn" type="default" size="mini" wx:if="{{permission === 'hgy' && purchase.state == '0'}}" @tap="changeState(1)">申请付款</button>
+                <button class="weui-btn mini-btn" type="default" size="mini" wx:if="{{permission === 'hgy' && purchase.logisticsState == '1'}}" @tap="changeLogisticsState(2)">确认签收</button>
+                <button class="weui-btn mini-btn" type="default" size="mini" wx:if="{{permission === 'hgy' && purchase.logisticsState == '2'}}" @tap="changeLogisticsState(3)">确认发料</button>
+                <!-- 回购员相关操作流程 -->
+                <!-- 财务员相关操作流程 -->
+                <button class="weui-btn mini-btn" type="default" size="mini" wx:if="{{permission === 'cw' && (purchase.state == '1' || purchase.state == '0')}}">驳回修改</button>
+                <button class="weui-btn mini-btn" type="default" size="mini" wx:if="{{permission === 'cw'}}">查看回购确认书</button>
+                <button class="weui-btn mini-btn" type="default" size="mini" wx:if="{{permission === 'cw' && purchase.logisticsState == '0'}}">催邮寄</button>
+                <button class="weui-btn mini-btn" type="default" size="mini" wx:if="{{permission === 'cw' && purchase.logisticsState == '1'}}">催签收</button>
+                <button class="weui-btn mini-btn" type="default" size="mini" wx:if="{{permission === 'cw' && purchase.logisticsState == '2'}}">催发料</button>
+                <button class="weui-btn mini-btn" type="default" size="mini" wx:if="{{permission === 'cw' && purchase.logisticsState == '3'}}">催收料</button>
+                <button class="weui-btn mini-btn" type="default" size="mini" wx:if="{{permission === 'cw' && purchase.state == '0'}}">催申请付款</button>
+                <button class="weui-btn mini-btn" type="default" size="mini" wx:if="{{permission === 'cw' && purchase.state == '2'}}">催打款</button>
+                <button class="weui-btn mini-btn" type="default" size="mini" wx:if="{{permission === 'cw' && purchase.state == '3'}}">催确认收款</button>
+                <button class="weui-btn mini-btn" type="default" size="mini" wx:if="{{permission === 'cw' && purchase.state == '1'}}" @tap="changeState(2)">审核</button>
+                <!-- 财务员相关操作流程 -->
+                <!-- 众恒隆相关操作流程 -->
+                <button class="weui-btn mini-btn" type="default" size="mini" wx:if="{{permission === 'zhl'}}">查看回购确认书</button>
+                <!-- <button class="weui-btn mini-btn" type="default" size="mini" wx:if="{{permission === 'zhl' && purchase.logisticsState == '0'}}">催邮寄</button>
+                <button class="weui-btn mini-btn" type="default" size="mini" wx:if="{{permission === 'zhl' && purchase.logisticsState == '1'}}">催签收</button> -->
+                <button class="weui-btn mini-btn" type="default" size="mini" wx:if="{{permission === 'zhl' && purchase.logisticsState == '2'}}">催发料</button>
+                <!-- <button class="weui-btn mini-btn" type="default" size="mini" wx:if="{{permission === 'zhl' && purchase.state == '0'}}">催申请付款</button> -->
+                <button class="weui-btn mini-btn" type="default" size="mini" wx:if="{{permission === 'zhl' && purchase.state == '3'}}">催确认收款</button>
+                <button class="weui-btn mini-btn" type="default" size="mini" wx:if="{{permission === 'zhl' && purchase.logisticsState == '3'}}" @tap="changeLogisticsState(4)">确认收料</button>
+                <button class="weui-btn mini-btn" type="default" size="mini" wx:if="{{permission === 'zhl' && purchase.state == '2'}}" @tap="changeState(3)">确认打款</button>
+                <!-- 众恒隆相关操作流程 -->
+            </view>
+        </view>
+    </view>
+  </view>
+</template>
+
+<script>
+    import wepy from 'wepy';
+    // import utils from '../utils/index';
+
+    export default class Repurchase extends wepy.component {
+        data = {
+            purchase: {},
+            permission: ''
+        };
+        props = {
+            currentPurchase: {}
+        };
+        computed = {
+            purchase () {
+                if (Array.isArray(this.currentPurchase) && this.currentPurchase[0]) {
+                    return this.currentPurchase[0];
+                }
+                return {};
+            },
+            // 对业务员的待修改单独处理
+            // 待修改的逻辑判断
+            // 物流状态不为0，即业务员发出快递
+            // 且付款状态小于2，即财务已审核之前
+            // 都可以修改回购客户的姓名和快递信息
+            prepareMod () {
+                if (this.permission === 'ywy' &&
+                    (Array.isArray(this.currentPurchase) && this.currentPurchase[0])) {
+                    const tmp = this.currentPurchase[0];
+                    if ((tmp.state === '0' || tmp.state === '1') && tmp.logisticsState !== '0') {
+                        return true;
+                    }
+                }
+                return false;
+            },
+            currentStateDesc () {
+                let tmp = '';
+                if (Array.isArray(this.currentPurchase) && this.currentPurchase[0]) {
+                    switch (this.currentPurchase[0].state) {
+                    case '0':
+                        tmp = '待申请付款';
+                        break;
+                    case '1':
+                        tmp = '已申请付款';
+                        break;
+                    case '2':
+                        tmp = '财务已审核';
+                        break;
+                    case '3':
+                        tmp = '众恒隆已打款';
+                        break;
+                    case '4':
+                        tmp = '业务员已确认';
+                        break;
+                    default:
+                        tmp = '暂无状态';
+                    }
+                }
+                return tmp;
+            },
+            currentState () {
+                let tmp = '';
+                if (Array.isArray(this.currentPurchase) && this.currentPurchase[0]) {
+                    switch (this.currentPurchase[0].state) {
+                    case '0':
+                        tmp = '待申请付款';
+                        break;
+                    case '1':
+                        tmp = '待财务审核';
+                        break;
+                    case '2':
+                        tmp = '待众恒隆打款';
+                        break;
+                    case '3':
+                        tmp = '待业务员确认';
+                        break;
+                    case '4':
+                        tmp = '流程结束';
+                        break;
+                    default:
+                        tmp = '暂无状态';
+                    }
+                }
+                return tmp;
+            },
+            currentLogisticsState () {
+                let tmp = '';
+                if (Array.isArray(this.currentPurchase) && this.currentPurchase[0]) {
+                    switch (this.currentPurchase[0].logisticsState) {
+                    case '0':
+                        tmp = '待邮寄';
+                        break;
+                    case '1':
+                        tmp = '待回购员签收';
+                        break;
+                    case '2':
+                        tmp = '待移交众恒隆';
+                        break;
+                    case '3':
+                        tmp = '待众恒隆签收';
+                        break;
+                    case '4':
+                        tmp = '众恒隆已签收';
+                        break;
+                    default:
+                        tmp = '暂无物流状态';
+                    }
+                }
+                return tmp;
+            },
+            currentPurchaseDate () {
+                if (Array.isArray(this.currentPurchase) && this.currentPurchase[0]) {
+                    if (this.currentPurchase[0].buybackDate) {
+                        return this.currentPurchase[0].buybackDate.slice(0, 16);
+                    }
+                    // return utils.formatFunc(new Date(this.currentPurchase[0].buybackDate), 'yyyy-MM-dd HH:mm');
+                }
+                return '';
+            }
+        };
+        methods = {
+            goToInputExpress () {
+                this.$emit('goToInputExpress');
+            },
+            changeState (stateType) {
+                this.$emit('changeState', stateType);
+            },
+            changeLogisticsState (logisticsStateType) {
+                this.$emit('changeLogisticsState', logisticsStateType);
+            },
+            read (fid) {
+                console.log(fid);
+                // const imgUrl = ''
+                // wx.previewImage({
+                //     urls: []
+                // })
+            },
+            goToUpdate(typeName) {
+                if (this.permission === 'ywy' || this.permission === 'hgy') {
+                    this.$emit('goToUpdate', typeName);
+                }
+            }
+        };
+        onLoad () {
+            this.permission = wx.getStorageSync('permissionType');
+        }
+    }
+</script>

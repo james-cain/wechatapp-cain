@@ -1,0 +1,123 @@
+<style type="less">
+@import '../../style/base/mixin/text.less';
+.order-confirm {
+    .weui-cells__title {
+        color: #262626;
+        font-size: 24rpx;
+    }
+    .weui-label {
+        color: #262626;
+        font-size: 28rpx;
+        font-weight: bold;
+        width: 260rpx;
+    }
+    .weui-cell__ft {
+        color: #262626;
+        font-size: 24rpx;
+    }
+    .weui-cell__bd {
+        color: #262626;
+        font-size: 28rpx;
+    }
+    .flex-bd {
+        .hLayout(row, right, center);
+    }
+    .weui-flex {
+        margin: 40rpx 0px;
+        .hLayout(row, center, center);
+        text {
+            color:#262626;
+            font-size: 24rpx;
+        }
+    }
+    .authenticate-btn {
+        width: 184rpx;
+        height: 58rpx;
+        background-color: #C4261D !important;
+        border: 1px solid #C4261D !important;
+        color: #fff;
+        font-size: 24rpx;
+    }
+}
+</style>
+<template>
+  <view class="order-confirm">
+    <view class="weui-cells__title">收款信息再次确认</view>
+    <view class="weui-cells weui-cells_after-title">
+        <view class="weui-cell">
+            <view class="weui-cell__bd">
+                <view class="weui-label">回购实物黄金总额</view>
+            </view>
+            <view class="weui-cell__ft">￥{{totalAmount}}</view>
+        </view>
+        <view class="weui-cell">
+            <view class="weui-cell__bd">
+                <view class="weui-label">收款户名</view>
+            </view>
+            <view class="weui-cell__ft">{{receivablesAccount}}</view>
+        </view>
+        <view class="weui-cell">
+            <view class="weui-cell__bd">
+                <view class="weui-label">收款开户行</view>
+            </view>
+            <view class="weui-cell__ft">{{openBank}}</view>
+        </view>
+        <view class="weui-cell">
+            <view class="weui-cell__bd">
+                <view class="weui-label">收款卡号</view>
+            </view>
+            <view class="weui-cell__ft">{{cardNumber}}</view>
+        </view>
+    </view>
+    <view class="weui-flex" style="padding-bottom: 50rpx;">
+        <button class="weui-btn authenticate-btn" type="default" @tap="confirm">提交</button>
+    </view>
+  </view>
+</template>
+
+<script>
+    import wepy from 'wepy';
+    import utils from '../../utils/index';
+
+    export default class ConfirmOrder extends wepy.page {
+        config = {
+            navigationBarTitleText: '收款信息确认'
+        };
+
+        data = {
+            totalAmount: '',
+            receivablesAccount: '',
+            openBank: '',
+            cardNumber: '',
+            toSubmitOrder: {}
+        };
+        methods = {
+            confirm () {
+                utils.ajax({
+                    url: '/order/save',
+                    method: 'POST',
+                    params: this.toSubmitOrder,
+                    success: (data) => {
+                        wx.showToast({
+                            title: '提交成功，即将返回首页',
+                            duration: 2000
+                        });
+                        setTimeout(() => {
+                            wx.redirectTo({
+                                url: 'main'
+                            });
+                        }, 2000);
+                    }
+                });
+            }
+        };
+
+        onShow() {
+            this.toSubmitOrder = JSON.parse(wx.getStorageSync('toSubmitOrder'));
+            this.totalAmount = this.toSubmitOrder.totalAmount;
+            this.receivablesAccount = this.toSubmitOrder.receivablesAccount;
+            this.openBank = this.toSubmitOrder.openBank;
+            this.cardNumber = this.toSubmitOrder.cardNumber;
+        }
+    }
+</script>

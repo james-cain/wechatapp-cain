@@ -1,0 +1,111 @@
+<style type="less">
+@import '../style/base/mixin/text.less';
+.page__func_spacing {
+    .price_up {
+        width: 44rpx;
+        height: 44rpx;
+        margin-left: 10rpx;
+    }
+    padding: 0 14rpx;
+    position: absolute;
+    width: 100%;
+    box-sizing: border-box;
+    top: 200rpx;
+    .placeholder{
+        margin: 5px;
+        padding: 0 10px;
+        text-align: center;
+        background-color: #fff;
+        height: 140rpx;
+        line-height: 140rpx;
+        color: #403E40;
+        .hLayout();
+        border-radius: 10rpx;
+    }
+    .weui-flex__item2 {
+        flex: 3;
+    }
+    .weui-flex__item3 {
+        flex: 4;
+    }
+    .weui-flex__item4 {
+        flex: 2;
+    }
+    .price {
+        color: #C4261D;
+        font-size: 60rpx;
+    }
+    .update {
+        width: 116rpx;
+        height: 42rpx;
+        color: #fff;
+        background-color: #EBC725;
+        border-radius: 6rpx;
+        font-size: 20rpx;
+        margin-right: 10rpx;
+        padding: 4rpx 2rpx;
+        box-sizing: border-box;
+    }
+    .tl {
+        text-align: left;
+    }
+    .tr {
+        text-align: right;
+    }
+    .item-flex {
+        .hLayout(row, left, center);
+    }
+    .item-flex2 {
+        .hLayout(column, center, left);
+    }
+    .doc {
+        width: 68rpx;
+        height: 68rpx;
+    }
+}
+</style>
+<template>
+    <view class="page__func_spacing">
+        <view class="weui-flex">
+            <view class="weui-flex__item">
+                <view class="placeholder">
+                    <view class="weui-flex__item2 tl item-flex">
+                        <image src="../images/price_up.png" lazy-load="true" class="price_up">
+                        <text style="font-size: 28rpx; margin-left: 20rpx;">当前金价</text>
+                    </view>
+                    <view class="weui-flex__item3 tl">
+                        <text class="price">{{goldPrice.price}}</text>
+                        <text style="font-size: 24rpx;">元/克</text>
+                    </view>
+                    <view class="weui-flex__item4 tr">
+                        <text class="update">{{goldPrice.updateDate}}更新</text>
+                    </view>
+                </view>
+            </view>
+        </view>
+        <view class="weui-flex">
+            <navigator class="weui-flex__item" wx:for="{{bannerIntroduce}}" url="{{item.url}}">
+                <view class="placeholder">
+                    <view class="weui-flex__item item-flex">
+                        <view class="weui-flex__item item-flex2">
+                            <text style="font-size: 24rpx; height: 32rpx; line-height: 32rpx; font-weight: bold;">{{item.name}}</text>
+                            <text style="font-size: 24rpx; height: 32rpx; line-height: 32rpx;">{{item.desc}}</text>
+                        </view>
+                        <image src="{{item.imageUrl}}" lazy-load="true" class="doc">
+                    </view>
+                </view>
+            </navigator>
+        </view>
+    </view>
+</template>
+
+<script>
+    import wepy from 'wepy';
+
+    export default class MainBanner extends wepy.component {
+        props = {
+            bannerIntroduce: {},
+            goldPrice: {}
+        };
+    }
+</script>

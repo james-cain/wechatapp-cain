@@ -1,0 +1,178 @@
+<style type="less">
+@import '../../style/base/mixin/text.less';
+.history {
+    .title-nav .weui-flex__item {
+        border-bottom: 1px solid #E5E5E5;
+        text-align: center;
+    }
+    .title-name {
+        height: 90rpx;
+        line-height: 90rpx;
+        color: #262626;
+        font-size: 24rpx;
+        font-weight: bold;
+        margin-bottom: 40rpx;
+    }
+    .selectedAll {
+        .hLayout(row, center, center);
+    }
+    .weui-flex {
+        padding: 0px 24rpx;
+        background-color: #fff;
+    }
+    .placeholder{
+        text-align: center;
+        box-sizing: border-box;
+        border-bottom: 1px solid #E5E5E5;
+        position: relative;
+    }
+    .title {
+        color: #474747;
+        font-size: 24rpx;
+        height: 72rpx;
+        line-height: 72rpx;
+    }
+    .content {
+        color: #262626;
+        font-size: 20rpx;
+        height: 100rpx;
+        line-height: 100rpx;
+        &__name {
+            color: 24rpx;
+        }
+        &__date {
+            line-height: 0px;
+            font-size: 20rpx;
+            color: #403E40;
+        }
+        &__unit {
+            color: #878787;
+            font-size: 24rpx;
+        }
+        &__in-access {
+            position: absolute;
+            height: 12rpx;
+            width: 12rpx;
+            border-width: 4rpx 4rpx 0 0;
+            border-color: #C8C8CD;
+            border-style: solid;
+            transform: rotate(45deg);
+            top: 50%;
+            margin-top: -7rpx;
+            right: 4rpx;
+        }
+        &__icon {
+            font-size: 22rpx;
+            color: #C4261D;
+            position: absolute;
+            top: -16rpx;
+            font-weight: bold;
+            font-size: 24rpx;
+        }
+    }
+    .send {
+        height: 56rpx;
+        width: 192rpx;
+        line-height: 56rpx;
+        font-size: 24rpx;
+    }
+}
+</style>
+<template>
+  <view class="history">
+    <view class="weui-flex title-name">
+        <view class="weui-flex__item">历史对账单</view>
+    </view>
+    <view class="weui-flex title-nav">
+        <view class="weui-flex__item selectedAll">
+            <checkbox-group @change="checkboxChange2" style="padding-left: 20rpx;">
+                <checkbox value="{{selectedAll.value}}" checked="{{selectedAll.checked}}"/>
+            </checkbox-group>
+            <view class="title">全选</view>
+        </view>
+        <view class="weui-flex__item" style="flex: 2;"><view class="title">业务日期</view></view>
+        <view class="weui-flex__item" style="flex: 2;"><view class="title">生成账单日期</view></view>
+    </view>
+    <view class="weui-flex" wx:for="{{tableValueList}}" wx:key="id">
+        <view class="weui-flex__item">
+            <view class="placeholder content">
+                <checkbox-group @change="checkboxChange">
+                    <checkbox value="{{item.id}}" checked="{{item.row1}}"/>
+                </checkbox-group>
+            </view>
+        </view>
+        <view class="weui-flex__item" style="flex: 2;">
+            <view class="placeholder content">
+                {{item.row2}}
+            </view>
+        </view>
+        <view class="weui-flex__item" style="flex: 2;">
+            <view class="placeholder content">
+                {{item.row3}}
+            </view>
+        </view>
+    </view>
+    <view style="margin: 80rpx auto 0 auto;">
+        <button class="weui-btn send" type="default">发送到邮箱</button>
+    </view>
+  </view>
+</template>
+
+<script>
+    import wepy from 'wepy';
+
+    export default class History extends wepy.page {
+        config = {
+            navigationBarTitleText: '历史对账单'
+        };
+        data = {
+            selectedAll: {
+                name: 'selectedAll',
+                value: 'all',
+                checked: 'false'
+            },
+            tableList: [
+                {
+                    id: 1,
+                    name: '全选'
+                },
+                {
+                    id: 2,
+                    name: '业务日期'
+                },
+                {
+                    id: 3,
+                    name: '生成账单日期'
+                }
+            ],
+            tableValueList: [
+                {
+                    id: 1,
+                    row1: false,
+                    row2: '2017/11/02-2017/11/08',
+                    row3: '2017/11/08'
+                },
+                {
+                    id: 2,
+                    row1: false,
+                    row2: '2017/11/02-2017/11/08',
+                    row3: '2017/11/08'
+                },
+                {
+                    id: 3,
+                    row1: false,
+                    row2: '2017/11/02-2017/11/08',
+                    row3: '2017/11/08'
+                },
+            ]
+        };
+        methods = {
+            checkboxChange (e) {
+                console.log(e.detail.value);
+            },
+            checkboxChange2 (e) {
+                console.log(e.detail.value);
+            }
+        };
+    }
+</script>

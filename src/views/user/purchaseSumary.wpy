@@ -1,0 +1,191 @@
+<style lang="less">
+    .weui-navbar {
+        top: 0 !important;
+    }
+</style>
+
+<template>
+    <view class="sumary">
+        <Tab :activeIndex.sync="activeIndex" :sliderWidth.sync="sliderWidth" :tabs.sync="tabs"></Tab>
+        <view class="weui-tab__panel">
+            <view class="weui-tab__content" hidden="{{activeIndex != 0}}">
+                <Table :tableList="tableList" :tableType="tableType" :tableValueList="tableValueList"></Table>
+                <view class="weui-loadmore">
+                    <view class="weui-loadmore__tips weui-loadmore__tips_in-line">没有了，别拉了~</view>
+                </view>
+            </view>
+            <view class="weui-tab__content" hidden="{{activeIndex != 1}}">
+                <Table2 :tableList="tableList" :tableType="tableType" :tableValueList="tableValueList2"></Table2>
+                <view class="weui-loadmore">
+                    <view class="weui-loadmore__tips weui-loadmore__tips_in-line">没有了，别拉了~</view>
+                </view>
+            </view>
+            <view class="weui-tab__content" hidden="{{activeIndex != 2}}">
+                <Table3 :tableList="tableList" :tableType="tableType" :tableValueList="tableValueList"></Table3>
+                <view class="weui-loadmore">
+                    <view class="weui-loadmore__tips weui-loadmore__tips_in-line">没有了，别拉了~</view>
+                </view>
+            </view>
+        </view>
+    </view>
+</template>
+
+<script>
+import wepy from 'wepy';
+import Table from '../../components/table';
+import Tab from '../../components/tab';
+
+export default class PurchaseSumary extends wepy.page {
+    config = {
+        navigationBarTitleText: '回购单明细'
+    };
+    components = {
+        Table: Table,
+        Table2: Table,
+        Table3: Table,
+        Tab: Tab
+    };
+    data = {
+        tabs: ['本周回购单明细', '本月回购单明细', '所有回购单明细'],
+        activeIndex: 0,
+        sliderWidth: 106.6667, // 需要设置slider的宽度，用于计算中间位置
+        titleName: '',
+        tableType: 2,
+        tableList: [
+            {
+                id: 1,
+                name: '客户姓名'
+            },
+            {
+                id: 2,
+                name: '回购重量'
+            },
+            {
+                id: 3,
+                name: '回购金额'
+            },
+            {
+                id: 4,
+                name: '提成奖金(5‰)'
+            },
+        ],
+        tableValueList: [
+            {
+                id: 1,
+                row1: '邓泽灵',
+                date: '2017/11/08',
+                row2: '400',
+                row3: '92,070',
+                row4: '460',
+                type: ''
+            },
+            {
+                id: 2,
+                row1: '欧阳姗姗',
+                date: '2017/11/08',
+                row2: '200',
+                row3: '46,070',
+                row4: '230',
+                type: ''
+            },
+            {
+                id: 1,
+                row1: '邓志帆',
+                date: '2017/11/08',
+                row2: '400',
+                row3: '92,070',
+                row4: '230',
+                type: ''
+            },
+            {
+                id: 1,
+                row1: '李子青',
+                date: '2017/11/08',
+                row2: '400',
+                row3: '92,070',
+                row4: '230',
+                type: ''
+            }
+        ],
+        tableValueList2: [
+            {
+                id: 1,
+                row1: '邓泽灵2',
+                date: '2017/11/08',
+                row2: '400',
+                row3: '92,070',
+                row4: '230',
+                type: ''
+            },
+            {
+                id: 2,
+                row1: '欧阳姗姗2',
+                date: '2017/11/08',
+                row2: '200',
+                row3: '46,070',
+                row4: '230',
+                type: ''
+            },
+            {
+                id: 1,
+                row1: '邓志帆2',
+                date: '2017/11/08',
+                row2: '400',
+                row3: '92,070',
+                row4: '230',
+                type: ''
+            },
+            {
+                id: 1,
+                row1: '李子青2',
+                date: '2017/11/08',
+                row2: '400',
+                row3: '92,070',
+                row4: '230',
+                type: ''
+            }
+        ]
+    };
+
+    events = {
+        goToPurchase () {
+            wx.navigateTo({
+                url: 'purchaseList'
+            });
+        },
+        tabChange (id, e) {
+            console.log(id, e);
+            this.changNavigationBarTitle(1 * id);
+            console.log(this.titleName);
+            wx.setNavigationBarTitle({
+                title: this.titleName
+            });
+        }
+    };
+
+    changNavigationBarTitle(index) {
+        switch (index) {
+        case 0:
+            this.titleName = '本周回购单明细';
+            break;
+        case 1:
+            this.titleName = '本月回购单明细';
+            break;
+        case 2:
+            this.titleName = '所有回购单明细';
+            break;
+        default:
+            this.titleName = '本周回购单明细';
+        }
+    }
+
+    onLoad(option) {
+        console.log(option);
+        this.activeIndex = 1 * option.index;
+        this.changNavigationBarTitle(this.activeIndex);
+        wx.setNavigationBarTitle({
+            title: this.titleName
+        });
+    }
+}
+</script>

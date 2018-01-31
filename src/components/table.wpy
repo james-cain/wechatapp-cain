@@ -1,0 +1,110 @@
+<style type="less">
+.list {
+    .weui-flex {
+        padding: 0px 24rpx;
+        background-color: #fff;
+    }
+    .placeholder{
+        text-align: center;
+        box-sizing: border-box;
+        border-bottom: 1px solid #E5E5E5;
+        position: relative;
+    }
+    .title {
+        color: #474747;
+        font-size: 24rpx;
+        height: 72rpx;
+        line-height: 72rpx;
+    }
+    .content {
+        color: #262626;
+        font-size: 20rpx;
+        height: 116rpx;
+        line-height: 116rpx;
+        &__name {
+            line-height: 90rpx;
+            color: 24rpx;
+        }
+        &__date {
+            line-height: 0px;
+            font-size: 20rpx;
+            color: #403E40;
+        }
+        &__unit {
+            color: #878787;
+            font-size: 24rpx;
+        }
+        &__in-access {
+            position: absolute;
+            height: 12rpx;
+            width: 12rpx;
+            border-width: 4rpx 4rpx 0 0;
+            border-color: #C8C8CD;
+            border-style: solid;
+            transform: rotate(45deg);
+            top: 50%;
+            margin-top: -7rpx;
+            right: 4rpx;
+        }
+        &__icon {
+            font-size: 22rpx;
+            color: #C4261D;
+            position: absolute;
+            top: -16rpx;
+            font-weight: bold;
+        }
+    }
+}
+</style>
+<template>
+  <view class="list" style="margin-top: {{mTop}}rpx">
+    <view class="weui-flex">
+        <view class="weui-flex__item" wx:for="{{tableList}}" wx:key="id"><view class="placeholder title">{{item.name}}</view></view>
+    </view>
+    <view class="weui-flex" wx:for="{{tableValueList}}" wx:key="id" @tap="goToPurchase({{item.id}})">
+        <view class="weui-flex__item"><view class="placeholder content"><view class="content__name">{{item.row1}}</view><view class="content__date">{{item.date}}</view></view></view>
+        <view class="weui-flex__item">
+            <view class="placeholder content">
+                {{item.row2}}
+                <text class="content__unit" wx:if="{{tableType !== 4}}">g</text>
+            </view>
+        </view>
+        <view class="weui-flex__item">
+            <view class="placeholder content">
+                <text class="content__unit" wx:if="{{tableType !== 3 && tableType !== 4}}">￥</text>
+                {{item.row3}}
+            </view>
+        </view>
+        <view class="weui-flex__item">
+            <view class="placeholder content">
+                <text class="content__unit" wx:if="{{tableType !== 1 && tableType !== 3 && tableType !== 4}}">￥</text>
+                {{item.row4}}
+                <text class="iconfont icon-cui content__icon" wx:if="{{item.type === 'cui'}}"></text>
+                <view class="content__in-access" wx:if="{{tableType !== 4}}"></view>
+            </view>
+        </view>
+    </view>
+  </view>
+</template>
+
+<script>
+    import wepy from 'wepy';
+
+    export default class Table extends wepy.component {
+        props = {
+            tableList: {},
+            tableType: Number,
+            tableValueList: {},
+            mTop: {
+                type: String,
+                default: 0
+            }
+        };
+
+        methods = {
+            goToPurchase (id) {
+                this.$emit('goToPurchase', id);
+            }
+        }
+    }
+</script>
