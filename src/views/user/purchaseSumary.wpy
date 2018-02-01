@@ -2,29 +2,71 @@
     .weui-navbar {
         top: 0 !important;
     }
+    .sumary {
+        .placeholder{
+            text-align: center;
+            box-sizing: border-box;
+            border-bottom: 1px solid #E5E5E5;
+            position: relative;
+        }
+        .title {
+            color: #474747;
+            font-size: 24rpx;
+            height: 72rpx;
+            line-height: 72rpx;
+        }
+    }
 </style>
 
 <template>
     <view class="sumary">
         <Tab :activeIndex.sync="activeIndex" :sliderWidth.sync="sliderWidth" :tabs.sync="tabs"></Tab>
+
         <view class="weui-tab__panel">
             <view class="weui-tab__content" hidden="{{activeIndex != 0}}">
-                <Table :tableList="tableList" :tableType="tableType" :tableValueList="tableValueList"></Table>
-                <view class="weui-loadmore">
+                <Table :tableList="tableList" :tableType="tableType" :tableValueList.sync="detail1"></Table>
+                <view class="weui-loadmore" wx:if="{{loading1}}">
+                    <view class="weui-loading"></view>
+                    <view class="weui-loadmore__tips weui-loadmore__tips_in-line">正在加载</view>
+                </view>
+                <view class="weui-loadmore" wx:if="{{noBackLog1}}">
                     <view class="weui-loadmore__tips weui-loadmore__tips_in-line">没有了，别拉了~</view>
                 </view>
             </view>
             <view class="weui-tab__content" hidden="{{activeIndex != 1}}">
-                <Table2 :tableList="tableList" :tableType="tableType" :tableValueList="tableValueList2"></Table2>
-                <view class="weui-loadmore">
+                <Table2 :tableList="tableList" :tableType="tableType" :tableValueList.sync="detail2"></Table2>
+                <view class="weui-loadmore" wx:if="{{loading2}}">
+                    <view class="weui-loading"></view>
+                    <view class="weui-loadmore__tips weui-loadmore__tips_in-line">正在加载</view>
+                </view>
+                <view class="weui-loadmore" wx:if="{{noBackLog2}}">
                     <view class="weui-loadmore__tips weui-loadmore__tips_in-line">没有了，别拉了~</view>
                 </view>
             </view>
             <view class="weui-tab__content" hidden="{{activeIndex != 2}}">
-                <Table3 :tableList="tableList" :tableType="tableType" :tableValueList="tableValueList"></Table3>
-                <view class="weui-loadmore">
+                <Table3 :tableList="tableList" :tableType="tableType" :tableValueList.sync="detail3"></Table3>
+                <view class="weui-loadmore" wx:if="{{loading3}}">
+                    <view class="weui-loading"></view>
+                    <view class="weui-loadmore__tips weui-loadmore__tips_in-line">正在加载</view>
+                </view>
+                <view class="weui-loadmore" wx:if="{{noBackLog3}}">
                     <view class="weui-loadmore__tips weui-loadmore__tips_in-line">没有了，别拉了~</view>
                 </view>
+            </view>
+        </view>
+
+        <view class="weui-flex" style="background: #fff; border-top: 2rpx solid #CCCCCC;">
+            <view class="weui-flex__item">
+                <view class="placeholder title">{{sumaryName}}</view>
+            </view>
+            <view class="weui-flex__item">
+                <view class="placeholder title">{{sumary.weight1}}g</view>
+            </view>
+            <view class="weui-flex__item">
+                <view class="placeholder title">￥{{sumary.weight2}}</view>
+            </view>
+            <view class="weui-flex__item">
+                <view class="placeholder title">￥{{sumary.weight3}}</view>
             </view>
         </view>
     </view>
@@ -34,6 +76,7 @@
 import wepy from 'wepy';
 import Table from '../../components/table';
 import Tab from '../../components/tab';
+import utils from '../../utils/index';
 
 export default class PurchaseSumary extends wepy.page {
     config = {
@@ -45,10 +88,30 @@ export default class PurchaseSumary extends wepy.page {
         Table3: Table,
         Tab: Tab
     };
+    computed = {
+        sumaryName() {
+            let tmp = '';
+            switch (this.activeIndex) {
+            case 0:
+                tmp = '本周合计';
+                break;
+            case 1:
+                tmp = '本月合计';
+                break;
+            case 2:
+                tmp = '全部合计';
+                break;
+            default:
+                tmp = '本周合计';
+            }
+            return tmp;
+        }
+    };
     data = {
         tabs: ['本周回购单明细', '本月回购单明细', '所有回购单明细'],
         activeIndex: 0,
         sliderWidth: 106.6667, // 需要设置slider的宽度，用于计算中间位置
+        sumary: [],
         titleName: '',
         tableType: 2,
         tableList: [
@@ -69,92 +132,31 @@ export default class PurchaseSumary extends wepy.page {
                 name: '提成奖金(5‰)'
             },
         ],
-        tableValueList: [
-            {
-                id: 1,
-                row1: '邓泽灵',
-                date: '2017/11/08',
-                row2: '400',
-                row3: '92,070',
-                row4: '460',
-                type: ''
-            },
-            {
-                id: 2,
-                row1: '欧阳姗姗',
-                date: '2017/11/08',
-                row2: '200',
-                row3: '46,070',
-                row4: '230',
-                type: ''
-            },
-            {
-                id: 1,
-                row1: '邓志帆',
-                date: '2017/11/08',
-                row2: '400',
-                row3: '92,070',
-                row4: '230',
-                type: ''
-            },
-            {
-                id: 1,
-                row1: '李子青',
-                date: '2017/11/08',
-                row2: '400',
-                row3: '92,070',
-                row4: '230',
-                type: ''
-            }
-        ],
-        tableValueList2: [
-            {
-                id: 1,
-                row1: '邓泽灵2',
-                date: '2017/11/08',
-                row2: '400',
-                row3: '92,070',
-                row4: '230',
-                type: ''
-            },
-            {
-                id: 2,
-                row1: '欧阳姗姗2',
-                date: '2017/11/08',
-                row2: '200',
-                row3: '46,070',
-                row4: '230',
-                type: ''
-            },
-            {
-                id: 1,
-                row1: '邓志帆2',
-                date: '2017/11/08',
-                row2: '400',
-                row3: '92,070',
-                row4: '230',
-                type: ''
-            },
-            {
-                id: 1,
-                row1: '李子青2',
-                date: '2017/11/08',
-                row2: '400',
-                row3: '92,070',
-                row4: '230',
-                type: ''
-            }
-        ]
+        detail1: [],
+        detail2: [],
+        detail3: [],
+        noBackLog1: false,
+        noBackLog2: false,
+        noBackLog3: false,
+        loading1: false,
+        loading2: false,
+        loading3: false,
+        page1: 1,
+        page2: 1,
+        page3: 1,
+        limit: 10
     };
 
     events = {
-        goToPurchase () {
+        goToPurchase (id) {
             wx.navigateTo({
-                url: 'purchaseList'
+                url: `purchaseList?id=${id}`
             });
         },
         tabChange (id, e) {
             this.changNavigationBarTitle(1 * id);
+            this.refreshDetailData(1 * id);
+            this.activeIndex = 1 * id;
             wx.setNavigationBarTitle({
                 title: this.titleName
             });
@@ -165,24 +167,139 @@ export default class PurchaseSumary extends wepy.page {
         switch (index) {
         case 0:
             this.titleName = '本周回购单明细';
+            this.sumary = JSON.parse(wx.getStorageSync('weekSum'));
             break;
         case 1:
             this.titleName = '本月回购单明细';
+            this.sumary = JSON.parse(wx.getStorageSync('monthSum'));
             break;
         case 2:
             this.titleName = '所有回购单明细';
+            this.sumary = JSON.parse(wx.getStorageSync('allSum'));
             break;
         default:
             this.titleName = '本周回购单明细';
+            this.sumary = JSON.parse(wx.getStorageSync('weekSum'));
+        }
+    }
+
+    refreshDetailData(index) {
+        switch (index) {
+        case 0:
+            this.getWeekDetail();
+            break;
+        case 1:
+            this.getMonthDetail();
+            break;
+        case 2:
+            this.getAllkDetail();
+            break;
+        default:
+            this.getWeekDetail();
+        }
+    }
+
+    changeCurrentData(dataList) {
+        let tmpList = [];
+        dataList.forEach(e => {
+            let tmp = {};
+            tmp.id = e.orderNo;
+            tmp.row1 = e.name;
+            tmp.date = e.buybackDate;
+            tmp.row2 = e.totalWeight;
+            tmp.row3 = e.totalAmount;
+            tmp.row4 = e.inChargeAmount;
+            tmpList.push(tmp);
+        });
+        return tmpList;
+    }
+    getWeekDetail() {
+        if (!this.noBackLog1) {
+            this.loading1 = true;
+            utils.ajax({
+                url: '/my/statistics/week/detailed',
+                method: 'GET',
+                success: (data) => {
+                    const currentData = data.page;
+                    const currentDataHandle = this.changeCurrentData(currentData.list);
+                    this.page1 += 1;
+                    this.detail1 = this.detail1.concat(currentDataHandle);
+                    if (currentData.totalCount <= this.limit || currentData.list.length < this.limit) {
+                        this.noBackLog1 = true;
+                    }
+                    this.loading1 = false;
+                    this.$apply();
+                }
+            });
+        }
+    }
+
+    getMonthDetail() {
+        if (!this.noBackLog2) {
+            this.loading2 = true;
+            utils.ajax({
+                url: '/my/statistics/month/detailed',
+                method: 'GET',
+                success: (data) => {
+                    const currentData = data.page;
+                    const currentDataHandle = this.changeCurrentData(currentData.list);
+                    this.page2 += 1;
+                    this.detail2 = this.detail2.concat(currentDataHandle);
+                    if (currentData.totalCount <= this.limit || currentData.list.length < this.limit) {
+                        this.noBackLog2 = true;
+                    }
+                    this.loading2 = false;
+                    this.$apply();
+                }
+            });
+        }
+    }
+
+    getAllkDetail() {
+        if (!this.noBackLog3) {
+            this.loading3 = true;
+            utils.ajax({
+                url: '/my/statistics/all/detailed',
+                method: 'GET',
+                success: (data) => {
+                    const currentData = data.page;
+                    const currentDataHandle = this.changeCurrentData(currentData.list);
+                    this.page3 += 1;
+                    this.detail3 = this.detail3.concat(currentDataHandle);
+                    if (currentData.totalCount <= this.limit || currentData.list.length < this.limit) {
+                        this.noBackLog3 = true;
+                    }
+                    this.loading3 = false;
+                    this.$apply();
+                }
+            });
         }
     }
 
     onLoad(option) {
+        this.detail1.length = 0;
+        this.detail2.length = 0;
+        this.detail3.length = 0;
+        this.noBackLog1 = false;
+        this.noBackLog2 = false;
+        this.noBackLog3 = false;
+        this.loading1 = false;
+        this.loading2 = false;
+        this.loading3 = false;
+        this.page1 = 1;
+        this.page2 = 1;
+        this.page3 = 1;
+
         this.activeIndex = 1 * option.index;
         this.changNavigationBarTitle(this.activeIndex);
+        this.refreshDetailData(this.activeIndex);
         wx.setNavigationBarTitle({
             title: this.titleName
         });
+    }
+
+    onReachBottom (e) {
+        this.refreshDetailData(this.activeIndex);
     }
 }
 </script>

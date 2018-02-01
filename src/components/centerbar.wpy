@@ -113,7 +113,7 @@
                       <view class="content__name">提成奖金（元）</view>
                       <view class="content__sum">{{sum.weight3}}</view>
                   </view>
-                  <view class="content__in-access" @tap="next"></view>
+                  <view class="content__in-access"></view>
               </view>
           </view>
       </view>

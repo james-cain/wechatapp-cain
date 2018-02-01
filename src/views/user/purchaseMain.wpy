@@ -291,7 +291,6 @@
                     url: '/order/search/record/list',
                     method: 'GET',
                     success: (data) => {
-                        console.log(data);
                         this.historySearchList = data.data;
                         this.$apply();
                     }
@@ -303,7 +302,6 @@
                     url: `/order/search/record/save?value=${searchCondition}`,
                     method: 'GET',
                     success: (data) => {
-                        console.log(data);
                         this.refreshHistory();
                     }
                 });
@@ -313,7 +311,6 @@
                     url: `/order/search/record/del?id=${historyId}`,
                     method: 'GET',
                     success: (data) => {
-                        console.log(data);
                         this.refreshHistory();
                     }
                 });
@@ -323,7 +320,6 @@
                     url: `/order/search/record/clear`,
                     method: 'GET',
                     success: (data) => {
-                        console.log(data);
                         this.refreshHistory();
                     }
                 });
@@ -472,7 +468,6 @@
                 url: '/order/search/record/list',
                 method: 'GET',
                 success: (data) => {
-                    console.log(data);
                     this.historySearchList = data.data;
                     this.$apply();
                 }

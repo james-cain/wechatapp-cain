@@ -72,7 +72,7 @@
         <view class="person-nav">
             <image src="{{account.avatarUrl}}" />
             <view class="person-name">{{account.nickName}}</view>
-            <view class="person-occupation">湖南省业务员</view>
+            <view class="person-occupation">{{region}}</view>
             <view class="rank-btn" wx:if="{{permission === 'ywy'}}" @tap="goToRank">业绩排行榜</view>
         </view>
 
@@ -116,6 +116,7 @@
 
         data = {
             account: {},
+            region: '',
             permission: '',
             showRank: true,
             weekTitle: '本周订单',
@@ -141,6 +142,7 @@
                 weight2: '',
                 weight3: ''
             },
+            sumary: [],
             tabBarList: {
                 color: '#403E40',
                 selectedColor: '#C4261D',
@@ -215,6 +217,11 @@
         onLoad() {
             this.account = JSON.parse(wx.getStorageSync('weChatAccount'));
             this.permission = wx.getStorageSync('permissionType');
+            try {
+                this.region = JSON.parse(wx.getStorageSync('userInfo')).region;
+            } catch (e) {
+                this.region = '';
+            }
             this.showRank = this.permission === 'ywy';
             utils.ajax({
                 url: '/my/statistics/survey',
@@ -231,15 +238,16 @@
                     this.weekSum.weight2 = currentData[1].x2;
                     this.weekSum.weight3 = currentData[1].x3;
                     this.weekSum.percent = currentData[0].x3;
-
+                    wx.setStorageSync('weekSum', JSON.stringify(this.weekSum));
                     this.monthSum.weight1 = currentData[3].x1;
                     this.monthSum.weight2 = currentData[3].x2;
                     this.monthSum.weight3 = currentData[3].x3;
                     this.monthSum.percent = currentData[2].x3;
-
+                    wx.setStorageSync('monthSum', JSON.stringify(this.monthSum));
                     this.allSum.weight1 = currentData[5].x1;
                     this.allSum.weight2 = currentData[5].x2;
                     this.allSum.weight3 = currentData[5].x3;
+                    wx.setStorageSync('allSum', JSON.stringify(this.allSum));
                     this.$apply();
                 }
             });
