@@ -48,7 +48,7 @@
                 const self = this;
                 wx.chooseImage({
                     count: 1,
-                    sizeType: ['original', 'compressed'],
+                    sizeType: ['compressed'],
                     success: (res) => {
                         // 返回选定照片的本地文件路径列表，tempFilePath可以作为img标签的src属性显示图片
                         const tmp = JSON.parse(wx.getStorageSync('purchaseOrder'));

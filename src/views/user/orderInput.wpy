@@ -383,7 +383,7 @@
                 this.usingCamera = true;
                 wx.chooseImage({
                     count: 1,
-                    sizeType: ['original', 'compressed'],
+                    sizeType: ['compressed'],
                     success: (res) => {
                         // 返回选定照片的本地文件路径列表，tempFilePath可以作为img标签的src属性显示图片
                         self.tempFilePaths = res.tempFilePaths;
@@ -455,6 +455,7 @@
                 toSubmitOrder.openBank = this.payeeBankName;
                 toSubmitOrder.cardNumber = this.payeeBankNo;
                 wx.setStorageSync('toSubmitOrder', JSON.stringify(toSubmitOrder));
+                console.log(toSubmitOrder);
                 wx.navigateTo({
                     url: 'confirmOrder'
                 });
