@@ -79,38 +79,30 @@
             </view>
             <view class="weui-search-bar__cancel-btn" hidden="{{!inputShowed}}" @tap="hideInput">取消</view>
         </view>
-        <scroll-view scroll-y lower-threshold="{{100}}" class="weui-cells searchbar-result" wx:if="{{inputShowed && !openResult}}" style="height: {{searchHeight}}px; overflow-y: auto;" @scrolltolower="refreshHistory">
+        <scroll-view scroll-y class="weui-cells searchbar-result" wx:if="{{inputShowed && !openResult}}" style="height: {{searchHeight}}px; overflow-y: auto;">
             <view class="weui-cell">
                 <view class="weui-cell__bd">
                     <view class="fl">搜索历史</view>
                 </view>
                 <view class="weui-cell__bd">
-                    <view class="fr">清除记录</view>
+                    <view class="fr" @tap="clearHistory">清除记录</view>
                 </view>
             </view>
-            <view class="weui-cell" hover-class="weui-cell_active">
-                <view class="weui-cell__bd" @tap="searchByHistory(james)">
-                    <view>james</view>
+            <view class="weui-cell" hover-class="weui-cell_active" wx:for="{{historySearchList}}" wx:key="*this">
+                <view class="weui-cell__bd" @tap="searchByHistory({{item.value}})">
+                    <view>{{item.value}}</view>
                 </view>
-                <view class="icon-nav">
+                <view class="icon-nav" @tap="deleteHistory({{item.id}})">
                     <icon type="cancel" size="15"></icon>
                 </view>
             </view>
-            <view class="weui-cell" hover-class="weui-cell_active">
-                <view class="weui-cell__bd" @tap="searchByHistory(sdf)">
-                    <view>sdf</view>
-                </view>
-                <view class="icon-nav">
-                    <icon type="cancel" size="15"></icon>
-                </view>
-            </view>
-            <view class="weui-loadmore" wx:if="{{historyLoading}}">
+            <!-- <view class="weui-loadmore" wx:if="{{historyLoading}}">
                 <view class="weui-loading"></view>
                 <view class="weui-loadmore__tips weui-loadmore__tips_in-line">正在加载</view>
             </view>
             <view class="weui-loadmore" wx:if="{{noHistoryBackLog}}">
                 <view class="weui-loadmore__tips weui-loadmore__tips_in-line">没有了，别拉了~</view>
-            </view>
+            </view> -->
         </scroll-view>
         <scroll-view scroll-y lower-threshold="{{100}}" class="weui-cells searchbar-result" wx:if="{{inputShowed && openResult}}" style="height: {{searchHeight}}px; overflow-y: auto;" @scrolltolower="refreshResult">
             <view class="search-title" wx:if="{{!hasNoSearchResult}}">
@@ -141,10 +133,8 @@
         data = {
             inputVal: '',
             searchHeight: '',
-            historyLoading: false,
-            noHistoryBackLog: false,
-            // resultLoading: false,
-            // noResultBackLog: false,
+            // historyLoading: false,
+            // noHistoryBackLog: false,
             openResult: false
         };
 
@@ -188,7 +178,8 @@
                 type: Boolean,
                 default: false,
                 twoWay: true
-            }
+            },
+            historySearchList: []
         };
 
         components = {
@@ -204,6 +195,7 @@
             showInput () {
                 this.inputShowed = true;
                 this.clear = false;
+                this.refreshHistory();
             },
             hideInput () {
                 this.inputVal = '';
@@ -221,19 +213,22 @@
             inputConfirm (e) {
                 this.openResult = true;
                 this.refreshResult(this.inputVal);
+                this.saveHistory(this.inputVal);
             },
             searchByHistory (value) {
                 this.inputVal = value;
                 this.openResult = true;
                 this.refreshResult(this.inputVal);
             },
-            // 调用方法上拉刷新--搜索历史
-            refreshHistory(e) {
-                this.getHistory();
-            },
             // 调用方法上拉刷新--搜索结果
             refreshResult(e) {
                 this.$emit('refreshSearchResult', this.inputVal, this.searchResultPage);
+            },
+            deleteHistory(historyId) {
+                this.$emit('deleteHistory', historyId);
+            },
+            clearHistory() {
+                this.$emit('clearHistory');
             }
         };
 
@@ -243,21 +238,18 @@
             this.$emit('refreshSearchResult', searchCondition, this.searchResultPage);
         };
 
-        getHistory() {
-            if (!this.noHistoryBackLog) {
-                this.historyLoading = true;
-                setTimeout(() => {
-                    this.historyLoading = false;
-                }, 1000);
-                setTimeout(() => {
-                    this.noHistoryBackLog = true;
-                }, 2000);
-            }
+        // 调用搜索历史
+        refreshHistory() {
+            this.$emit('refreshHistory');
+        };
+
+        // 保存搜索历史
+        saveHistory(searchCondition) {
+            this.$emit('saveHistory', searchCondition);
         };
 
         onLoad () {
             this.searchHeight = wx.getStorageSync('windowH') - 45;
-            this.getHistory();
         };
     }
 </script>

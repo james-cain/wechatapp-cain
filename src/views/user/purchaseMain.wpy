@@ -10,7 +10,7 @@
 </style>
 <template>
     <view class="page" style="padding-bottom: 40px;">
-        <Search :inputShowed.sync="inputShowed" :clear.sync="clear" placeholder="搜索客户、业务员、日期、金额、重量" :repurchaseList.sync="searchOrderList" :searchHistoryPage.sync="searchHistoryPage" :searchResultPage.sync="searchResultPage" :resultLoading.sync="resultLoading" :noResultBackLog.sync="noResultBackLog" :hasNoSearchResult.sync="hasNoSearchResult"></Search>
+        <Search :inputShowed.sync="inputShowed" :clear.sync="clear" placeholder="搜索客户、业务员、日期、金额、重量" :repurchaseList.sync="searchOrderList" :searchHistoryPage.sync="searchHistoryPage" :searchResultPage.sync="searchResultPage" :resultLoading.sync="resultLoading" :noResultBackLog.sync="noResultBackLog" :hasNoSearchResult.sync="hasNoSearchResult" :historySearchList.sync="historySearchList"></Search>
         <view class="weui-tab {{inputShowed ? 'close' : ''}}">
             <Tab :activeIndex.sync="activeIndex" :sliderWidth.sync="sliderWidth" :tabs.sync="tabs"></Tab>
             <view class="weui-tab__panel">
@@ -151,7 +151,9 @@
             searchResultPage: 1,
             resultLoading: false,
             noResultBackLog: false,
-            hasNoSearchResult: false
+            hasNoSearchResult: false,
+            // 历史记录的结果
+            historySearchList: []
         };
 
         methods = {
@@ -281,6 +283,50 @@
                         }
                     });
                 }
+            },
+            // 获取搜索历史的记录
+            refreshHistory() {
+                this.historySearchList.length = 0;
+                utils.ajax({
+                    url: '/order/search/record/list',
+                    method: 'GET',
+                    success: (data) => {
+                        console.log(data);
+                        this.historySearchList = data.data;
+                        this.$apply();
+                    }
+                });
+            },
+            // 保存搜索历史记录
+            saveHistory(searchCondition) {
+                utils.ajax({
+                    url: `/order/search/record/save?value=${searchCondition}`,
+                    method: 'GET',
+                    success: (data) => {
+                        console.log(data);
+                        this.refreshHistory();
+                    }
+                });
+            },
+            deleteHistory(historyId) {
+                utils.ajax({
+                    url: `/order/search/record/del?id=${historyId}`,
+                    method: 'GET',
+                    success: (data) => {
+                        console.log(data);
+                        this.refreshHistory();
+                    }
+                });
+            },
+            clearHistory() {
+                utils.ajax({
+                    url: `/order/search/record/clear`,
+                    method: 'GET',
+                    success: (data) => {
+                        console.log(data);
+                        this.refreshHistory();
+                    }
+                });
             }
         };
 
@@ -361,27 +407,6 @@
         }
 
         updateBuybackOrder() {
-            // this.page[this.activeIndex] = 1;
-            // this.noBackLog[this.activeIndex] = false;
-            // switch (this.activeIndex) {
-            // case 0:
-            //     this.allOrderList.length = 0;
-            //     break;
-            // case 1:
-            //     this.type1OrderList.length = 0;
-            //     break;
-            // case 2:
-            //     this.type2OrderList.length = 0;
-            //     break;
-            // case 3:
-            //     this.type3OrderList.length = 0;
-            //     break;
-            // case 4:
-            //     this.type4OrderList.length = 0;
-            //     break;
-            // default:
-            //     this.allOrderList.length = 0;
-            // }
             this.page = [1, 1, 1, 1, 1];
             this.noBackLog = [false, false, false, false, false];
             this.loading = [false, false, false, false, false];
@@ -440,6 +465,19 @@
             }
         }
 
+        // 获取搜索历史的记录
+        refreshHistory() {
+            this.historySearchList.length = 0;
+            utils.ajax({
+                url: '/order/search/record/list',
+                method: 'GET',
+                success: (data) => {
+                    console.log(data);
+                    this.historySearchList = data.data;
+                    this.$apply();
+                }
+            });
+        }
         onShow () {
             this.inputShowed = false;
             this.clear = true;

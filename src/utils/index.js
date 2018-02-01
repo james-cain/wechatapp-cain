@@ -141,7 +141,7 @@ class Utils {
                 },
                 from: 'checksession',
                 success(data) {
-                    // console.log(data);
+                    console.log(data);
                     if (data.code === 0) {
                         wx.setStorageSync('session', data.token);
                         wx.setStorageSync('userType', data.userType);
