@@ -145,6 +145,12 @@ class Utils {
                     if (data.code === 0) {
                         wx.setStorageSync('session', data.token);
                         wx.setStorageSync('userType', data.userType);
+                        const userInfo = {};
+                        userInfo.region = data.region;
+                        userInfo.userId = data.userId;
+                        userInfo.userName = data.userName;
+                        userInfo.userType = data.userType;
+                        wx.setStorageSync('userInfo', JSON.stringify(userInfo));
                         const userType = data.userType;
                         if (userType === '2') {
                             wx.setStorageSync('permissionType', 'ywy');
