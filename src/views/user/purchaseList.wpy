@@ -90,6 +90,9 @@
                         case '4':
                             stateDesc = '收款成功';
                             break;
+                        case '-1':
+                            stateDesc = '驳回成功';
+                            break;
                         default:
                             stateDesc = '系统异常';
                         }
@@ -98,8 +101,9 @@
                             icon: 'success',
                             duraction: 2000
                         });
+                        const orderNo = this.currentPurchase[0].orderNo;
                         this.currentPurchase.length = 0;
-                        this.getCurrentOrder(this.currentPurchase[0].orderNo);
+                        this.getCurrentOrder(orderNo);
                         // setTimeout(() => {
                         //     wx.navigateBack();
                         // }, 2000);
@@ -131,8 +135,9 @@
                             icon: 'success',
                             duraction: 2000
                         });
+                        const orderNo = this.currentPurchase[0].orderNo;
                         this.currentPurchase.length = 0;
-                        this.getCurrentOrder(this.currentPurchase[0].orderNo);
+                        this.getCurrentOrder(orderNo);
                         // setTimeout(() => {
                         //     wx.navigateBack();
                         // }, 2000);
@@ -151,6 +156,22 @@
                         });
                         this.currentPurchase.length = 0;
                         this.getCurrentOrder(orderNo);
+                    }
+                });
+            },
+            // 作废订单
+            invalid (orderNo) {
+                utils.ajax({
+                    url: `/order/invalid?orderNo=${orderNo}`,
+                    method: 'GET',
+                    success: (data) => {
+                        wx.showToast({
+                            title: '已成功作废此订单',
+                            duraction: 2000
+                        });
+                        setTimeout(() => {
+                            wx.navigateBack();
+                        }, 2000);
                     }
                 });
             }

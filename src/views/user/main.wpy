@@ -206,6 +206,8 @@
                         // }
                         if (e.state === '3') {
                             stateArr.push('确认收款');
+                        } else if (e.state === '-1') {
+                            stateArr.push('待修改');
                         }
                         tmp.row4 = stateArr.join('/');
                         break;

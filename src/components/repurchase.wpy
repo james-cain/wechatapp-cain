@@ -8,9 +8,9 @@
         background-color: #fff;
         font-size: 24rpx;
         padding: 5rpx 30rpx;
-        /* &__name {
-            width: 100rpx;
-        } */
+        &__name {
+            margin-right: 20rpx;
+        }
         &__purchase {
             flex: 1;
         }
@@ -110,6 +110,10 @@
         margin-top: -7rpx;
         right: 20rpx;
     }
+    .red2 {
+        background: #C4261D;
+        color: #fff;
+    }
 }
 </style>
 <template>
@@ -117,7 +121,7 @@
     <view class="repurchase-head">
         <view class="repurchase-head__name">{{purchase.name}}</view>
          <!-- wx:if="{{prepareMod}}" -->
-        <text class="iconfont icon-bianji" wx:if="{{permission === 'ywy'}}" @tap="goToUpdate(customerName)"></text>
+        <text class="iconfont icon-bianji" wx:if="{{permission === 'ywy' && purchase.state == '-1'}}" @tap="goToUpdate(customerName)"></text>
         <view class="repurchase-head__purchase">订单号：{{purchase.orderNo}}</view>
         <view class="repurchase-head__state">{{currentState}}</view>
     </view>
@@ -146,42 +150,42 @@
             <view class="weui-cell__ft">
                 ￥{{purchase.buybackPrice}}元/克
                 <text class="weui-cell__ld" wx:if="{{permission === 'hgy'}}" @tap="goToUpdate(perPrice)">修改</text>
-                <view class="content__in-access" wx:if="{{permission === 'ywy'}}"></view>
+                <view class="content__in-access" wx:if="{{permission === 'ywy' && purchase.state == '-1'}}"></view>
             </view>
         </view>
         <view class="weui-cell" @tap="goToUpdate(counts)">
             <view class="weui-cell__bd">金条件数</view>
             <view class="weui-cell__ft">
                 {{purchase.number}}件
-                <view class="content__in-access" wx:if="{{permission === 'ywy'}}"></view>
+                <view class="content__in-access" wx:if="{{permission === 'ywy' && purchase.state == '-1'}}"></view>
             </view>
         </view>
         <view class="weui-cell" @tap="goToUpdate(customerId)">
             <view class="weui-cell__bd">客户身份证号码</view>
             <view class="weui-cell__ft">
                 {{purchase.cardNo}}
-                <view class="content__in-access" wx:if="{{permission === 'ywy'}}"></view>
+                <view class="content__in-access" wx:if="{{permission === 'ywy' && purchase.state == '-1'}}"></view>
             </view>
         </view>
         <view class="weui-cell" @tap="goToUpdate(productType)">
             <view class="weui-cell__bd">产品类型</view>
             <view class="weui-cell__ft">
                 {{purchase.type}}
-                <view class="content__in-access" wx:if="{{permission === 'ywy'}}"></view>
+                <view class="content__in-access" wx:if="{{permission === 'ywy' && purchase.state == '-1'}}"></view>
             </view>
         </view>
         <view class="weui-cell" @tap="goToUpdate(bankNetType)">
             <view class="weui-cell__bd">回收银行网点</view>
             <view class="weui-cell__ft">
                 {{purchase.dot}}
-                <view class="content__in-access" wx:if="{{permission === 'ywy'}}"></view>
+                <view class="content__in-access" wx:if="{{permission === 'ywy' && purchase.state == '-1'}}"></view>
             </view>
         </view>
         <view class="weui-cell" @tap="goToUpdate(chargePerPrice)">
             <view class="weui-cell__bd">中收费单价</view>
             <view class="weui-cell__ft">
                 {{purchase.inChargePrice}}元/g
-                <view class="content__in-access" wx:if="{{permission === 'ywy'}}"></view>
+                <view class="content__in-access" wx:if="{{permission === 'ywy' && purchase.state == '-1'}}"></view>
             </view>
         </view>
         <view class="weui-cell">
@@ -199,21 +203,21 @@
             <view class="weui-cell__bd">收款户名</view>
             <view class="weui-cell__ft">
                 {{purchase.receivablesAccount}}
-                <view class="content__in-access" wx:if="{{permission === 'ywy'}}"></view>
+                <view class="content__in-access" wx:if="{{permission === 'ywy' && purchase.state == '-1'}}"></view>
             </view>
         </view>
         <view class="weui-cell" @tap="goToUpdate(payeeBankName)">
             <view class="weui-cell__bd">收款开户行</view>
             <view class="weui-cell__ft">
                 {{purchase.openBank}}
-                <view class="content__in-access" wx:if="{{permission === 'ywy'}}"></view>
+                <view class="content__in-access" wx:if="{{permission === 'ywy' && purchase.state == '-1'}}"></view>
             </view>
         </view>
         <view class="weui-cell" @tap="goToUpdate(payeeBankNo)">
             <view class="weui-cell__bd">收款号码</view>
             <view class="weui-cell__ft">
                 {{purchase.cardNumber}}
-                <view class="content__in-access" wx:if="{{permission === 'ywy'}}"></view>
+                <view class="content__in-access" wx:if="{{permission === 'ywy' && purchase.state == '-1'}}"></view>
             </view>
         </view>
         <view class="weui-cell">
@@ -225,7 +229,7 @@
         <view class="weui-cell" style="padding: 0 0 8rpx 0;">
             <view class="weui-cell__ft" style="text-align: right;">
                 <!-- 业务员相关操作流程 -->
-                <button class="weui-btn mini-btn" type="default" size="mini" wx:if="{{prepareMod}}">作废订单</button>
+                <button class="weui-btn mini-btn" type="default" size="mini" wx:if="{{permission === 'ywy' && purchase.state == '-1'}}" @tap="invalid">作废订单</button>
                 <button class="weui-btn mini-btn" type="default" size="mini" wx:if="{{permission === 'ywy'}}" @tap="read({{purchase.confirmationAddr}})">查看回购确认书</button>
                 <button class="weui-btn mini-btn" type="default" size="mini" wx:if="{{permission === 'ywy' && purchase.logisticsState == '1'}}" @tap="getCui">催签收</button>
                 <button class="weui-btn mini-btn" type="default" size="mini" wx:if="{{permission === 'ywy' && purchase.logisticsState == '2'}}" @tap="getCui">催发料</button>
@@ -237,10 +241,12 @@
                 <button class="weui-btn mini-btn red" type="default" size="mini" wx:if="{{permission === 'ywy' && purchase.state == '3'}}" @tap="changeState(4)">确认收款</button>
                 <!-- 业务员相关操作流程 -->
                 <!-- 回购员相关操作流程 -->
-                <button class="weui-btn mini-btn" type="default" size="mini" wx:if="{{permission === 'hgy' && purchase.state == '0'}}">驳回修改</button>
+                <button class="weui-btn mini-btn" type="default" size="mini" wx:if="{{permission === 'hgy' && purchase.state == '0'}}" @tap="changeState(-1)">驳回修改</button>
+                <button class="weui-btn mini-btn red2" type="default" size="mini" wx:if="{{permission === 'hgy' && purchase.state == '-1'}}">已驳回修改</button>
                 <button class="weui-btn mini-btn" type="default" size="mini" wx:if="{{permission === 'hgy'}}">查看回购确认书</button>
                 <button class="weui-btn mini-btn" type="default" size="mini" wx:if="{{permission === 'hgy' && purchase.logisticsState == '0'}}" @tap="getCui">催邮寄</button>
                 <button class="weui-btn mini-btn" type="default" size="mini" wx:if="{{permission === 'hgy' && purchase.logisticsState == '3'}}" @tap="getCui">催收料</button>
+                <button class="weui-btn mini-btn" type="default" size="mini" wx:if="{{permission === 'hgy' && purchase.state == '-1'}}" @tap="getCui">催修改</button>
                 <button class="weui-btn mini-btn" type="default" size="mini" wx:if="{{permission === 'hgy' && purchase.state == '1'}}" @tap="getCui">催财务审核</button>
                 <button class="weui-btn mini-btn" type="default" size="mini" wx:if="{{permission === 'hgy' && purchase.state == '2'}}" @tap="getCui">催打款</button>
                 <button class="weui-btn mini-btn" type="default" size="mini" wx:if="{{permission === 'hgy' && purchase.state == '3'}}" @tap="getCui">催确认收款</button>
@@ -249,8 +255,10 @@
                 <button class="weui-btn mini-btn" type="default" size="mini" wx:if="{{permission === 'hgy' && purchase.logisticsState == '2'}}" @tap="changeLogisticsState(3)">确认发料</button>
                 <!-- 回购员相关操作流程 -->
                 <!-- 财务员相关操作流程 -->
-                <button class="weui-btn mini-btn" type="default" size="mini" wx:if="{{permission === 'cw' && (purchase.state == '1' || purchase.state == '0')}}">驳回修改</button>
+                <button class="weui-btn mini-btn" type="default" size="mini" wx:if="{{permission === 'cw' && (purchase.state == '1' || purchase.state == '0')}}" @tap="changeState(-1)">驳回修改</button>
+                <button class="weui-btn mini-btn red2" type="default" size="mini" wx:if="{{permission === 'cw' && purchase.state == '-1'}}">已驳回修改</button>
                 <button class="weui-btn mini-btn" type="default" size="mini" wx:if="{{permission === 'cw'}}">查看回购确认书</button>
+                <button class="weui-btn mini-btn" type="default" size="mini" wx:if="{{permission === 'cw' && purchase.state == '-1'}}" @tap="getCui">催修改</button>
                 <button class="weui-btn mini-btn" type="default" size="mini" wx:if="{{permission === 'cw' && purchase.logisticsState == '0'}}" @tap="getCui">催邮寄</button>
                 <button class="weui-btn mini-btn" type="default" size="mini" wx:if="{{permission === 'cw' && purchase.logisticsState == '1'}}" @tap="getCui">催签收</button>
                 <button class="weui-btn mini-btn" type="default" size="mini" wx:if="{{permission === 'cw' && purchase.logisticsState == '2'}}" @tap="getCui">催发料</button>
@@ -405,8 +413,10 @@
                     content = '确认通过审核？';
                 } else if (stateType === '4') {
                     content = '确认已向客户打款？';
+                } else if (stateType === '-1') {
+                    content = '确认需要驳回给业务员修改？';
                 }
-                if (stateType === '2' || stateType === '4') {
+                if (stateType === '2' || stateType === '4' || stateType === '-1') {
                     wx.showModal({
                         title: '提示',
                         content: content,
@@ -451,6 +461,21 @@
                     this.$emit('getCui', this.purchase.orderNo);
                 }
             },
+            // 作废订单
+            invalid () {
+                wx.showModal({
+                    title: '提示',
+                    content: '回购单信息将被清空，确认作废？',
+                    cancelText: '返回',
+                    confirmText: '是的',
+                    confirmColor: '#C4261D',
+                    success: (res) => {
+                        if (res.confirm) {
+                            this.$emit('invalid', this.purchase.orderNo);
+                        }
+                    }
+                });
+            },
             read (fid) {
                 console.log(wx.getStorageSync('session'));
                 console.log(`${utils.server_url}/order/view/img/${fid}?token=${wx.getStorageSync('session')}`);
@@ -467,7 +492,7 @@
                 });
             },
             goToUpdate(typeName) {
-                if (this.permission === 'ywy' || this.permission === 'hgy') {
+                if ((this.permission === 'ywy' && this.purchase.state === '-1') || this.permission === 'hgy') {
                     this.$emit('goToUpdate', typeName);
                 }
             }
