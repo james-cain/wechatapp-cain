@@ -15,7 +15,6 @@
             flex: 1;
         }
         &__state {
-            width: 150rpx;
             color: #C4261D;
         }
     }
@@ -239,6 +238,7 @@
                 <button class="weui-btn mini-btn" type="default" size="mini" wx:if="{{permission === 'ywy' && purchase.state == '2'}}" @tap="getCui">催打款</button>
                 <button class="weui-btn mini-btn" type="default" size="mini" wx:if="{{permission === 'ywy' && purchase.logisticsState == '0'}}" @tap="goToInputExpress">邮寄</button>
                 <button class="weui-btn mini-btn red" type="default" size="mini" wx:if="{{permission === 'ywy' && purchase.state == '3'}}" @tap="changeState(4)">确认收款</button>
+                <button class="weui-btn mini-btn red" type="default" size="mini" wx:if="{{permission === 'ywy' && purchase.state == '-1'}}" @tap="changeState(0)">重新提交</button>
                 <!-- 业务员相关操作流程 -->
                 <!-- 回购员相关操作流程 -->
                 <button class="weui-btn mini-btn" type="default" size="mini" wx:if="{{permission === 'hgy' && purchase.state == '0'}}" @tap="changeState(-1)">驳回修改</button>
@@ -322,6 +322,9 @@
                 let tmp = '';
                 if (Array.isArray(this.currentPurchase) && this.currentPurchase[0]) {
                     switch (this.currentPurchase[0].state) {
+                    case '-1':
+                        tmp = '待重新提交回购单';
+                        break;
                     case '0':
                         tmp = '待申请付款';
                         break;
@@ -347,6 +350,9 @@
                 let tmp = '';
                 if (Array.isArray(this.currentPurchase) && this.currentPurchase[0]) {
                     switch (this.currentPurchase[0].state) {
+                    case '-1':
+                        tmp = '待修改';
+                        break;
                     case '0':
                         tmp = '待申请付款';
                         break;

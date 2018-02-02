@@ -113,17 +113,12 @@
                 }
                 return {};
             },
-            // 对业务员的待修改单独处理
-            // 待修改的逻辑判断
-            // 物流状态不为0，即业务员发出快递
-            // 且付款状态小于2，即财务已审核之前
-            // 都可以修改回购客户的姓名和快递信息
             prepareMod () {
                 const permission = wx.getStorageSync('permissionType');
                 if (permission === 'ywy' &&
                     (Array.isArray(this.currentPurchase) && this.currentPurchase[0])) {
                     const tmp = this.currentPurchase[0];
-                    if ((tmp.state === '0' || tmp.state === '1') && tmp.logisticsState !== '0') {
+                    if (tmp.logisticsState === '1') {
                         return true;
                     }
                 }

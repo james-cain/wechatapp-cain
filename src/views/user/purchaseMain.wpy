@@ -214,7 +214,7 @@
                             stateDesc = '收款成功';
                             break;
                         default:
-                            stateDesc = '系统异常';
+                            stateDesc = '';
                         }
                         wx.showToast({
                             title: stateDesc,
@@ -243,7 +243,7 @@
                             stateDesc = '收料成功';
                             break;
                         default:
-                            stateDesc = '系统异常';
+                            stateDesc = '';
                         }
                         wx.showToast({
                             title: stateDesc,

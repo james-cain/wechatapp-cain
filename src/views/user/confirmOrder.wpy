@@ -100,6 +100,7 @@
                     success: (data) => {
                         wx.showToast({
                             title: '提交成功，即将返回首页',
+                            icon: 'none',
                             duration: 2000
                         });
                         setTimeout(() => {

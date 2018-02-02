@@ -164,6 +164,8 @@
         data = {
             modifyType: '',
             error: false,
+            // 修改必须要有orderNo
+            orderNo: '',
             customerName: '',
             customerId: '',
             // 用于计算总金额
@@ -300,6 +302,7 @@
             },
             save () {
                 let toUpdateOrder = {};
+                toUpdateOrder.orderNo = this.orderNo;
                 switch (this.modifyType) {
                 case 'customerName':
                     if (!utils.beforeSubmit(this.customerName, '姓名不能为空')) return;
@@ -359,14 +362,29 @@
                         duration: 2000
                     });
                 } else {
-                    wx.setStorageSync('toUpdateOrder', JSON.stringify(toUpdateOrder));
-                    wx.navigateBack();
+                    // wx.setStorageSync('toUpdateOrder', JSON.stringify(toUpdateOrder));
+                    utils.ajax({
+                        url: '/order/update',
+                        method: 'POST',
+                        params: toUpdateOrder,
+                        success: (data) => {
+                            wx.showToast({
+                                title: '提交成功，即将返回首页',
+                                icon: 'none',
+                                duration: 2000
+                            });
+                            setTimeout(() => {
+                                wx.navigateBack();
+                            }, 2000);
+                        }
+                    });
                 }
             }
         };
 
         onShow() {
             const purchaseOrder = JSON.parse(wx.getStorageSync('currentPurchase'));
+            this.orderNo = purchaseOrder.orderNo;
             switch (this.modifyType) {
             case 'customerName':
                 this.customerName = purchaseOrder.name;
