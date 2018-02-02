@@ -79,7 +79,7 @@
             <view class="placeholder content">
                 <text class="content__unit" wx:if="{{tableType !== 1 && tableType !== 3 && tableType !== 4}}">￥</text>
                 {{item.row4}}
-                <text class="iconfont icon-cui content__icon" wx:if="{{item.type === 'cui'}}"></text>
+                <text class="iconfont icon-cui content__icon" wx:if="{{item.type === '催'}}"></text>
                 <view class="content__in-access" wx:if="{{tableType !== 4}}"></view>
             </view>
         </view>

@@ -254,6 +254,19 @@
                     }
                 });
             },
+            // 催办
+            getCui (orderNo) {
+                utils.ajax({
+                    url: `/order/update/flag?orderNo=${orderNo}`,
+                    method: 'GET',
+                    success: (data) => {
+                        wx.showToast({
+                            title: '已成功发送催办消息',
+                            duraction: 2000
+                        });
+                    }
+                });
+            },
             // 更新搜索结果历史记录
             refreshSearchResult(searchCondition, searchResultPage) {
                 // 通过页数为第一页判断是不是第一次加载数据，若是，删除之前的查询list

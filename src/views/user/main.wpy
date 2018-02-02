@@ -188,6 +188,7 @@
                     tmp.row2 = e.totalWeight;
                     tmp.row3 = e.totalAmount;
                     tmp.row4 = '';
+                    tmp.type = e.flag;
                     // 用来存储物流状态和付款状态。之后转换成用"/"连接的字符串
                     let stateArr = [];
                     switch (userType) {

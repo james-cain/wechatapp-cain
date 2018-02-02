@@ -98,9 +98,11 @@
                             icon: 'success',
                             duraction: 2000
                         });
-                        setTimeout(() => {
-                            wx.navigateBack();
-                        }, 2000);
+                        this.currentPurchase.length = 0;
+                        this.getCurrentOrder(this.currentPurchase[0].orderNo);
+                        // setTimeout(() => {
+                        //     wx.navigateBack();
+                        // }, 2000);
                     }
                 });
             },
@@ -129,9 +131,26 @@
                             icon: 'success',
                             duraction: 2000
                         });
-                        setTimeout(() => {
-                            wx.navigateBack();
-                        }, 2000);
+                        this.currentPurchase.length = 0;
+                        this.getCurrentOrder(this.currentPurchase[0].orderNo);
+                        // setTimeout(() => {
+                        //     wx.navigateBack();
+                        // }, 2000);
+                    }
+                });
+            },
+            // 催办
+            getCui (orderNo) {
+                utils.ajax({
+                    url: `/order/update/flag?orderNo=${orderNo}`,
+                    method: 'GET',
+                    success: (data) => {
+                        wx.showToast({
+                            title: '已成功发送催办消息',
+                            duraction: 2000
+                        });
+                        this.currentPurchase.length = 0;
+                        this.getCurrentOrder(orderNo);
                     }
                 });
             }

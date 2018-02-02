@@ -79,7 +79,7 @@ class Utils {
                 } else if (data.data.code === 500 && param.from !== 'checksession') {
                     wx.showToast({
                         title: data.data.msg,
-                        image: errorTipImg,
+                        icon: 'none',
                         duration: 2000
                     });
                 } else {
@@ -120,7 +120,7 @@ class Utils {
                 } else if (data.code === '500') {
                     wx.showToast({
                         title: data.msg,
-                        image: '../images/warn.png',
+                        icon: 'none',
                         duration: 2000
                     });
                 }
