@@ -268,7 +268,7 @@
                     wx.navigateTo({
                         url: 'businessConfirm'
                     });
-                } else if (this.permission === 'hgl') {
+                } else if (this.permission === 'hgy') {
                     wx.navigateTo({
                         url: 'editPrice'
                     });

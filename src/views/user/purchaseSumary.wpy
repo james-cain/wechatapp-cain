@@ -55,7 +55,7 @@
             </view>
         </view>
 
-        <view class="weui-flex" style="background: #fff; border-top: 2rpx solid #CCCCCC;">
+        <view class="weui-flex" style="background: #fff; margin-top: 20rpx">
             <view class="weui-flex__item">
                 <view class="placeholder title">{{sumaryName}}</view>
             </view>
