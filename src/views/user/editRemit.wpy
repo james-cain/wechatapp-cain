@@ -1,0 +1,195 @@
+<style type="less">
+@import '../../style/base/mixin/text.less';
+.edit-remit {
+    padding: 60rpx;
+    .weui-edit-cells {
+      position: relative;
+      line-height: 1.41176471;
+      font-size: 17px;
+    }
+    .weui-cells__title {
+        color: #3B3B3B;
+        font-size: 24rpx;
+    }
+    .weui-label {
+        color: #262626;
+        font-size: 28rpx;
+        font-weight: bold;
+        width: 260rpx;
+    }
+    .weui-cell__bd {
+        color: #262626;
+        font-size: 28rpx;
+    }
+    .flex-bd {
+        .hLayout(row, right, center);
+    }
+    .weui-special {
+        .weui-select {
+            border-right: 0px;
+        }
+    }
+    .weui-flex {
+        margin: 40rpx 0px;
+        .hLayout(row, center, center);
+        text {
+            color:#262626;
+            font-size: 24rpx;
+        }
+    }
+    .authenticate-btn1 {
+        width: 184rpx;
+        height: 58rpx;
+        border: 1px solid #C4261D !important;
+        color: #C4261D;
+        font-size: 24rpx;
+    }
+    .border-input {
+      border: 1px solid #9E8D9E;
+      border-radius: 6rpx;
+    }
+    .unit {
+      display: block;
+      margin-left: 20rpx;
+      font-size: 24rpx;
+      color: #9E8D9E;
+    }
+    .time-nav {
+        width: 525rpx !important;
+        margin-left: 30rpx !important;
+        border: 1px solid #9E8D9E !important;
+        border-radius: 6rpx !important;
+    }
+}
+</style>
+<template>
+  <view class="edit-remit">
+    <view class="weui-cells__title">本次汇款金额</view>
+    <view class="weui-edit-cells weui-cells_after-title">
+        <view class="weui-cell weui-cell_input">
+            <view class="weui-cell__bd flex-bd">
+                <input class="weui-input border-input" type="digit" value="{{remitPrice}}" placeholder="填写汇款金额" @blur="blurPurchasePrice" @input="inputPurchasePrice" style="flex: 1;"/>
+                <text class="unit">元</text>
+            </view>
+        </view>
+    </view>
+    <view class="weui-cells__title">本次汇款时间</view>
+    <view class="weui-edit-cells weui-cells_after-title time-nav" style="">
+        <view class="weui-cell weui-cell_input" style="padding: 0px;">
+            <view class="weui-cell__bd flex-bd">
+                <picker mode="date" value="{{date}}" start="{{beginDate}}" end="{{endDate}}" @change="bindDateChange" style="flex: 1;">
+                    <view class="weui-input">{{date}}</view>
+                </picker>
+                <picker mode="time" value="{{time}}" start="00:00" end="23:59" @change="bindTimeChange" style="flex: 1;">
+                    <view class="weui-input">{{time}}</view>
+                </picker>
+            </view>
+        </view>
+    </view>
+    <view class="weui-flex" style="margin: 60rpx auto;">
+        <text @tap="next">历史汇款记录</text>
+    </view>
+    <view class="weui-flex" style="padding-bottom: 50rpx;">
+        <button class="weui-btn authenticate-btn1" type="default" @tap="finish">确认</button>
+    </view>
+  </view>
+</template>
+
+<script>
+    import wepy from 'wepy';
+    import utils from '../../utils/index';
+
+    export default class EditRemit extends wepy.page {
+        config = {
+            navigationBarTitleText: '发起汇款'
+        };
+        data = {
+            date: '',
+            time: '',
+            currentTime: '',
+            remitPrice: '',
+
+            beginDate: '',
+            endDate: '',
+        };
+        computed = {
+            remitDate () {
+                return `${this.date} ${this.time}:00`;
+            },
+        }
+        methods = {
+            bindDateChange (e) {
+                this.date = e.detail.value;
+            },
+            bindTimeChange (e) {
+                this.time = e.detail.value;
+            },
+            blurRemitPrice (e) {
+                this.remitPrice = '' + e.detail.value;
+                const reg = /^[0-9]*(\.[0-9]{1,6})?$/;
+                utils.judge(this.remitPrice, reg, '回购单价不合法', () => {
+                    this.remitPrice = '';
+                    this.$apply();
+                    this.setData({
+                        remitPrice: ''
+                    });
+                });
+            },
+            inputRemitPrice (e) {
+                this.remitPrice = '' + e.detail.value;
+            },
+            finish () {
+                if (!utils.beforeSubmit(this.remitPrice, '汇款金额不能空')) return;
+                // utils.ajax({
+                //     url: `/gold/update?price=${this.remitPrice}&&lockPrice=${this.lockPrice}`,
+                //     method: 'POST',
+                //     success: (data) => {
+                //         // 更新金价
+                //         wx.showToast({
+                //             title: '发起成功，即将返回首页',
+                //             icon: 'none',
+                //             duration: 2000
+                //         });
+                //         setTimeout(() => {
+                //             wx.navigateBack();
+                //         }, 2000);
+                //     }
+                // });
+                wx.showToast({
+                    title: '发起成功，即将返回首页',
+                    icon: 'none',
+                    duration: 2000
+                });
+                setTimeout(() => {
+                    wx.navigateBack();
+                }, 2000);
+            },
+            next() {
+                wx.navigateTo({
+                    url: '/views/user/remitHistory'
+                });
+            }
+        };
+
+        onShow () {
+            this.currentTime = utils.formatFunc(new Date(), 'YYYY-MM-dd HH:mm:ss');
+        }
+
+        onLoad() {
+            this.endDate = utils.formatFunc(new Date());
+            this.date = this.endDate;
+            const currentYear = (new Date()).getFullYear().toString();
+            const currentMonth = (new Date()).getMonth() + 1;
+            const mStr = currentMonth.length > 1 ? currentMonth : `0${currentMonth}`;
+            const currentDay = (new Date()).getDate().toString();
+            const dayStr = currentDay > 1 ? currentDay : `0${currentDay}`;
+            const lastYear = 1 * currentYear - 1;
+            this.beginDate = `${lastYear}-${mStr}-${dayStr}`;
+            const minutes = (new Date()).getMinutes();
+            const hours = (new Date()).getHours();
+            const hoursStr = hours >= 10 ? hours : `0${hours}`;
+            const minutesStr = minutes >= 10 ? minutes : `0${minutes}`;
+            this.time = `${hoursStr}:${minutesStr}`;
+        }
+    }
+</script>

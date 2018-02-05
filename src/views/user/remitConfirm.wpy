@@ -64,7 +64,6 @@
             noHistory: false
         };
         onLoad(option) {
-            console.log(option);
             this.noHistory = option.noHistory === 'true';
         }
     }

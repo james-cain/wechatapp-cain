@@ -81,8 +81,8 @@
         <view class="weui-loadmore" wx:if="{{noBackLog && (page !== 1 && page !== 2)}}">
             <view class="weui-loadmore__tips weui-loadmore__tips_in-line">没有了，别拉了~</view>
         </view>
-        <view class="func-button" @tap="launchRepurchase" wx:if="{{permission === 'ywy' || permission === 'hgy'}}">
-            <text class="desc">{{permission === 'ywy' ? '发起回购' : '发布金价'}}</text>
+        <view class="func-button" @tap="launchRepurchase" wx:if="{{permission === 'ywy' || permission === 'hgy' || permission === 'zhl'}}">
+            <text class="desc">{{funcName}}</text>
         </view>
         <TabBar :tabBar.sync="tabBarList"></TabBar>
     </view>
@@ -171,6 +171,16 @@
             totalCount: 0
         };
         computed = {
+            funcName() {
+                if (this.permission === 'ywy') {
+                    return '发起回购';
+                } else if (this.permission === 'hgy') {
+                    return '发布金价';
+                } else if (this.permission === 'zhl') {
+                    return '发起汇款';
+                }
+                return '';
+            },
             tableValueList() {
                 const userType = wx.getStorageSync('userType');
                 let tmpList = [];
@@ -258,9 +268,13 @@
                     wx.navigateTo({
                         url: 'businessConfirm'
                     });
-                } else {
+                } else if (this.permission === 'hgl') {
                     wx.navigateTo({
                         url: 'editPrice'
+                    });
+                } else if (this.permission === 'zhl') {
+                    wx.navigateTo({
+                        url: 'editRemit'
                     });
                 }
             }

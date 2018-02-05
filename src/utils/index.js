@@ -185,7 +185,7 @@ class Utils {
         if (data !== '' && !reg.test(data)) {
             wx.showToast({
                 title,
-                image: '../../images/warn.png',
+                icon: 'none',
                 duration: 2000
             });
             cb();
@@ -196,7 +196,7 @@ class Utils {
         if (!data) {
             wx.showToast({
                 title,
-                image: '../../images/warn.png',
+                icon: 'none',
                 duration: 2000
             });
             return false;
