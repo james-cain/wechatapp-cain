@@ -55,7 +55,7 @@
         border-radius: 5px;
     }
     .gou-nav {
-        width: 80rpx;
+        width: 30rpx;
         text-align: center;
         line-height: 128rpx;
         margin: 5px;
@@ -74,8 +74,8 @@
 </style>
 <template>
   <view class="confirm">
-    <view class="weui-flex">
-        <view class="weui-flex__item">
+    <view class="weui-flex" style="margin-top: 30rpx;">
+        <view class="weui-flex__item" style="margin-left: 30rpx;">
             <view class="placeholder">
                 <view class="weui-flex__item item-flex">
                     <view class="weui-flex__item item-flex2">
@@ -91,7 +91,7 @@
         </view>
     </view>
     <view class="weui-flex">
-        <view class="weui-flex__item">
+        <view class="weui-flex__item" style="margin-left: 30rpx;">
             <view class="placeholder">
                 <view class="weui-flex__item item-flex">
                     <view class="weui-flex__item item-flex2">
@@ -108,7 +108,7 @@
         </view>
     </view>
     <view class="weui-flex">
-        <view class="weui-flex__item">
+        <view class="weui-flex__item" style="margin-left: 30rpx;">
             <view class="placeholder">
                 <view class="weui-flex__item item-flex">
                     <view class="weui-flex__item item-flex2">

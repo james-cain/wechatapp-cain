@@ -366,7 +366,7 @@
                         tmp = '待业务员确认';
                         break;
                     case '4':
-                        tmp = '流程结束';
+                        tmp = '结束';
                         break;
                     default:
                         tmp = '暂无状态';
@@ -415,29 +415,29 @@
             },
             changeState (stateType) {
                 let content = '';
-                if (stateType === '2') {
+                if (stateType === '1') {
+                    content = '已确认回购信息无误，申请付款？';
+                } else if (stateType === '2') {
                     content = '确认通过审核？';
-                } else if (stateType === '4') {
+                } else if (stateType === '3') {
                     content = '确认已向客户打款？';
+                } else if (stateType === '4') {
+                    content = '是否已和客户电话确认收款？';
                 } else if (stateType === '-1') {
                     content = '确认需要驳回给业务员修改？';
                 }
-                if (stateType === '2' || stateType === '4' || stateType === '-1') {
-                    wx.showModal({
-                        title: '提示',
-                        content: content,
-                        cancelText: '返回',
-                        confirmText: '是的',
-                        confirmColor: '#C4261D',
-                        success: (res) => {
-                            if (res.confirm) {
-                                this.$emit('changeState', stateType);
-                            }
+                wx.showModal({
+                    title: '提示',
+                    content: content,
+                    cancelText: '返回',
+                    confirmText: '是的',
+                    confirmColor: '#C4261D',
+                    success: (res) => {
+                        if (res.confirm) {
+                            this.$emit('changeState', stateType);
                         }
-                    });
-                } else {
-                    this.$emit('changeState', stateType);
-                }
+                    }
+                });
             },
             changeLogisticsState (logisticsStateType) {
                 this.$emit('changeLogisticsState', logisticsStateType);

@@ -90,7 +90,7 @@
             </view>
             <view class="weui-cell__bd flex-bd">
                 <text>￥</text>
-                <input class="weui-input" type="digit" value="{{perPrice}}" placeholder="请输入回购单价" @blur="blurPerPrice" disabled style="flex: 1;"/>
+                <input class="weui-input" type="digit" value="{{realPerPrice}}" placeholder="请输入回购单价" @blur="blurPerPrice" disabled style="flex: 1;"/>
                 <text>元/克</text>
             </view>
         </view>
@@ -120,7 +120,7 @@
             </view>
             <view class="weui-cell__bd flex-bd">
                 <text>￥</text>
-                <input class="weui-input" type="digit" value="{{amountPrice}}" placeholder="请输入回购实物黄金总额" disabled @blur="blurAmountPrice"/>
+                <input class="weui-input" type="digit" value="{{realAmountPrice}}" placeholder="请输入回购实物黄金总额" disabled @blur="blurAmountPrice"/>
             </view>
         </view>
         <view class="weui-cell weui-cell_select">
@@ -212,8 +212,12 @@
             date: '',
             time: '',
             perPrice: '',
+            // 真实的回购单价，当选择99.99%时要扣0.5元/克
+            realPerPrice: '',
             weight: '',
             amountPrice: '',
+            // 真实的回购单价，当选择99.99%时要扣0.5元/克
+            realAmountPrice: '',
             chargePerPrice: '',
             chargeAmountPrice: '',
             confirmationAddr: '',
@@ -250,6 +254,15 @@
         computed = {
             buybackDate () {
                 return `${this.date} ${this.time}:00`;
+            },
+            realPerPrice () {
+                if (this.productIndex === 0) {
+                    return 1 * this.perPrice - 0.5;
+                }
+                return this.perPrice;
+            },
+            realAmountPrice () {
+                return 1 * this.realPerPrice * this.weight;
             }
         };
         methods = {
@@ -278,7 +291,7 @@
                 this.time = e.detail.value;
             },
             bindProductChange (e) {
-                this.productIndex = e.detail.value;
+                this.productIndex = 1 * e.detail.value;
             },
             bindCountsChange (e) {
                 this.countsIndex = e.detail.value;
@@ -437,9 +450,9 @@
                 toSubmitOrder.cardNo = this.customerId;
                 toSubmitOrder.buybackDate = this.buybackDate;
                 toSubmitOrder.type = this.productType[this.productIndex];
-                toSubmitOrder.buybackPrice = this.perPrice;
+                toSubmitOrder.buybackPrice = this.realPerPrice;
                 toSubmitOrder.number = this.counts[this.countsIndex];
-                toSubmitOrder.totalAmount = this.amountPrice;
+                toSubmitOrder.totalAmount = this.realAmountPrice;
                 toSubmitOrder.totalWeight = this.weight;
                 toSubmitOrder.dot = this.bankNetType[this.bankNetIndex];
                 this.cacheNetworkBank.forEach(element => {
@@ -455,7 +468,6 @@
                 toSubmitOrder.openBank = this.payeeBankName;
                 toSubmitOrder.cardNumber = this.payeeBankNo;
                 wx.setStorageSync('toSubmitOrder', JSON.stringify(toSubmitOrder));
-                console.log(toSubmitOrder);
                 wx.navigateTo({
                     url: 'confirmOrder'
                 });
@@ -494,7 +506,7 @@
             // 总重量自动获取
             this.weight = this.cacheWeight;
             // 回购实物黄金总额计算得到
-            this.amountPrice = 1 * this.perPrice * this.weight;
+            // this.amountPrice = 1 * this.perPrice * this.weight;
             this.cacheFid = purchaseOrder.fid;
             // 回购确认书fid
             this.confirmationAddr = this.cacheFid;

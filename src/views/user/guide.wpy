@@ -1,0 +1,11 @@
+<template>
+    <web-view src="https://eim.online/static/page/guide.html"></web-view>
+</template>
+<script>
+    import wepy from 'wepy';
+    export default class Guide extends wepy.page {
+        config = {
+            navigationBarTitleText: '微黄金'
+        };
+    }
+</script>

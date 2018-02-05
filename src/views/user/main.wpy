@@ -73,12 +73,12 @@
                 </navigator>
             </view>
         </view>
-        <Table :tableList="tableList" :tableType="tableType" :tableValueList.sync="tableValueList"></Table>
+        <Table :tableList.sync="tableList" :tableType.sync="tableType" :tableValueList.sync="tableValueList"></Table>
         <view class="weui-loadmore" wx:if="{{loading}}">
             <view class="weui-loading"></view>
             <view class="weui-loadmore__tips weui-loadmore__tips_in-line">正在加载</view>
         </view>
-        <view class="weui-loadmore" wx:if="{{noBackLog}}">
+        <view class="weui-loadmore" wx:if="{{noBackLog && (page !== 1 && page !== 2)}}">
             <view class="weui-loadmore__tips weui-loadmore__tips_in-line">没有了，别拉了~</view>
         </view>
         <view class="func-button" @tap="launchRepurchase" wx:if="{{permission === 'ywy' || permission === 'hgy'}}">
@@ -187,6 +187,9 @@
                     tmp.row1 = e.name;
                     tmp.row2 = e.totalWeight;
                     tmp.row3 = e.totalAmount;
+                    if (userType === '3' || userType === '4') {
+                        tmp.row3 = e.salesman;
+                    }
                     tmp.row4 = '';
                     tmp.type = e.flag;
                     // 用来存储物流状态和付款状态。之后转换成用"/"连接的字符串
@@ -319,12 +322,12 @@
                 this.bannerIntroduce = [{
                     name: '业务指南',
                     desc: '回购流程详解',
-                    url: '/views/building?needTabBar=false',
+                    url: '/views/user/guide',
                     imageUrl: '../../images/doc_icon1.png'
                 }, {
                     name: '对客说明',
                     desc: '回购相关事项',
-                    url: '/views/building?needTabBar=false',
+                    url: '/views/user/explain',
                     imageUrl: '../../images/doc_icon2.png'
                 }];
                 break;
@@ -349,18 +352,37 @@
                 this.bannerIntroduce = [{
                     name: '业务指南',
                     desc: '回购流程详解',
-                    url: '/views/building?needTabBar=false',
+                    url: '/views/user/guide',
                     imageUrl: '../../images/doc_icon1.png'
                 }, {
                     name: '对客说明',
                     desc: '回购相关事项',
-                    url: '/views/building?needTabBar=false',
+                    url: '/views/user/explain',
                     imageUrl: '../../images/doc_icon2.png'
                 }];
             }
             // 回购员和财务，当前保证金是不能点击跳转页面，要取消掉url链接
             if (this.permission === 'hgy' || this.permission === 'cw') {
                 this.bannerIntroduce[0].url = '';
+                this.tableType = 4;
+                this.tableList = [
+                    {
+                        id: 1,
+                        name: '客户姓名'
+                    },
+                    {
+                        id: 2,
+                        name: '回购重量'
+                    },
+                    {
+                        id: 3,
+                        name: '业务员'
+                    },
+                    {
+                        id: 4,
+                        name: '状态'
+                    },
+                ];
             }
             this.$apply();
             utils.ajax({

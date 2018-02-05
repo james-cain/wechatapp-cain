@@ -29,7 +29,7 @@
                     <view class="weui-loading"></view>
                     <view class="weui-loadmore__tips weui-loadmore__tips_in-line">正在加载</view>
                 </view>
-                <view class="weui-loadmore" wx:if="{{noBackLog1}}">
+                <view class="weui-loadmore" wx:if="{{noBackLog1 && (page1 !== 1 && page1 !== 2)}}">
                     <view class="weui-loadmore__tips weui-loadmore__tips_in-line">没有了，别拉了~</view>
                 </view>
             </view>
@@ -39,7 +39,7 @@
                     <view class="weui-loading"></view>
                     <view class="weui-loadmore__tips weui-loadmore__tips_in-line">正在加载</view>
                 </view>
-                <view class="weui-loadmore" wx:if="{{noBackLog2}}">
+                <view class="weui-loadmore" wx:if="{{noBackLog2 && (page2 !== 1 && page2 !== 2)}}">
                     <view class="weui-loadmore__tips weui-loadmore__tips_in-line">没有了，别拉了~</view>
                 </view>
             </view>
@@ -49,7 +49,7 @@
                     <view class="weui-loading"></view>
                     <view class="weui-loadmore__tips weui-loadmore__tips_in-line">正在加载</view>
                 </view>
-                <view class="weui-loadmore" wx:if="{{noBackLog3}}">
+                <view class="weui-loadmore" wx:if="{{noBackLog3 && (page3 !== 1 && page3 !== 2)}}">
                     <view class="weui-loadmore__tips weui-loadmore__tips_in-line">没有了，别拉了~</view>
                 </view>
             </view>
@@ -195,7 +195,7 @@ export default class PurchaseSumary extends wepy.page {
             this.getAllkDetail();
             break;
         default:
-            this.getWeekDetail();
+            // this.getWeekDetail();
         }
     }
 
@@ -217,7 +217,7 @@ export default class PurchaseSumary extends wepy.page {
         if (!this.noBackLog1) {
             this.loading1 = true;
             utils.ajax({
-                url: '/my/statistics/week/detailed',
+                url: `/my/statistics/week/detailed?page=${this.page1}&limit=${this.limit}`,
                 method: 'GET',
                 success: (data) => {
                     const currentData = data.page;
@@ -238,7 +238,7 @@ export default class PurchaseSumary extends wepy.page {
         if (!this.noBackLog2) {
             this.loading2 = true;
             utils.ajax({
-                url: '/my/statistics/month/detailed',
+                url: `/my/statistics/month/detailed?page=${this.page2}&limit=${this.limit}`,
                 method: 'GET',
                 success: (data) => {
                     const currentData = data.page;
@@ -259,7 +259,7 @@ export default class PurchaseSumary extends wepy.page {
         if (!this.noBackLog3) {
             this.loading3 = true;
             utils.ajax({
-                url: '/my/statistics/all/detailed',
+                url: `/my/statistics/all/detailed?page=${this.page3}&limit=${this.limit}`,
                 method: 'GET',
                 success: (data) => {
                     const currentData = data.page;

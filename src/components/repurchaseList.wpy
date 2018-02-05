@@ -9,9 +9,6 @@
             background-color: #fff;
             font-size: 24rpx;
             padding: 5rpx 30rpx;
-            &__name {
-                width: 100rpx;
-            }
             &__state {
                 flex: 1;
                 float: right;
@@ -183,12 +180,16 @@
             },
             changeState (order, stateType) {
                 let content = '';
-                if (stateType === '2') {
+                if (stateType === '1') {
+                    content = '已确认回购信息无误，申请付款？';
+                } else if (stateType === '2') {
                     content = '确认通过审核？';
-                } else if (stateType === '4') {
+                } else if (stateType === '3') {
                     content = '确认已向客户打款？';
+                } else if (stateType === '4') {
+                    content = '是否已和客户电话确认收款？';
                 }
-                if (stateType === '2' || stateType === '4') {
+                if (stateType === '1' || stateType === '2' || stateType === '3' || stateType === '4') {
                     wx.showModal({
                         title: '提示',
                         content: content,

@@ -1,0 +1,11 @@
+<template>
+    <web-view src="https://eim.online/static/page/explain.html"></web-view>
+</template>
+<script>
+    import wepy from 'wepy';
+    export default class Explain extends wepy.page {
+        config = {
+            navigationBarTitleText: '黄金回购业务说明'
+        };
+    }
+</script>

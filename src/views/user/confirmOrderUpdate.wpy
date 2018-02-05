@@ -1,0 +1,191 @@
+<style type="less">
+@import '../../style/base/mixin/text.less';
+.confirm-order-upt {
+    .weui-cells__title {
+        color: #262626;
+        font-size: 24rpx;
+    }
+    .weui-label {
+        color: #262626;
+        font-size: 28rpx;
+        font-weight: bold;
+        width: 260rpx;
+    }
+    .weui-cell__bd {
+        color: #262626;
+        font-size: 28rpx;
+    }
+    .flex-bd {
+        .hLayout(row, right, center);
+    }
+    .weui-special {
+        .weui-select {
+            border-right: 0px;
+        }
+    }
+    .weui-flex {
+        margin: 40rpx 0px;
+        .hLayout(row, center, center);
+        text {
+            color:#262626;
+            font-size: 24rpx;
+        }
+    }
+    .authenticate-btn1 {
+        width: 184rpx;
+        height: 58rpx;
+        background-color: #C4261D !important;
+        border: 1px solid #C4261D !important;
+        color: #fff;
+        font-size: 24rpx;
+    }
+}
+</style>
+<template>
+  <view class="confirm-order-upt">
+    <view class="weui-cells__title">订单信息</view>
+    <view class="weui-cells weui-cells_after-title">
+        <view class="weui-cell weui-cell_input" wx:if="{{modifyType === 'payeeName'}}">
+            <view class="weui-cell__hd">
+                <view class="weui-label">收款户名</view>
+            </view>
+            <view class="weui-cell__bd">
+                <input class="weui-input" value="{{payeeName}}" placeholder="收款人姓名" @confirm="confirmPayeeName" @input="inputPayeeName" @blur="blurPayeeName"/>
+            </view>
+        </view>
+        <view class="weui-cell weui-cell_input" wx:if="{{modifyType === 'payeeBankName'}}">
+            <view class="weui-cell__hd">
+                <view class="weui-label">收款开户行</view>
+            </view>
+            <view class="weui-cell__bd">
+                <input class="weui-input" value="{{payeeBankName}}" placeholder="请认真填写开户行信息" @confirm="confirmPayeeBankName" @input="inputPayeeBankName" @blur="blurPayeeBankName"/>
+            </view>
+        </view>
+        <view class="weui-cell weui-cell_input" wx:if="{{modifyType === 'payeeBankNo'}}">
+            <view class="weui-cell__hd">
+                <view class="weui-label">收款卡号</view>
+            </view>
+            <view class="weui-cell__bd">
+                <input class="weui-input" type="number" value="{{payeeBankNo}}" placeholder="收款人储蓄卡号" @input="inputPayeeBankNo" @blur="blurPayeeBankNo"/>
+            </view>
+        </view>
+    </view>
+    <view class="weui-flex" style="padding-bottom: 50rpx;">
+        <button class="weui-btn authenticate-btn1" type="default" @tap="save">提交</button>
+    </view>
+  </view>
+</template>
+
+<script>
+    import wepy from 'wepy';
+    import utils from '../../utils/index';
+
+    export default class OrderUpdate extends wepy.page {
+        config = {
+            navigationBarTitleText: '修改订单信息'
+        };
+        data = {
+            modifyType: '',
+            error: false,
+            // 修改必须要有orderNo
+            orderNo: '',
+            payeeName: '',
+            payeeBankName: '',
+            payeeBankNo: '',
+
+            purchaseOrder: {}
+        };
+        methods = {
+            inputPayeeName (e) {
+                this.payeeName = e.detail.value;
+            },
+            inputPayeeBankName (e) {
+                this.payeeBankName = e.detail.value;
+            },
+            inputPayeeBankNo (e) {
+                this.payeeBankNo = e.detail.value;
+            },
+            blurPayeeName (e) {
+                this.payeeName = e.detail.value;
+            },
+            confirmPayeeName (e) {
+                this.payeeName = e.detail.value;
+            },
+            blurPayeeBankName (e) {
+                this.payeeBankName = e.detail.value;
+            },
+            confirmPayeeBankName (e) {
+                this.payeeBankName = e.detail.value;
+            },
+            blurPayeeBankNo (e) {
+                this.payeeBankNo = e.detail.value;
+            },
+            save () {
+                switch (this.modifyType) {
+                case 'payeeName':
+                    if (!utils.beforeSubmit(this.payeeName, '户名不能为空')) return;
+                    this.purchaseOrder.receivablesAccount = this.payeeName;
+                    break;
+                case 'payeeBankNo':
+                    if (!utils.beforeSubmit(this.payeeBankNo, '卡号不能为空')) return;
+                    this.purchaseOrder.cardNumber = this.payeeBankNo;
+                    break;
+                case 'payeeBankName':
+                    if (!utils.beforeSubmit(this.payeeBankName, '开户行不能为空')) return;
+                    this.purchaseOrder.openBank = this.payeeBankName;
+                    break;
+                default:
+                    this.error = true;
+                }
+                if (this.error) {
+                    wx.showToast({
+                        title: '数据出现异常',
+                        image: '../../images/warn.png',
+                        duration: 2000
+                    });
+                } else {
+                    wx.setStorageSync('toSubmitOrder', JSON.stringify(this.purchaseOrder));
+                    wx.showToast({
+                        title: '修改成功',
+                        icon: 'none',
+                        duration: 2000
+                    });
+                    setTimeout(() => {
+                        wx.navigateBack();
+                    }, 2000);
+                }
+            }
+        };
+
+        onShow() {
+            this.purchaseOrder = JSON.parse(wx.getStorageSync('toSubmitOrder'));
+            switch (this.modifyType) {
+            case 'payeeName':
+                this.payeeName = this.purchaseOrder.receivablesAccount;
+                break;
+            case 'payeeBankNo':
+                this.payeeBankNo = this.purchaseOrder.cardNumber;
+                break;
+            case 'payeeBankName':
+                this.payeeBankName = this.purchaseOrder.openBank;
+                break;
+            default:
+                this.error = true;
+            }
+            if (this.error) {
+                wx.showToast({
+                    title: '数据获取失败',
+                    image: '../../images/warn.png',
+                    duration: 2000
+                });
+                setTimeout(() => {
+                    wx.navigateBack();
+                }, 2000);
+            }
+        }
+
+        onLoad(option) {
+            this.modifyType = option.modifyType;
+        }
+    }
+</script>

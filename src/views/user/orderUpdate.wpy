@@ -183,6 +183,7 @@
 
             productType: ['99.9%', '99.99%'],
             productIndex: 0,
+            oldProductIndex: 0,
 
             bankNetType: [],
             bankNetIndex: 0,
@@ -227,7 +228,7 @@
                 this.payeeBankNo = e.detail.value;
             },
             bindProductChange (e) {
-                this.productIndex = e.detail.value;
+                this.productIndex = 1 * e.detail.value;
             },
             bindCountsChange (e) {
                 this.countsIndex = e.detail.value;
@@ -322,6 +323,15 @@
                     break;
                 case 'productType':
                     toUpdateOrder.type = this.productType[this.productIndex];
+                    if (1 * this.productIndex === 0 && this.oldProductIndex !== 1 * this.productIndex) {
+                        this.perPrice = 1 * this.perPrice - 0.5;
+                        toUpdateOrder.buybackPrice = this.perPrice;
+                        toUpdateOrder.totalAmount = this.amountPrice;
+                    } else if (1 * this.productIndex === 1 && this.oldProductIndex !== 1 * this.productIndex) {
+                        this.perPrice = 1 * this.perPrice + 0.5;
+                        toUpdateOrder.buybackPrice = this.perPrice;
+                        toUpdateOrder.totalAmount = this.amountPrice;
+                    }
                     break;
                 case 'bankNetType':
                     toUpdateOrder.dot = this.bankNetType[this.bankNetIndex];
@@ -407,8 +417,11 @@
                 this.productType.forEach((e, idx) => {
                     if (e === purchaseOrder.type) {
                         this.productIndex = idx;
+                        this.oldProductIndex = 1 * idx;
                     }
                 });
+                this.perPrice = purchaseOrder.buybackPrice;
+                this.weight = purchaseOrder.totalWeight;
                 break;
             case 'bankNetType':
                 this.bankNetType.forEach((e, idx) => {

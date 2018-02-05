@@ -135,6 +135,9 @@ export default class extends wepy.app {
             'views/user/rank',
             'views/user/history',
             'views/user/orderUpdate',
+            'views/user/guide',
+            'views/user/explain',
+            'views/user/confirmOrderUpdate',
 
             'views/manager/managerMain',
             'views/manager/purchaseMain',

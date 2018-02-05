@@ -38,6 +38,18 @@
         color: #fff;
         font-size: 24rpx;
     }
+    .content__in-access {
+        position: absolute;
+        height: 12rpx;
+        width: 12rpx;
+        border-width: 4rpx 4rpx 0 0;
+        border-color: #C8C8CD;
+        border-style: solid;
+        transform: rotate(45deg);
+        top: 50%;
+        margin-top: -7rpx;
+        right: 20rpx;
+    }
 }
 </style>
 <template>
@@ -50,23 +62,26 @@
             </view>
             <view class="weui-cell__ft">￥{{totalAmount}}</view>
         </view>
-        <view class="weui-cell">
+        <view class="weui-cell" @tap="goToUpdate(payeeName)">
             <view class="weui-cell__bd">
                 <view class="weui-label">收款户名</view>
             </view>
             <view class="weui-cell__ft">{{receivablesAccount}}</view>
+            <view class="content__in-access"></view>
         </view>
-        <view class="weui-cell">
+        <view class="weui-cell" @tap="goToUpdate(payeeBankName)">
             <view class="weui-cell__bd">
                 <view class="weui-label">收款开户行</view>
             </view>
             <view class="weui-cell__ft">{{openBank}}</view>
+            <view class="content__in-access"></view>
         </view>
-        <view class="weui-cell">
+        <view class="weui-cell" @tap="goToUpdate(payeeBankNo)">
             <view class="weui-cell__bd">
                 <view class="weui-label">收款卡号</view>
             </view>
             <view class="weui-cell__ft">{{cardNumber}}</view>
+            <view class="content__in-access"></view>
         </view>
     </view>
     <view class="weui-flex" style="padding-bottom: 50rpx;">
@@ -109,6 +124,11 @@
                             });
                         }, 2000);
                     }
+                });
+            },
+            goToUpdate(typeName) {
+                wx.navigateTo({
+                    url: `confirmOrderUpdate?modifyType=${typeName}`
                 });
             }
         };

@@ -148,7 +148,8 @@
                     success: (data) => {
                         // 更新金价
                         wx.showToast({
-                            title: '价格更新成功',
+                            title: '发布成功，即将返回首页',
+                            icon: 'none',
                             duration: 2000
                         });
                         setTimeout(() => {
