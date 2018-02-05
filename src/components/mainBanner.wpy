@@ -84,7 +84,7 @@
             </view>
         </view>
         <view class="weui-flex">
-            <navigator class="weui-flex__item" wx:for="{{bannerIntroduce}}" url="{{item.url}}">
+            <navigator class="weui-flex__item" wx:for="{{bannerIntroduce}}" url="{{item.url}}" wx:key="item.name">
                 <view class="placeholder">
                     <view class="weui-flex__item item-flex">
                         <view class="weui-flex__item item-flex2">
