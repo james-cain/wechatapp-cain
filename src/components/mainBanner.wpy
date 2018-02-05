@@ -26,6 +26,7 @@
         flex: 3;
     }
     .weui-flex__item3 {
+        text-align: center;
         flex: 4;
     }
     .weui-flex__item4 {
@@ -73,7 +74,7 @@
                         <image src="../images/price_up.png" lazy-load="true" class="price_up">
                         <text style="font-size: 28rpx; margin-left: 20rpx;">当前金价</text>
                     </view>
-                    <view class="weui-flex__item3 tl">
+                    <view class="weui-flex__item3">
                         <text class="price">{{goldPrice.price}}</text>
                         <text style="font-size: 24rpx;">元/克</text>
                     </view>
@@ -88,7 +89,7 @@
                 <view class="placeholder">
                     <view class="weui-flex__item item-flex">
                         <view class="weui-flex__item item-flex2">
-                            <text style="font-size: 24rpx; height: 32rpx; line-height: 32rpx; font-weight: bold;">{{item.name}}</text>
+                            <text style="font-size: 28rpx; height: 32rpx; line-height: 32rpx;">{{item.name}}</text>
                             <text style="font-size: 24rpx; height: 32rpx; line-height: 32rpx;">{{item.desc}}</text>
                         </view>
                         <image src="{{item.imageUrl}}" lazy-load="true" class="doc">

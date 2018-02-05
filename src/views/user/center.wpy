@@ -76,9 +76,9 @@
             <view class="rank-btn" wx:if="{{permission === 'ywy'}}" @tap="goToRank">业绩排行榜</view>
         </view>
 
-        <Centerbar :title="weekTitle" :showRank.sync="showRank" :time.sync="weekTime" :sum.sync="weekSum" type="1"></Centerbar>
-        <Centerbar2 :title="monthTitle" :showRank.sync="showRank" :time.sync="monthTime" :sum.sync="monthSum" type="2"></Centerbar2>
-        <Centerbar3 :title="allTitle" :time.sync="allTime" :sum.sync="allSum" type="3"></Centerbar3>
+        <Centerbar :title="weekTitle" :showRank.sync="showRank" :time.sync="weekTime" :sum.sync="weekSum" type="1" :lastGridName.sync="lastGridName"></Centerbar>
+        <Centerbar2 :title="monthTitle" :showRank.sync="showRank" :time.sync="monthTime" :sum.sync="monthSum" type="2" :lastGridName.sync="lastGridName"></Centerbar2>
+        <Centerbar3 :title="allTitle" :time.sync="allTime" :sum.sync="allSum" type="3" :lastGridName.sync="lastGridName"></Centerbar3>
 
         <button class="weui-btn unbind-btn red2" type="primary" @tap="unBundle">解绑</button>
 
@@ -125,6 +125,7 @@
             weekTime: '',
             monthTime: '',
             allTime: '',
+            lastGridName: '',
             weekSum: {
                 weight1: '',
                 weight2: '',
@@ -223,6 +224,20 @@
                 this.region = '';
             }
             this.showRank = this.permission === 'ywy';
+            switch (this.permission) {
+            case 'ywy':
+                this.lastGridName = '提成奖金（元）';
+                break;
+            case 'hgy':
+            case 'cw':
+                this.lastGridName = '毛利润（元）';
+                break;
+            case 'zhl':
+                this.lastGridName = '应付金额（元）';
+                break;
+            default:
+                this.lastGridName = '';
+            }
             utils.ajax({
                 url: '/my/statistics/survey',
                 method: 'GET',

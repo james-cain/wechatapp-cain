@@ -16,7 +16,7 @@ class Utils {
         const month = m.toString();
         const mStr = month.length > 1 ? month : `0${month}`;
         const day = date.getDate().toString();
-        const dayStr = day > 1 ? day : `0${day}`;
+        const dayStr = day.length > 1 ? day : `0${day}`;
         const minutes = date.getMinutes();
         const hours = date.getHours();
         const hoursStr = hours >= 10 ? hours : `0${hours}`;
@@ -26,7 +26,7 @@ class Utils {
         if (format === 'yyyyMMddHHmmss') {
             return date.getFullYear() + mStr + dayStr + hoursStr + minutesStr + secondsStr;
         } else if (format === 'YYYY-MM-dd HH:mm:ss') {
-            return `${date.getFullYear()}-${mStr}-${dayStr} ${hoursStr} ${minutesStr} ${secondsStr}`;
+            return `${date.getFullYear()}-${mStr}-${dayStr} ${hoursStr}:${minutesStr}:${secondsStr}`;
         } else if (format === 'yyyyMMdd') {
             return date.getFullYear() + mStr + dayStr;
         } else if (format === 'yyyy年M月d日') {

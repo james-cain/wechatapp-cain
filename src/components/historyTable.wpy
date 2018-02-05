@@ -61,7 +61,7 @@
         <view class="weui-flex">
             <view class="weui-flex__item" wx:for="{{tableList}}" wx:key="id"><view class="placeholder title">{{item.name}}</view></view>
         </view>
-        <view class="weui-flex" wx:for="{{tableValueList}}" wx:key="id">
+        <view class="weui-flex" wx:for="{{tableValueList}}" wx:key="id" @tap="confirm({{item.id}}, {{item.row4}})">
             <view class="weui-flex__item">
                 <view class="placeholder content">
                     {{item.row1}}
@@ -94,5 +94,16 @@
             tableList: {},
             tableValueList: {}
         };
+        methods = {
+            confirm(id, info) {
+                this.$emit('confirm', id, info);
+                console.log(info);
+                if (info === '待确认') {
+                    wx.navigateTo({
+                        url: 'remitConfirm?noHistory=true'
+                    });
+                }
+            }
+        }
     }
 </script>

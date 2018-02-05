@@ -30,7 +30,7 @@
     <view class="weui-flex" style="margin-top: 200rpx;">
         <button class="weui-btn authenticate-btn" type="default" @tap="ok">确认已到账</button>
     </view>
-    <view class="tip-nav" style="margin-top: 30rpx; font-size: 24rpx; color: #403E40;" @tap="next">
+    <view class="tip-nav" style="margin-top: 30rpx; font-size: 24rpx; color: #403E40;" @tap="next" wx:if="{{!noHistory}}">
         历史汇款记录
     </view>
   </view>
@@ -60,5 +60,12 @@
                 });
             }
         };
+        data = {
+            noHistory: false
+        };
+        onLoad(option) {
+            console.log(option);
+            this.noHistory = option.noHistory === 'true';
+        }
     }
 </script>

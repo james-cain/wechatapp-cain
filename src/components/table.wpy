@@ -5,7 +5,7 @@
         background-color: #fff;
     }
     .placeholder{
-        text-align: center;
+        text-align: left;
         box-sizing: border-box;
         border-bottom: 1px solid #E5E5E5;
         position: relative;

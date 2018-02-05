@@ -262,6 +262,7 @@
                     success: (data) => {
                         wx.showToast({
                             title: '已成功发送催办消息',
+                            icon: 'none',
                             duraction: 2000
                         });
                     }

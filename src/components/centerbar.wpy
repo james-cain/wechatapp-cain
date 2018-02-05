@@ -110,7 +110,7 @@
               </view>
               <view class="weui-flex__item">
                   <view class="placeholder content">
-                      <view class="content__name">提成奖金（元）</view>
+                      <view class="content__name">{{lastGridName}}</view>
                       <view class="content__sum">{{sum.weight3}}</view>
                   </view>
                   <view class="content__in-access"></view>
@@ -131,7 +131,8 @@
                 default: false
             },
             sum: {},
-            type: String
+            type: String,
+            lastGridName: String
         };
 
         methods = {
