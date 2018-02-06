@@ -89,7 +89,7 @@
             <view class="repurchase-head__name">{{item.name}}</view>
             <view class="repurchase-head__state">{{item.stateDesc}}</view>
         </view>
-        <view url="" class="weui-media-box weui-media-box_appmsg" hover-class="weui-cell_active">
+        <view class="weui-media-box weui-media-box_appmsg" hover-class="weui-cell_active" @tap="goToPurchase({{item}})">
             <view class="weui-media-box__hd weui-media-box__hd_in-appmsg">
                 <image class="weui-media-box__thumb" src="../images/gold.jpg" />
             </view>
@@ -119,8 +119,9 @@
                     <button class="weui-btn mini-btn" type="default" size="mini" wx:if="{{permission === 'ywy' && item.state == '0'}}" @tap="getCui({{item}})">催申请付款</button>
                     <button class="weui-btn mini-btn" type="default" size="mini" wx:if="{{permission === 'ywy' && item.state == '1'}}" @tap="getCui({{item}})">催财务审核</button>
                     <button class="weui-btn mini-btn" type="default" size="mini" wx:if="{{permission === 'ywy' && item.state == '2'}}" @tap="getCui({{item}})">催打款</button>
+                    <button class="weui-btn mini-btn red" type="default" size="mini" wx:if="{{permission === 'ywy' && item.state == '-1'}}" @tap="goToPurchase({{item}})">修改</button>
                     <button class="weui-btn mini-btn red" type="default" size="mini" wx:if="{{permission === 'ywy' && item.state == '3'}}" @tap="changeState({{item}}, 4)">确认收款</button>
-                    <button class="weui-btn mini-btn" type="default" size="mini" wx:if="{{permission === 'ywy' && item.state == '4'}}">查看更多</button>
+                    <button class="weui-btn mini-btn" type="default" size="mini" wx:if="{{permission === 'ywy' && item.state == '4'}}" @tap="goToPurchase({{item}})">查看更多</button>
                     <!-- 业务员相关操作流程 -->
                     <!-- 回购员相关操作流程 -->
                     <button class="weui-btn mini-btn" type="default" size="mini" wx:if="{{permission === 'hgy' && item.logisticsState == '0'}}" @tap="getCui({{item}})">催邮寄</button>
@@ -132,7 +133,7 @@
                     <button class="weui-btn mini-btn" type="default" size="mini" wx:if="{{permission === 'hgy' && item.state == '2'}}" @tap="getCui({{item}})">催打款</button>
                     <button class="weui-btn mini-btn" type="default" size="mini" wx:if="{{permission === 'hgy' && item.state == '3'}}" @tap="getCui({{item}})">催确认收款</button>
                     <button class="weui-btn mini-btn red" type="default" size="mini" wx:if="{{permission === 'hgy' && item.state == '0'}}" @tap="changeState({{item}}, 1)">申请付款</button>
-                    <button class="weui-btn mini-btn" type="default" size="mini" wx:if="{{permission === 'hgy' && item.state == '4'}}">查看更多</button>
+                    <button class="weui-btn mini-btn" type="default" size="mini" wx:if="{{permission === 'hgy' && item.state == '4'}}" @tap="goToPurchase({{item}})">查看更多</button>
                     <!-- 回购员相关操作流程 -->
                     <!-- 财务员相关操作流程 -->
                     <button class="weui-btn mini-btn" type="default" size="mini" wx:if="{{permission === 'cw' && item.logisticsState == '0'}}" @tap="getCui({{item}})">催邮寄</button>
@@ -144,7 +145,7 @@
                     <button class="weui-btn mini-btn" type="default" size="mini" wx:if="{{permission === 'cw' && item.state == '2'}}" @tap="getCui({{item}})">催打款</button>
                     <button class="weui-btn mini-btn" type="default" size="mini" wx:if="{{permission === 'cw' && item.state == '3'}}" @tap="getCui({{item}})">催确认收款</button>
                     <button class="weui-btn mini-btn red" type="default" size="mini" wx:if="{{permission === 'cw' && item.state == '1'}}" @tap="changeState({{item}}, 2)">审核</button>
-                    <button class="weui-btn mini-btn" type="default" size="mini" wx:if="{{permission === 'cw' && item.state == '4'}}">查看更多</button>
+                    <button class="weui-btn mini-btn" type="default" size="mini" wx:if="{{permission === 'cw' && item.state == '4'}}" @tap="goToPurchase({{item}})">查看更多</button>
                     <!-- 财务员相关操作流程 -->
                     <!-- 众恒隆相关操作流程 -->
                     <!-- <button class="weui-btn mini-btn" type="default" size="mini" wx:if="{{permission === 'zhl' && item.logisticsState == '0'}}">催邮寄</button>
@@ -154,7 +155,7 @@
                     <!-- <button class="weui-btn mini-btn" type="default" size="mini" wx:if="{{permission === 'zhl' && item.state == '0'}}">催申请付款</button> -->
                     <button class="weui-btn mini-btn" type="default" size="mini" wx:if="{{permission === 'zhl' && item.state == '3'}}" @tap="getCui({{item}})">催确认收款</button>
                     <button class="weui-btn mini-btn red" type="default" size="mini" wx:if="{{permission === 'zhl' && item.state == '2'}}" @tap="changeState({{item}}, 3)">确认打款</button>
-                    <button class="weui-btn mini-btn" type="default" size="mini" wx:if="{{permission === 'zhl' && item.state == '4'}}">查看更多</button>
+                    <button class="weui-btn mini-btn" type="default" size="mini" wx:if="{{permission === 'zhl' && item.state == '4'}}" @tap="goToPurchase({{item}})">查看更多</button>
                     <!-- 众恒隆相关操作流程 -->
                 </view>
             </view>
@@ -233,6 +234,9 @@
                 } else {
                     this.$emit('getCui', purchase.orderNo);
                 }
+            },
+            goToPurchase (purchase) {
+                this.$emit('goToPurchase', purchase.orderNo);
             },
         };
         onLoad () {

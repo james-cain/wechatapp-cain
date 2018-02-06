@@ -337,12 +337,21 @@
                         this.refreshHistory();
                     }
                 });
+            },
+            // 跳转详情页
+            goToPurchase (id) {
+                wx.navigateTo({
+                    url: `purchaseList?id=${id}`
+                });
             }
         };
 
         currentStateDesc (stateDesc) {
             let tmp = '';
             switch (stateDesc) {
+            case '-1':
+                tmp = '待重新提交回购单';
+                break;
             case '0':
                 tmp = '待申请付款';
                 break;
@@ -366,6 +375,9 @@
         currentState (state) {
             let tmp = '';
             switch (state) {
+            case '-1':
+                tmp = '待修改';
+                break;
             case '0':
                 tmp = '待申请付款';
                 break;

@@ -10,6 +10,7 @@ class Utils {
         this.judge = this.judge.bind(this);
         this.beforeSubmit = this.beforeSubmit.bind(this);
         this.formatFloat = this.formatFloat.bind(this);
+        this.checkNetWorkStatus = this.checkNetWorkStatus.bind(this);
     }
 
     formatFunc (date, format) {
@@ -58,81 +59,86 @@ class Utils {
         if (/login/g.test(param.url)) {
             errorTipImg = '../images/warn.png';
         }
-        wx.request({
-            url: this.server_url + param.url,
-            method: param.method,
-            dataType: param.dataType,
-            data: param.params,
-            header: {
-                'token': wx.getStorageSync('session'),
-                'content-type': param.contentType
-            },
-            success: (data) => {
-                // console.log(data);
-                wx.hideLoading();
-                if (data.data.code === 401) {
+        if (this.checkNetWorkStatus()) {
+            wx.request({
+                url: this.server_url + param.url,
+                method: param.method,
+                dataType: param.dataType,
+                data: param.params,
+                header: {
+                    'token': wx.getStorageSync('session'),
+                    'content-type': param.contentType
+                },
+                success: (data) => {
+                    // console.log(data);
+                    wx.hideLoading();
+                    if (data.data.code === 401) {
+                        wx.showToast({
+                            title: '会话过期,正在重新获取认证',
+                            icon: 'none',
+                            duration: 1000
+                        });
+                        self.auth();
+                    } else if (data.data.code === 500 && param.from !== 'checksession') {
+                        wx.showToast({
+                            title: data.data.msg,
+                            icon: 'none',
+                            duration: 2000
+                        });
+                    } else {
+                        const dataInData = data.data ? data.data : data;
+                        param.success(dataInData);
+                    }
+                },
+                fail: (e) => {
+                    wx.hideLoading();
                     wx.showToast({
-                        title: 'session过期',
+                        title: '服务请求失败',
                         image: errorTipImg,
-                        duration: 1000
-                    });
-                    self.auth();
-                } else if (data.data.code === 500 && param.from !== 'checksession') {
-                    wx.showToast({
-                        title: data.data.msg,
-                        icon: 'none',
                         duration: 2000
                     });
-                } else {
-                    const dataInData = data.data ? data.data : data;
-                    param.success(dataInData);
                 }
-            },
-            fail: (e) => {
-                wx.hideLoading();
-                wx.showToast({
-                    title: '服务请求失败',
-                    image: errorTipImg,
-                    duration: 2000
-                });
-            }
-        });
+            });
+        }
     }
 
     auth () {
-        this.ajax({
-            url: '/app/wx/user/info',
-            method: 'GET',
-            params: {
-                openid: this.wechatAccount.id
-            },
-            success(data) {
-                // console.log(data);
-                if (data.code === 0) {
-                    wx.setStorageSync('session', data.token);
-                    wx.setStorageSync('userType', data.userType);
-                    this.session = data.token;
-                    setTimeout(() => {
+        if (this.checkNetWorkStatus()) {
+            this.ajax({
+                url: '/app/wx/user/info',
+                method: 'GET',
+                params: {
+                    openid: this.wechatAccount.id
+                },
+                success(data) {
+                    // console.log(data);
+                    if (data.code === 0) {
+                        wx.setStorageSync('session', data.token);
+                        wx.setStorageSync('userType', data.userType);
+                        this.session = data.token;
+                        setTimeout(() => {
+                            wx.showToast({
+                                title: '认证成功，请重新操作!',
+                                icon: 'none',
+                                duration: 2000
+                            });
+                        }, 1000);
+                    } else if (data.code === '500') {
                         wx.showToast({
-                            title: '重新操作',
+                            title: data.msg,
+                            icon: 'none',
                             duration: 2000
                         });
-                    }, 1000);
-                } else if (data.code === '500') {
-                    wx.showToast({
-                        title: data.msg,
-                        icon: 'none',
-                        duration: 2000
-                    });
+                    }
                 }
-            }
-        });
+            });
+        }
     }
 
     checkSession () {
         const session = wx.getStorageSync('session');
         // console.log('checkSession', session);
-        if (!session) {
+        if (!session && this.checkNetWorkStatus()) {
             const wechatAccount = wx.getStorageSync('weChatAccount') ? JSON.parse(wx.getStorageSync('weChatAccount')) : '';
             this.ajax({
                 url: '/app/wx/user/info',
@@ -211,6 +217,35 @@ class Utils {
         const pm = p * m;
         const wm = w * m;
         return parseInt(pm * wm, 10) / (m * m);
+    }
+
+    // 网络连接验证
+    checkNetWorkStatus() {
+        let status = true;
+        wx.getNetworkType({
+            success: (res) => {
+                // 返回网络类型2g,3g,4g,wifi,none,unknown
+                const networkType = res.networkType
+                if (networkType === 'none') {
+                    // 没有网络连接
+                    wx.showToast({
+                        title: '没有网络连接，请检查您的网络设置',
+                        icon: 'none',
+                        duration: 2000
+                    });
+                    status = false;
+                } else if (networkType === 'unknown') {
+                    // 未知的网络类型
+                    wx.showToast({
+                        title: '未知的网络类型，请检查您的网络设置',
+                        icon: 'none',
+                        duration: 2000
+                    });
+                    status = false;
+                }
+            }
+        });
+        return status;
     }
 }
 
