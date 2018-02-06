@@ -213,7 +213,7 @@
             </view>
         </view>
         <view class="weui-cell" @tap="goToUpdate(payeeBankNo)">
-            <view class="weui-cell__bd">收款号码</view>
+            <view class="weui-cell__bd">收款账号</view>
             <view class="weui-cell__ft">
                 {{purchase.cardNumber}}
                 <view class="content__in-access" wx:if="{{permission === 'ywy' && purchase.state == '-1'}}"></view>

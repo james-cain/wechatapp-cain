@@ -120,7 +120,7 @@
             </view>
             <view class="weui-cell__bd flex-bd">
                 <text>￥</text>
-                <input class="weui-input" type="digit" value="{{realAmountPrice}}" placeholder="请输入回购实物黄金总额" disabled @blur="blurAmountPrice"/>
+                <input class="weui-input" type="digit" value="{{realAmountPrice}}" placeholder="自动计算" disabled @blur="blurAmountPrice"/>
             </view>
         </view>
         <view class="weui-cell weui-cell_select">
@@ -149,7 +149,7 @@
             </view>
             <view class="weui-cell__bd flex-bd">
                 <text>￥</text>
-                <input class="weui-input" type="digit" value="{{chargeAmountPrice}}" @blur="blurChargeAmountPrice" disabled placeholder="请输入中收费合计金额"/>
+                <input class="weui-input" type="digit" value="{{chargeAmountPrice}}" @blur="blurChargeAmountPrice" disabled placeholder="自动计算"/>
             </view>
         </view>
         <view class="weui-cell weui-cell_input">

@@ -55,10 +55,10 @@
         border-radius: 5px;
     }
     .gou-nav {
-        width: 30rpx;
+        width: 40rpx;
         text-align: center;
         line-height: 128rpx;
-        margin: 5px;
+        margin: 5px 10px 5px 0;
     }
     .next-btn {
         width: 184rpx;

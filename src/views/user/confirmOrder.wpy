@@ -48,7 +48,7 @@
         transform: rotate(45deg);
         top: 50%;
         margin-top: -7rpx;
-        right: 20rpx;
+        right: 10rpx;
     }
 }
 </style>

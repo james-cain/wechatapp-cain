@@ -79,7 +79,7 @@
                     </view>
                     <view class="weui-flex__item3">
                         <text class="price">{{goldPrice.price}}</text>
-                        <text style="font-size: 24rpx;">元/克</text>
+                        <text style="font-size: 24rpx; font-weight: bold;">元/克</text>
                     </view>
                     <view class="weui-flex__item4 tr">
                         <text class="update">{{goldPrice.updateDate}}更新</text>
@@ -93,7 +93,7 @@
                     <view class="weui-flex__item item-flex">
                         <view class="weui-flex__item item-flex2">
                             <text style="font-size: 28rpx; height: 32rpx; line-height: 32rpx;">{{item.name}}</text>
-                            <text style="font-size: 24rpx; height: 32rpx; line-height: 32rpx;">{{item.desc}}</text>
+                            <text style="font-size: 20rpx; height: 32rpx; line-height: 32rpx; margin-top: 10rpx;">{{item.desc}}</text>
                         </view>
                         <image src="{{item.imageUrl}}" lazy-load="true" class="doc">
                     </view>
