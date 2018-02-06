@@ -11,8 +11,11 @@
     width: 100%;
     box-sizing: border-box;
     top: 200rpx;
-    .placeholder{
+    .navigate-nav {
         margin: 5px;
+        height: 140rpx;
+    }
+    .placeholder{
         padding: 0 10px;
         text-align: center;
         background-color: #fff;
@@ -85,7 +88,7 @@
             </view>
         </view>
         <view class="weui-flex">
-            <navigator class="weui-flex__item" wx:for="{{bannerIntroduce}}" url="{{item.url}}" wx:key="item.name">
+            <navigator class="weui-flex__item navigate-nav" wx:for="{{bannerIntroduce}}" url="{{item.url}}" wx:key="item.name">
                 <view class="placeholder">
                     <view class="weui-flex__item item-flex">
                         <view class="weui-flex__item item-flex2">
