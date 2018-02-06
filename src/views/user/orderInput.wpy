@@ -248,7 +248,7 @@
         };
         watch = {
             chargePerPrice (val) {
-                this.chargeAmountPrice = 1 * val * this.weight;
+                this.chargeAmountPrice = utils.formatFloat(val, this.weight, 3);
             }
         };
         computed = {
@@ -262,7 +262,7 @@
                 return this.perPrice;
             },
             realAmountPrice () {
-                return 1 * this.realPerPrice * this.weight;
+                return utils.formatFloat(this.realPerPrice, this.weight, 3);
             }
         };
         methods = {

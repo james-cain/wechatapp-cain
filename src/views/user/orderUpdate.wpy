@@ -196,10 +196,10 @@
         };
         watch = {
             perPrice (val) {
-                this.amountPrice = 1 * val * this.weight;
+                this.amountPrice = utils.formatFloat(val, this.weight, 3);
             },
             chargePerPrice (val) {
-                this.chargeAmountPrice = 1 * val * this.weight;
+                this.chargeAmountPrice = utils.formatFloat(val, this.weight, 3);
             }
         };
         methods = {

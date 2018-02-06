@@ -9,6 +9,7 @@ class Utils {
         this.formatFunc = this.formatFunc.bind(this);
         this.judge = this.judge.bind(this);
         this.beforeSubmit = this.beforeSubmit.bind(this);
+        this.formatFloat = this.formatFloat.bind(this);
     }
 
     formatFunc (date, format) {
@@ -202,6 +203,14 @@ class Utils {
             return false;
         }
         return true;
+    }
+
+    // 清除浮点数精度误差
+    formatFloat(p, w, digit) {
+        const m = Math.pow(10, digit);
+        const pm = p * m;
+        const wm = w * m;
+        return parseInt(pm * wm, 10) / (m * m);
     }
 }
 
