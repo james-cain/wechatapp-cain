@@ -84,25 +84,31 @@
             </view>
         </view>
         <view class="rank-nav" wx:if="{{tab==1}}">
-            <view class="rank-nav__list" wx:for="{{[1, 2, 3, 4, 5, 6, 7, 8, 9]}}">
-                <view class="rank-nav__list-no">{{item}}</view>
-                <image src="../../images/banner.png" lazy-load="true" class="avatar"/>
+            <view class="rank-nav__list" wx:for="{{detail1}}">
+                <view class="rank-nav__list-no">{{item.num}}</view>
+                <image src="{{item.headUrl}}" lazy-load="true" class="avatar"/>
                 <view class="rank-nav__list-name">
-                    <view class="name">陈小波</view>
-                    <view>济南营业部</view>
+                    <view class="name">{{item.username}}</view>
+                    <view>{{item.region}}</view>
                 </view>
-                <view class="rank-nav__list-money">￥968200</view>
+                <view class="rank-nav__list-money">￥{{item.total}}</view>
+            </view>
+            <view class="weui-loadmore" wx:if="{{hasNoData1}}">
+                <view class="weui-loadmore__tips weui-loadmore__tips_in-line">没有排名数据哦~</view>
             </view>
         </view>
         <view class="rank-nav" wx:if="{{tab==2}}">
-            <view class="rank-nav__list" wx:for="{{[1, 2, 3, 4, 5, 6, 7, 8, 9]}}">
-                <view class="rank-nav__list-no">{{item}}</view>
-                <image src="../../images/banner.png" lazy-load="true" class="avatar"/>
+            <view class="rank-nav__list" wx:for="{{detail2}}">
+                <view class="rank-nav__list-no">{{item.num}}</view>
+                <image src="{{item.headUrl}}" lazy-load="true" class="avatar"/>
                 <view class="rank-nav__list-name">
-                    <view class="name">谢磊</view>
-                    <view>济南营业部</view>
+                    <view class="name">{{item.username}}</view>
+                    <view>{{item.region}}</view>
                 </view>
-                <view class="rank-nav__list-money">￥968200</view>
+                <view class="rank-nav__list-money">￥{{item.total}}</view>
+            </view>
+            <view class="weui-loadmore" wx:if="{{hasNoData2}}">
+                <view class="weui-loadmore__tips weui-loadmore__tips_in-line">没有排名数据哦~</view>
             </view>
         </view>
     </view>
@@ -110,21 +116,71 @@
 
 <script>
     import wepy from 'wepy';
+    import utils from '../../utils/index';
 
     export default class Rank extends wepy.page {
         config = {
             navigationBarTitleText: '回购金额排行榜'
         };
         data = {
-            tab: 1
+            tab: 1,
+            detail1: [],
+            detail2: [],
+            hasNoData1: false,
+            hasNoData2: false
         };
         methods = {
             changeTab(id) {
                 this.tab = id;
+                this.refreshDetailData(1 * this.tab);
             }
         };
+        getWeekDetail() {
+            if (this.detail1 && this.detail1.length === 0) {
+                utils.ajax({
+                    url: '/my/statistics/ranks/week/list',
+                    method: 'GET',
+                    success: (data) => {
+                        this.detail1 = data.data;
+                        if (this.detail1.length === 0) {
+                            this.hasNoData1 = true;
+                        }
+                        this.$apply();
+                    }
+                });
+            }
+        }
+
+        getMonthDetail() {
+            if (this.detail2 && this.detail2.length === 0) {
+                utils.ajax({
+                    url: '/my/statistics/ranks/month/list',
+                    method: 'GET',
+                    success: (data) => {
+                        this.detail2 = data.data;
+                        if (this.detail2.length === 0) {
+                            this.hasNoData2 = true;
+                        }
+                        this.$apply();
+                    }
+                });
+            }
+        }
+        refreshDetailData(index) {
+            switch (index) {
+            case 1:
+                this.getWeekDetail();
+                break;
+            case 2:
+                this.getMonthDetail();
+                break;
+            default:
+                // this.getWeekDetail();
+            }
+        }
         onLoad(option) {
             this.tab = option.type || 1;
+            this.refreshDetailData(1 * this.tab);
         };
     }
 </script>

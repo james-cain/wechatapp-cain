@@ -225,7 +225,7 @@ class Utils {
         wx.getNetworkType({
             success: (res) => {
                 // 返回网络类型2g,3g,4g,wifi,none,unknown
-                const networkType = res.networkType
+                const networkType = res.networkType;
                 if (networkType === 'none') {
                     // 没有网络连接
                     wx.showToast({
