@@ -116,8 +116,8 @@
         data = {
             img: '',
             name: '',
-            username: '',
-            password: '',
+            username: 'zhonghenglong',
+            password: 'hello123',
             canLogin: false
         };
 
@@ -234,6 +234,7 @@
                     wx.setStorageSync('weChatAccount', '');
                     wx.setStorageSync('session', '');
                     wx.setStorageSync('permissionType', '');
+                    wx.setStorageSync('expressList', '');
                     if (!res.code) {
                         wx.showToast({
                             title: '检查网络是否正常',

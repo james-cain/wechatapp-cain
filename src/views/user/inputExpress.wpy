@@ -84,9 +84,11 @@
             customerName: '',
             orderNo: '',
             expressNo: '',
-            expressName: ['顺丰快递', '圆通快递', '韵达快递'],
+            expressName: [],
             expressIndex: 0,
-            express: {}
+            express: {},
+            // 修改或者是新增的判断类型
+            type: ''
         };
         methods = {
             bindExpressNameChange (e) {
@@ -150,20 +152,58 @@
             return true;
         }
 
+        getExpressList() {
+            let list = [];
+            try {
+                list = JSON.parse(wx.getStorageSync('expressList'));
+            } catch (e) {
+                list = [];
+            }
+            if (list && list.length === 0) {
+                utils.ajax({
+                    url: '/sys/config/express/list',
+                    method: 'GET',
+                    success: (data) => {
+                        console.log(data);
+                        // 快递信息绑定
+                        data.data.forEach(element => {
+                            this.expressName.push(element.name);
+                            this.$apply();
+                        });
+                        wx.setStorageSync('expressList', JSON.stringify(this.expressName));
+                        if (this.type === 'mod') {
+                            this.express = JSON.parse(wx.getStorageSync('modExpress'));
+                            this.expressNo = this.express.expressNo;
+                            this.expressName.forEach((e, idx) => {
+                                if (e === this.express.expressName) {
+                                    this.expressIndex = idx;
+                                    this.$apply();
+                                }
+                            });
+                        }
+                    }
+                });
+            } else {
+                this.expressName = this.expressName.concat(list);
+                if (this.type === 'mod') {
+                    this.express = JSON.parse(wx.getStorageSync('modExpress'));
+                    this.expressNo = this.express.expressNo;
+                    this.expressName.forEach((e, idx) => {
+                        if (e === this.express.expressName) {
+                            this.expressIndex = idx;
+                            this.$apply();
+                        }
+                    });
+                }
+            }
+        }
+
         onLoad(option) {
             this.type = option.type;
             this.customerName = option.name;
             this.orderNo = option.no;
-            if (option.type === 'mod') {
-                this.express = JSON.parse(wx.getStorageSync('modExpress'));
-                this.expressNo = this.express.expressNo;
-                this.expressName.forEach((e, idx) => {
-                    if (e === this.express.expressName) {
-                        this.expressIndex = idx;
-                        this.$apply();
-                    }
-                });
-            }
+            this.type = option.type;
+            this.getExpressList();
         }
     }
 </script>

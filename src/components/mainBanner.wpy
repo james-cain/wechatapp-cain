@@ -14,6 +14,12 @@
     .navigate-nav {
         margin: 5px;
         height: 140rpx;
+        &:first-of-type {
+            margin-left: 0px;
+        }
+        &:last-of-type {
+            margin-right: 0px;
+        }
     }
     .placeholder{
         padding: 0 10px;

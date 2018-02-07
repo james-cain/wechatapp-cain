@@ -68,7 +68,7 @@
     <view class="weui-edit-cells weui-cells_after-title">
         <view class="weui-cell weui-cell_input">
             <view class="weui-cell__bd flex-bd">
-                <input class="weui-input border-input" type="digit" value="{{remitPrice}}" placeholder="填写汇款金额" @blur="blurPurchasePrice" @input="inputPurchasePrice" style="flex: 1;"/>
+                <input class="weui-input border-input" type="digit" value="{{remitPrice}}" placeholder="填写汇款金额" @blur="blurRemitPrice" @input="inputRemitPrice" style="flex: 1;"/>
                 <text class="unit">元</text>
             </view>
         </view>
@@ -140,29 +140,25 @@
             },
             finish () {
                 if (!utils.beforeSubmit(this.remitPrice, '汇款金额不能空')) return;
-                // utils.ajax({
-                //     url: `/gold/update?price=${this.remitPrice}&&lockPrice=${this.lockPrice}`,
-                //     method: 'POST',
-                //     success: (data) => {
-                //         // 更新金价
-                //         wx.showToast({
-                //             title: '发起成功，即将返回首页',
-                //             icon: 'none',
-                //             duration: 2000
-                //         });
-                //         setTimeout(() => {
-                //             wx.navigateBack();
-                //         }, 2000);
-                //     }
-                // });
-                wx.showToast({
-                    title: '发起成功，即将返回首页',
-                    icon: 'none',
-                    duration: 2000
+                const params = {};
+                params.create_date = this.remitDate;
+                params.amounts = this.remitPrice;
+                utils.ajax({
+                    url: '/remittance/save',
+                    method: 'POST',
+                    params,
+                    success: (data) => {
+                        // 发起汇款成功
+                        wx.showToast({
+                            title: '发起汇款成功，即将返回首页',
+                            icon: 'none',
+                            duration: 2000
+                        });
+                        setTimeout(() => {
+                            wx.navigateBack();
+                        }, 2000);
+                    }
                 });
-                setTimeout(() => {
-                    wx.navigateBack();
-                }, 2000);
             },
             next() {
                 wx.navigateTo({
