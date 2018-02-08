@@ -39,6 +39,9 @@
         color: #fff;
         font-size: 24rpx;
     }
+    .hide {
+        display: none;
+    }
 }
 </style>
 <template>
@@ -164,6 +167,8 @@
     <view class="weui-flex">
         <text class="iconfont icon-zhaoxiangji" @tap="openCamera" style="color: #C4261D; margin-right: 20rpx;"></text>
         <text @tap="openCamera">拍摄黄金实物</text>
+        <text class="iconfont icon-yulan {{materialAddr !== '' ? '' : 'hide'}}" @tap="read" style="margin-left: 10px; color: #C4261D; font-size: 40rpx;"></text>
+        <text class="iconfont icon-gou {{materialAddr !== '' ? '' : 'hide'}}" style="color: #C4261D;"></text>
     </view>
     <view class="weui-cells__title">收款账号</view>
     <view class="weui-cells weui-cells_after-title">
@@ -390,6 +395,20 @@
             },
             blurPayeeBankNo (e) {
                 this.payeeBankNo = e.detail.value;
+            },
+            read () {
+                // console.log(`${utils.server_url}/order/view/img/${fid}?token=${wx.getStorageSync('session')}`);
+                const imgUrl = [`${utils.server_url}/order/view/img/${this.materialAddr}?token=${wx.getStorageSync('session')}`];
+                wx.previewImage({
+                    current: `${utils.server_url}/order/view/img/${this.materialAddr}?token=${wx.getStorageSync('session')}`,
+                    urls: imgUrl,
+                    fail(e) {
+                        // console.log(e);
+                    },
+                    success(e) {
+                        // console.log(e);
+                    }
+                });
             },
             openCamera () {
                 const self = this;

@@ -483,8 +483,8 @@
                 });
             },
             read (fid) {
-                console.log(wx.getStorageSync('session'));
-                console.log(`${utils.server_url}/order/view/img/${fid}?token=${wx.getStorageSync('session')}`);
+                // console.log(wx.getStorageSync('session'));
+                // console.log(`${utils.server_url}/order/view/img/${fid}?token=${wx.getStorageSync('session')}`);
                 const imgUrl = [`${utils.server_url}/order/view/img/${fid}?token=${wx.getStorageSync('session')}`];
                 wx.previewImage({
                     current: `${utils.server_url}/order/view/img/${fid}?token=${wx.getStorageSync('session')}`,
