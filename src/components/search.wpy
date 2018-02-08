@@ -232,6 +232,13 @@
             }
         };
 
+        // events = {
+        //     // 跳转详情页
+        //     goToPurchase (id) {
+        //         this.$emit('goToPurchase', id);
+        //     }
+        // }
+
         // 点击搜索按钮初始加载第一页的数据
         refreshResult(searchCondition) {
             this.searchResultPage = 1;

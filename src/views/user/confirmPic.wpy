@@ -41,7 +41,8 @@
             navigationBarTitleText: '上传回购确认书'
         };
         data = {
-            tempFilePaths: []
+            tempFilePaths: [],
+            type: ''
         };
         methods = {
             openCamera () {
@@ -51,7 +52,12 @@
                     sizeType: ['compressed'],
                     success: (res) => {
                         // 返回选定照片的本地文件路径列表，tempFilePath可以作为img标签的src属性显示图片
-                        const tmp = JSON.parse(wx.getStorageSync('purchaseOrder'));
+                        let tmp = {};
+                        if (self.type === 'pay') {
+                            tmp = JSON.parse(wx.getStorageSync('payOrder'));
+                        } else {
+                            tmp = JSON.parse(wx.getStorageSync('purchaseOrder'));
+                        }
                         self.tempFilePaths.length = 0;
                         self.tempFilePaths = res.tempFilePaths;
                         wx.showLoading({
@@ -75,15 +81,23 @@
                                         duration: 2000
                                     });
                                 } else {
-                                    tmp.fid = data.fid;
+                                    if (self.type === 'pay') {
+                                        tmp.billImg = data.fid;
+                                    } else {
+                                        tmp.fid = data.fid;
+                                    }
                                     wx.showToast({
                                         title: '上传成功',
                                         duration: 2000
                                     });
                                     tmp.tempFilePaths = self.tempFilePaths;
                                     self.$apply();
-                                    wx.setStorageSync('purchaseOrder', JSON.stringify(tmp));
-                                    wx.navigateBack();
+                                    if (self.type === 'pay') {
+                                        wx.setStorageSync('payOrder', JSON.stringify(tmp));
+                                    } else {
+                                        wx.setStorageSync('purchaseOrder', JSON.stringify(tmp));
+                                        wx.navigateBack();
+                                    }
                                 }
                             }
                         });
@@ -94,9 +108,14 @@
                 wx.navigateBack();
             }
         };
-        onShow () {
+        onLoad(option) {
+            this.type = option.type;
             try {
-                this.tempFilePaths = JSON.parse(wx.getStorageSync('purchaseOrder')).tempFilePaths;
+                if (this.type === 'pay') {
+                    this.tempFilePaths = JSON.parse(wx.getStorageSync('payOrder')).tempFilePaths;
+                } else {
+                    this.tempFilePaths = JSON.parse(wx.getStorageSync('purchaseOrder')).tempFilePaths;
+                }
             } catch (e) {
                 this.tempFilePaths = [];
             }

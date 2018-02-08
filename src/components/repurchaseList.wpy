@@ -199,7 +199,12 @@
                         confirmColor: '#C4261D',
                         success: (res) => {
                             if (res.confirm) {
-                                this.$emit('changeState', order, stateType);
+                                // 众恒隆不能直接修改状态  要跳转到确认付款页付款。后修改状态
+                                if (stateType === '3') {
+                                    this.$emit('goToConfirmPay', order);
+                                } else {
+                                    this.$emit('changeState', order, stateType);
+                                }
                             }
                         }
                     });

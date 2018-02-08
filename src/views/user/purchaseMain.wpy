@@ -193,6 +193,12 @@
                     url: `inputExpress?name=${order.name}&&no=${order.orderNo}`
                 });
             },
+            goToConfirmPay(order) {
+                wx.setStorageSync('payOrder', '');
+                wx.navigateTo({
+                    url: `confirmPay?no=${order.orderNo}`
+                });
+            },
             // 状态变更
             changeState (order, state) {
                 utils.ajax({
@@ -345,7 +351,6 @@
                 });
             }
         };
-
         currentStateDesc (stateDesc) {
             let tmp = '';
             switch (stateDesc) {
@@ -502,7 +507,7 @@
         onShow () {
             this.inputShowed = false;
             this.clear = true;
-            this.activeIndex = 0;
+            // this.activeIndex = 0;
             this.page = [1, 1, 1, 1, 1];
             this.noBackLog = [false, false, false, false, false];
             this.loading = [false, false, false, false, false];
@@ -511,10 +516,11 @@
             this.type2OrderList.length = 0;
             this.type3OrderList.length = 0;
             this.type4OrderList.length = 0;
-            this.qryBuybackOrder('all', 0);
+            this.qryBuybackOrder(this.getType(this.activeIndex), this.activeIndex);
         };
 
         onLoad () {
+            this.activeIndex = 0;
             this.permission = wx.getStorageSync('permissionType');
             switch (this.permission) {
             case 'ywy':

@@ -140,6 +140,7 @@ export default class extends wepy.app {
             'views/user/explain',
             'views/user/confirmOrderUpdate',
             'views/user/editRemit',
+            'views/user/confirmPay',
 
             'views/manager/managerMain',
             'views/manager/purchaseMain',

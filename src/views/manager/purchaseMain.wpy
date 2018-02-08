@@ -10,18 +10,18 @@
 </style>
 <template>
     <view class="page" style="padding-bottom: 40px;">
-        <Search :inputShowed.sync="inputShowed" :clear.sync="clear" placeholder="搜索营业部、业务员、日期、客户" :repurchaseList.sync="tableList" :searchHistoryPage.sync="searchHistoryPage" :searchResultPage.sync="searchResultPage" :resultLoading.sync="resultLoading" :noResultBackLog.sync="noResultBackLog" :hasNoSearchResult.sync="hasNoSearchResult"></Search>
+        <Search :inputShowed.sync="inputShowed" :clear.sync="clear" placeholder="搜索营业部、业务员、日期、客户" :repurchaseList.sync="searchOrderList" :searchHistoryPage.sync="searchHistoryPage" :searchResultPage.sync="searchResultPage" :resultLoading.sync="resultLoading" :noResultBackLog.sync="noResultBackLog" :hasNoSearchResult.sync="hasNoSearchResult" :historySearchList.sync="historySearchList"></Search>
         <Tab :activeIndex.sync="activeIndex" :sliderWidth.sync="sliderWidth" :tabs.sync="tabs"></Tab>
         <view class="weui-tab__panel {{inputShowed ? 'close' : ''}}">
             <view class="weui-tab__content" hidden="{{activeIndex != 0}}">
-                <Table :tableList="tableList" :tableType="tableType" :tableValueList="tableValueList"></Table>
-                <view class="weui-loadmore">
+                <Table :tableList="tableList" :tableType="tableType" :tableValueList.sync="tableValueList"></Table>
+                <view class="weui-loadmore" wx:if="{{noBackLog[0] && (page[0] !== 1 && page[0] !== 2)}}">
                     <view class="weui-loadmore__tips weui-loadmore__tips_in-line">没有了，别拉了~</view>
                 </view>
             </view>
             <view class="weui-tab__content" hidden="{{activeIndex != 1}}">
-                <Table2 :tableList="tableList" :tableType="tableType" :tableValueList="tableValueList2"></Table2>
-                <view class="weui-loadmore">
+                <Table2 :tableList="tableList" :tableType="tableType" :tableValueList.sync="tableValueList2"></Table2>
+                <view class="weui-loadmore" wx:if="{{noBackLog[0] && (page[0] !== 1 && page[0] !== 2)}}">
                     <view class="weui-loadmore__tips weui-loadmore__tips_in-line">没有了，别拉了~</view>
                 </view>
             </view>
@@ -75,82 +75,8 @@
                     name: '营业部'
                 },
             ],
-            tableValueList: [
-                {
-                    id: 1,
-                    row1: '邓泽灵',
-                    date: '2017/11/08',
-                    row2: '400',
-                    row3: '陈林飞',
-                    row4: '深圳',
-                    type: ''
-                },
-                {
-                    id: 2,
-                    row1: '欧阳姗姗',
-                    date: '2017/11/08',
-                    row2: '200',
-                    row3: '李清',
-                    row4: '南京',
-                    type: ''
-                },
-                {
-                    id: 1,
-                    row1: '邓志帆',
-                    date: '2017/11/08',
-                    row2: '400',
-                    row3: '黄海波',
-                    row4: '合肥',
-                    type: ''
-                },
-                {
-                    id: 1,
-                    row1: '李子青',
-                    date: '2017/11/08',
-                    row2: '400',
-                    row3: '王二东',
-                    row4: '海口',
-                    type: ''
-                }
-            ],
-            tableValueList2: [
-                {
-                    id: 1,
-                    row1: '邓泽灵2',
-                    date: '2017/11/08',
-                    row2: '400',
-                    row3: '陈晓晓',
-                    row4: '武汉',
-                    type: ''
-                },
-                {
-                    id: 2,
-                    row1: '欧阳姗姗2',
-                    date: '2017/11/08',
-                    row2: '200',
-                    row3: '王霞',
-                    row4: '郑州',
-                    type: ''
-                },
-                {
-                    id: 1,
-                    row1: '邓志帆2',
-                    date: '2017/11/08',
-                    row2: '400',
-                    row3: '李辉',
-                    row4: '上海',
-                    type: ''
-                },
-                {
-                    id: 1,
-                    row1: '李子青2',
-                    date: '2017/11/08',
-                    row2: '400',
-                    row3: '陈菲琳',
-                    row4: '深圳',
-                    type: ''
-                }
-            ],
+            tableValueList: [],
+            tableValueList2: [],
             tabBarList: {
                 color: '#403E40',
                 selectedColor: '#C4261D',
@@ -184,6 +110,10 @@
                 ],
                 position: 'bottom'
             },
+            page: [1, 1],
+            limit: 10,
+            noBackLog: [false, false],
+            loading: [false, false],
             // 搜索中历史和结果限制每页10条记录
             searchLimit: 10,
             // 搜索中历史记录的当前页数
@@ -193,7 +123,9 @@
             searchResultPage: 1,
             resultLoading: false,
             noResultBackLog: false,
-            hasNoSearchResult: false
+            hasNoSearchResult: false,
+            // 历史记录的结果
+            historySearchList: []
         };
 
         methods = {
@@ -231,22 +163,268 @@
 
         events = {
             tabChange (id, e) {
-                // console.log(id, e);
+                this.activeIndex = 1 * id;
+                this.qryBuybackOrder(this.getType(id), (1 * id));
+            },
+            // 更新搜索结果历史记录
+            refreshSearchResult(searchCondition, searchResultPage) {
+                // 通过页数为第一页判断是不是第一次加载数据，若是，删除之前的查询list
+                if (searchResultPage === 1) {
+                    this.searchOrderList.length = 0;
+                    this.noResultBackLog = false;
+                    this.hasNoSearchResult = false;
+                }
+                if (!this.noResultBackLog) {
+                    this.resultLoading = true;
+                    utils.ajax({
+                        url: `/order/search?key=${searchCondition}&page=${searchResultPage}&limit=${this.searchLimit}`,
+                        method: 'GET',
+                        success: (data) => {
+                            const currentData = data.data;
+                            const currentDataHandle = this.changeCurrentData(currentData.list);
+                            this.searchResultPage += 1;
+                            this.searchOrderList = this.searchOrderList.concat(currentDataHandle);
+                            if (currentData.totalCount <= this.limit || currentData.list.length < this.limit) {
+                                if (1 * currentData.totalCount === 0) {
+                                    this.hasNoSearchResult = true;
+                                }
+                                this.noResultBackLog = true;
+                            }
+                            this.resultLoading = false;
+                            this.$apply();
+                        }
+                    });
+                }
+            },
+            // 获取搜索历史的记录
+            refreshHistory() {
+                this.historySearchList.length = 0;
+                utils.ajax({
+                    url: '/order/search/record/list',
+                    method: 'GET',
+                    success: (data) => {
+                        this.historySearchList = data.data;
+                        this.$apply();
+                    }
+                });
+            },
+            // 保存搜索历史记录
+            saveHistory(searchCondition) {
+                utils.ajax({
+                    url: `/order/search/record/save?value=${searchCondition}`,
+                    method: 'GET',
+                    success: (data) => {
+                        this.refreshHistory();
+                    }
+                });
+            },
+            deleteHistory(historyId) {
+                utils.ajax({
+                    url: `/order/search/record/del?id=${historyId}`,
+                    method: 'GET',
+                    success: (data) => {
+                        this.refreshHistory();
+                    }
+                });
+            },
+            clearHistory() {
+                utils.ajax({
+                    url: `/order/search/record/clear`,
+                    method: 'GET',
+                    success: (data) => {
+                        this.refreshHistory();
+                    }
+                });
+            },
+            // 跳转详情页
+            goToPurchase (id) {
+                wx.navigateTo({
+                    url: `/views/user/purchaseList?id=${id}`
+                });
             }
         };
+        getType(id) {
+            let type = '';
+            switch (this.tabs[id]) {
+            case '本周回购单明细':
+                type = 'today';
+                break;
+            case '本月回购单明细':
+                type = 'week';
+                break;
+            default:
+                type = 'today';
+            }
+            return type;
+        }
+        currentStateDesc (stateDesc) {
+            let tmp = '';
+            switch (stateDesc) {
+            case '-1':
+                tmp = '待重新提交回购单';
+                break;
+            case '0':
+                tmp = '待申请付款';
+                break;
+            case '1':
+                tmp = '已申请付款';
+                break;
+            case '2':
+                tmp = '财务已审核';
+                break;
+            case '3':
+                tmp = '众恒隆已打款';
+                break;
+            case '4':
+                tmp = '业务员已确认';
+                break;
+            default:
+                tmp = '暂无状态';
+            }
+            return tmp;
+        }
+        currentState (state) {
+            let tmp = '';
+            switch (state) {
+            case '-1':
+                tmp = '待修改';
+                break;
+            case '0':
+                tmp = '待申请付款';
+                break;
+            case '1':
+                tmp = '待财务审核';
+                break;
+            case '2':
+                tmp = '待众恒隆打款';
+                break;
+            case '3':
+                tmp = '待业务员确认';
+                break;
+            case '4':
+                tmp = '结束';
+                break;
+            default:
+                tmp = '暂无状态';
+            }
+            return tmp;
+        }
+        currentLogisticsState (logisticsState) {
+            let tmp = '';
+            switch (logisticsState) {
+            case '0':
+                tmp = '待邮寄';
+                break;
+            case '1':
+                tmp = '待回购员签收';
+                break;
+            case '2':
+                tmp = '待移交众恒隆';
+                break;
+            case '3':
+                tmp = '待众恒隆签收';
+                break;
+            case '4':
+                tmp = '众恒隆已签收';
+                break;
+            default:
+                tmp = '暂无物流状态';
+            }
+            return tmp;
+        }
 
+        currentPurchaseDate (date) {
+            if (date) {
+                return date.slice(0, 16);
+            }
+            return '';
+        }
+
+        changeCurrentData(dataList) {
+            dataList.forEach(e => {
+                e.purchaseDate = this.currentPurchaseDate(e.buybackDate);
+                e.logisticsStateDesc = this.currentLogisticsState(e.logisticsState);
+                e.stateDesc = this.currentState(e.state);
+                e.stateDescDesc = this.currentStateDesc(e.state);
+            });
+            return dataList;
+        }
+
+        // 获取搜索历史的记录
+        refreshHistory() {
+            this.historySearchList.length = 0;
+            utils.ajax({
+                url: '/order/search/record/list',
+                method: 'GET',
+                success: (data) => {
+                    this.historySearchList = data.data;
+                    this.$apply();
+                }
+            });
+        }
+        changeCurrentDataList(list) {
+            let tmpList = [];
+            list.forEach(e => {
+                const tmp = {};
+                let date = '暂无回购时间';
+                tmp.id = e.orderNo;
+                tmp.date = e.buybackDate || date;
+                tmp.row1 = e.name;
+                tmp.row2 = e.totalWeight;
+                tmp.row3 = e.username;
+                tmp.row4 = e.region;
+                tmpList.push(tmp);
+            });
+            return tmpList;
+        }
+        // 查询待办处理事项
+        qryBuybackOrder(type, idx) {
+            if (!this.noBackLog[idx]) {
+                this.loading[idx] = true;
+                utils.ajax({
+                    url: `/admin/statistics/${type}/detailed?page=${this.page[idx]}&limit=${this.limit}`,
+                    method: 'GET',
+                    success: (data) => {
+                        console.log(data);
+                        const currentData = data.data || data.page;
+                        const currentDataHandle = this.changeCurrentDataList(currentData.list);
+                        this.page[idx] += 1;
+                        switch (idx) {
+                        case 0:
+                            this.tableValueList = this.tableValueList.concat(currentDataHandle);
+                            break;
+                        case 1:
+                            this.tableValueList2 = this.tableValueList2.concat(currentDataHandle);
+                            break;
+                        }
+                        if (currentData.totalCount <= this.limit || currentData.list.length < this.limit) {
+                            this.noBackLog[idx] = true;
+                        }
+                        this.loading[idx] = false;
+                        this.$apply();
+                    }
+                });
+            }
+        }
         onShow () {
             this.inputShowed = false;
             this.clear = true;
-            this.activeIndex = 0;
+            // this.activeIndex = 0;
+            this.page = [1, 1];
+            this.noBackLog = [false, false];
+            this.loading = [false, false];
+            this.tableValueList.length = 0;
+            this.tableValueList2.length = 0;
+            this.qryBuybackOrder(this.getType(this.activeIndex), this.activeIndex);
         };
 
         onLoad () {
             this.permission = wx.getStorageSync('permissionType');
+            this.activeIndex = 0;
         }
 
-        // onPageScroll (e) {
-        //     console.log(e);
-        // }
+        onReachBottom () {
+            this.qryBuybackOrder(this.getType(this.activeIndex), this.activeIndex);
+        }
     }
 </script>

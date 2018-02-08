@@ -399,16 +399,24 @@
                     },
                 ];
             }
-            // 获取当前保证金报错
-            // if (this.permission === 'hgy' || this.permission === 'cw' || this.permission === 'zhl') {
-            //     utils.ajax({
-            //         url: '/bond/current',
-            //         method: 'GET',
-            //         success: (data) => {
-            //             console.log(data);
-            //         }
-            //     });
-            // }
+            if (this.permission === 'hgy' || this.permission === 'cw' || this.permission === 'zhl') {
+                // 获取当前保证金报错
+                // utils.ajax({
+                //     url: '/bond/current',
+                //     method: 'GET',
+                //     success: (data) => {
+                //         console.log(data);
+                //     }
+                // });
+                // 获取历史账单
+                utils.ajax({
+                    url: '/bill/generate/list',
+                    method: 'GET',
+                    success: (data) => {
+                        console.log(data);
+                    }
+                });
+            }
             this.$apply();
             utils.ajax({
                 url: '/sys/config/bank/network',

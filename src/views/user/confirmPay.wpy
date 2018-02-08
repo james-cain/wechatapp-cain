@@ -1,0 +1,206 @@
+<style type="less">
+@import '../../style/base/mixin/text.less';
+.edit-price {
+    padding: 60rpx;
+    .weui-edit-cells {
+      position: relative;
+      line-height: 1.41176471;
+      font-size: 17px;
+    }
+    .weui-cells__title {
+        color: #3B3B3B;
+        font-size: 24rpx;
+    }
+    .weui-label {
+        color: #262626;
+        font-size: 28rpx;
+        font-weight: bold;
+        width: 260rpx;
+    }
+    .weui-cell__bd {
+        color: #262626;
+        font-size: 28rpx;
+    }
+    .flex-bd {
+        .hLayout(row, right, center);
+    }
+    .weui-special {
+        .weui-select {
+            border-right: 0px;
+        }
+    }
+    .weui-flex {
+        margin: 40rpx 0px;
+        .hLayout(row, center, center);
+        text {
+            color:#262626;
+            font-size: 24rpx;
+        }
+    }
+    .authenticate-btn1 {
+        width: 184rpx;
+        height: 58rpx;
+        background-color: #C4261D !important;
+        border: 1px solid #C4261D !important;
+        color: #fff;
+        font-size: 24rpx;
+    }
+    .border-input {
+      border: 1px solid #9E8D9E;
+      border-radius: 6rpx;
+    }
+    .unit {
+      display: block;
+      width: 100rpx;
+      margin-left: 20rpx;
+      font-size: 24rpx;
+      color: #9E8D9E;
+    }
+}
+</style>
+<template>
+  <view class="edit-price">
+    <view class="weui-cells__title">本次付款手续费金额</view>
+    <view class="weui-edit-cells weui-cells_after-title">
+        <view class="weui-cell weui-cell_input">
+            <view class="weui-cell__bd flex-bd">
+                <input class="weui-input border-input" type="digit" value="{{poundage}}" placeholder="填写手续费金额" @blur="blurPoundage" @input="inputPoundage" style="flex: 1;"/>
+                <text class="unit">元</text>
+            </view>
+        </view>
+    </view>
+    <view class="weui-flex" style="margin: 40rpx 15px; justify-content: left;" @tap="upload">
+        <text>请上传本次付款流水单据</text>
+        <text class="iconfont icon-zhaoxiangji" style="color: #C4261D; margin-right: 20rpx;"></text>
+    </view>
+    <view class="weui-flex" style="padding-bottom: 50rpx;">
+        <button class="weui-btn authenticate-btn1" type="default" @tap="finish">确认</button>
+    </view>
+  </view>
+</template>
+
+<script>
+    import wepy from 'wepy';
+    import utils from '../../utils/index';
+
+    export default class ConfirmPay extends wepy.page {
+        config = {
+            navigationBarTitleText: '确认付款'
+        };
+        data = {
+            orderNo: '',
+            poundage: '',
+            billImg: '',
+            tempFilePaths: [],
+            payOrder: {}
+        };
+
+        methods = {
+            blurPoundage (e) {
+                this.poundage = '' + e.detail.value;
+                const reg = /^[0-9]*(\.[0-9]{1,6})?$/;
+                utils.judge(this.poundage, reg, '手续费金额不合法', () => {
+                    this.poundage = '';
+                    this.$apply();
+                    this.setData({
+                        poundage: ''
+                    });
+                });
+            },
+            inputPoundage (e) {
+                this.poundage = '' + e.detail.value;
+                this.payOrder.poundage = this.poundage;
+            },
+            finish () {
+                if (!utils.beforeSubmit(this.poundage, '手续费金额不能空')) return;
+                if (!utils.beforeSubmit(this.billImg, '付款流水单据必须上传')) return;
+                utils.ajax({
+                    url: '/order/confirm/playmoney',
+                    method: 'POST',
+                    params: this.payOrder,
+                    success: (data) => {
+                        utils.ajax({
+                            url: `/order/state/change/to/3?orderNo=${this.payOrder.orderNo}`,
+                            method: 'GET',
+                            success: (data) => {
+                                wx.showToast({
+                                    title: '已确认付款，待与客户确认收款',
+                                    icon: 'none',
+                                    duration: 2000
+                                });
+                                setTimeout(() => {
+                                    wx.navigateBack();
+                                }, 2000);
+                            }
+                        });
+                    }
+                });
+            },
+            upload () {
+                const self = this;
+                wx.chooseImage({
+                    count: 1,
+                    sizeType: ['compressed'],
+                    success: (res) => {
+                        // 返回选定照片的本地文件路径列表，tempFilePath可以作为img标签的src属性显示图片
+                        self.tempFilePaths = res.tempFilePaths;
+                        wx.showLoading({
+                            title: '正在上传'
+                        });
+                        wx.uploadFile({
+                            url: utils.server_url + '/order/uploadimg',
+                            filePath: self.tempFilePaths[0],
+                            name: 'file',
+                            header: {
+                                'token': wx.getStorageSync('session'),
+                                'content-type': 'multipart/form-data'
+                            },
+                            success: (res) => {
+                                wx.hideLoading();
+                                const data = JSON.parse(res.data);
+                                if (data.code === 500) {
+                                    wx.showToast({
+                                        title: data.msg,
+                                        image: '../../images/warn.png',
+                                        duration: 2000
+                                    });
+                                } else {
+                                    let data = JSON.parse(res.data);
+                                    wx.showToast({
+                                        title: '上传成功',
+                                        duration: 2000
+                                    });
+                                    self.billImg = data.fid;
+                                    self.payOrder.poundage = self.poundage;
+                                    self.payOrder.billImg = self.billImg;
+                                    self.payOrder.tempFilePaths = self.tempFilePaths;
+                                    wx.setStorageSync('payOrder', JSON.stringify(self.payOrder));
+                                    self.$apply();
+                                    wx.navigateTo({
+                                        url: 'confirmPic?type=pay'
+                                    });
+                                }
+                            }
+                        });
+                    }
+                });
+            },
+        };
+
+        onShow() {
+            try {
+                this.payOrder = JSON.parse(wx.getStorageSync('payOrder'));
+                this.poundage = this.payOrder.poundage;
+                this.billImg = this.payOrder.billImg;
+                this.orderNo = this.payOrder.orderNo;
+                this.tempFilePaths = this.payOrder.tempFilePaths;
+            } catch (e) {
+                this.payOrder = {};
+                this.payOrder.orderNo = this.orderNo;
+            }
+        }
+        onLoad(option) {
+            this.orderNo = option.no;
+        }
+    }
+</script>

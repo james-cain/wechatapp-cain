@@ -61,7 +61,7 @@
         font-size: 24rpx;
     }
 
-    .red {
+    .red2 {
         background-color: #C4261D;
     }
 }
@@ -73,15 +73,15 @@
         <view class="person-nav">
             <image src="{{account.avatarUrl}}" />
             <view class="person-name">{{account.nickName}}</view>
-            <view class="person-occupation">湖南省业务员</view>
+            <view class="person-occupation">{{region}}</view>
             <view class="rank-btn" wx:if="{{permission === 'ywy'}}">业绩排行榜</view>
         </view>
 
-        <Centerbar title="本周订单" :showRank.sync="showRank" :time.sync="weekTime" :sum.sync="weekSum" type="1"></Centerbar>
-        <Centerbar2 title="本月订单" :showRank.sync="showRank" :time.sync="monthTime" :sum.sync="monthSum" type="2"></Centerbar2>
-        <Centerbar3 title="全部订单" :time.sync="allTime" :sum.sync="allSum" type="3"></Centerbar3>
+        <Centerbar :title="weekTitle" :showRank.sync="showRank" :time.sync="weekTime" :sum.sync="weekSum" type="1" :lastGridName.sync="lastGridName"></Centerbar>
+        <Centerbar2 :title="monthTitle" :showRank.sync="showRank" :time.sync="monthTime" :sum.sync="monthSum" type="2" :lastGridName.sync="lastGridName"></Centerbar2>
+        <Centerbar3 :title="allTitle" :time.sync="allTime" :sum.sync="allSum" type="3" :lastGridName.sync="lastGridName"></Centerbar3>
 
-        <button class="weui-btn unbind-btn red" type="primary" @tap="unBundle">解绑</button>
+        <button class="weui-btn unbind-btn red2" type="primary" @tap="unBundle">解绑</button>
 
         <view class="weui-footer" style="bottom: 65px; display: absolute; margin-top: 20rpx; margin-bottom: 20rpx;">
             <view class="weui-footer__links">
@@ -118,25 +118,30 @@
             account: {},
             permission: '',
             showRank: true,
-            weekTime: '11月6日-11月8日',
-            monthTime: '11月1日-11月8日',
-            allTime: '2017年2月1日-今天',
+            weekTitle: '本周订单',
+            monthTitle: '本月订单',
+            allTitle: '全部订单',
+            weekTime: '',
+            monthTime: '',
+            allTime: '',
+            lastGridName: '',
+            region: '',
             weekSum: {
-                weight1: '1,300',
-                weight2: '201,070',
-                weight3: '1,578',
-                percent: '57%'
+                weight1: '',
+                weight2: '',
+                weight3: '',
+                percent: ''
             },
             monthSum: {
-                weight1: '1,300',
-                weight2: '201,070',
-                weight3: '1,578',
-                percent: '62%'
+                weight1: '',
+                weight2: '',
+                weight3: '',
+                percent: ''
             },
             allSum: {
-                weight1: '1,300',
-                weight2: '201,070',
-                weight3: '1,578'
+                weight1: '',
+                weight2: '',
+                weight3: ''
             },
             tabBarList: {
                 color: '#403E40',
@@ -194,7 +199,7 @@
             next(type) {
                 const index = (1 * type) - 1;
                 wx.navigateTo({
-                    url: `purchaseSumary?index=${index}`
+                    url: `/views/user/purchaseSumary?index=${index}`
                 });
             }
         };
@@ -202,7 +207,56 @@
         onLoad() {
             this.account = JSON.parse(wx.getStorageSync('weChatAccount'));
             this.permission = wx.getStorageSync('permissionType');
+            try {
+                this.region = JSON.parse(wx.getStorageSync('userInfo')).region;
+                console.log(JSON.parse(wx.getStorageSync('userInfo')));
+            } catch (e) {
+                this.region = '';
+            }
             this.showRank = this.permission === 'ywy';
+            switch (this.permission) {
+            case 'ywy':
+                this.lastGridName = '提成奖金（元）';
+                break;
+            case 'hgy':
+            case 'cw':
+            case 'gly':
+                this.lastGridName = '毛利润（元）';
+                break;
+            case 'zhl':
+                this.lastGridName = '应付金额（元）';
+                break;
+            default:
+                this.lastGridName = '';
+            }
+            utils.ajax({
+                url: '/my/statistics/survey',
+                method: 'GET',
+                success: (data) => {
+                    const currentData = data.data;
+                    this.weekTitle = currentData[0].x1;
+                    this.monthTitle = currentData[2].x1;
+                    this.allTitle = currentData[4].x1;
+                    this.weekTime = currentData[0].x2;
+                    this.monthTime = currentData[2].x2;
+                    this.allTime = currentData[4].x2;
+                    this.weekSum.weight1 = currentData[1].x1;
+                    this.weekSum.weight2 = currentData[1].x2;
+                    this.weekSum.weight3 = currentData[1].x3;
+                    this.weekSum.percent = currentData[0].x3;
+                    wx.setStorageSync('weekSum', JSON.stringify(this.weekSum));
+                    this.monthSum.weight1 = currentData[3].x1;
+                    this.monthSum.weight2 = currentData[3].x2;
+                    this.monthSum.weight3 = currentData[3].x3;
+                    this.monthSum.percent = currentData[2].x3;
+                    wx.setStorageSync('monthSum', JSON.stringify(this.monthSum));
+                    this.allSum.weight1 = currentData[5].x1;
+                    this.allSum.weight2 = currentData[5].x2;
+                    this.allSum.weight3 = currentData[5].x3;
+                    wx.setStorageSync('allSum', JSON.stringify(this.allSum));
+                    this.$apply();
+                }
+            });
         }
     }
 </script>
