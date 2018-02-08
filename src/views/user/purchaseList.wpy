@@ -70,6 +70,12 @@
                     url: `inputExpress?name=${this.currentPurchase[0].name}&&no=${this.currentPurchase[0].orderNo}&&type=mod`
                 });
             },
+            goToConfirmPay() {
+                wx.setStorageSync('payOrder', '');
+                wx.navigateTo({
+                    url: `confirmPay?no=${this.currentPurchase[0].orderNo}`
+                });
+            },
             // 状态变更
             changeState (state) {
                 utils.ajax({

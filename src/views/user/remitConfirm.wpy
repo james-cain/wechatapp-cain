@@ -38,6 +38,7 @@
 
 <script>
     import wepy from 'wepy';
+    import utils from '../../utils/index';
 
     export default class RemitConfirm extends wepy.page {
         config = {
@@ -65,6 +66,13 @@
         };
         onLoad(option) {
             this.noHistory = option.noHistory === 'true';
+            utils.ajax({
+                url: '/remittance/list',
+                method: 'GET',
+                success: (data) => {
+                    console.log(data);
+                }
+            });
         }
     }
 </script>

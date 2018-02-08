@@ -51,7 +51,7 @@
     }
     .unit {
       display: block;
-      width: 100rpx;
+      width: 10rpx;
       margin-left: 20rpx;
       font-size: 24rpx;
       color: #9E8D9E;

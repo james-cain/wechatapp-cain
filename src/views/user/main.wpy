@@ -68,7 +68,7 @@
                 <navigator url="/views/user/remitConfirm" class="weui-cell weui-cell_access" hover-class="weui-cell_active">
                     <view class="weui-cell__hd" style="width: 100rpx;"><text class="title">汇款确认</text></view>
                     <view class="weui-cell__bd weui-cell_primary">
-                        <text class="message">众恒隆已发起了1笔汇款，需要你进行确认</text>
+                        <text class="message">{{confirmRecord}}</text>
                     </view>
                     <view class="weui-cell__ft weui-cell__ft_in-access"></view>
                 </navigator>
@@ -169,7 +169,8 @@
             permission: '',
             noBackLog: false,
             loading: false,
-            totalCount: 0
+            totalCount: 0,
+            confirmRecord: ''
         };
         computed = {
             funcName() {
@@ -325,6 +326,40 @@
                     this.$apply();
                 }
             });
+            
+            if (this.permission === 'hgy' || this.permission === 'cw' || this.permission === 'zhl') {
+                // 获取当前保证金报错
+                // utils.ajax({
+                //     url: '/bond/current',
+                //     method: 'GET',
+                //     success: (data) => {
+                //         console.log(data);
+                //     }
+                // });
+                // 获取历史账单
+                utils.ajax({
+                    url: '/bill/generate/list',
+                    method: 'GET',
+                    success: (data) => {
+
+                    }
+                });
+            }
+            if (this.permission === 'cw') {
+                utils.ajax({
+                    url: '/remittance/confirm/num',
+                    method: 'GET',
+                    success: (data) => {
+                        const num = 1 * data.data;
+                        if (typeof num === 'number' && num >= 1) {
+                            this.confirmRecord = `众恒隆已发起了${num}笔汇款，需要你进行确认`;
+                        } else {
+                            this.confirmRecord = '当前暂无需要确认的汇款';
+                        }
+                        this.$apply();
+                    }
+                });
+            }
             this.qryBackLog();
         };
         // onLoad() wx.navigateBack()将不执行，
@@ -398,24 +433,6 @@
                         name: '状态'
                     },
                 ];
-            }
-            if (this.permission === 'hgy' || this.permission === 'cw' || this.permission === 'zhl') {
-                // 获取当前保证金报错
-                // utils.ajax({
-                //     url: '/bond/current',
-                //     method: 'GET',
-                //     success: (data) => {
-                //         console.log(data);
-                //     }
-                // });
-                // 获取历史账单
-                utils.ajax({
-                    url: '/bill/generate/list',
-                    method: 'GET',
-                    success: (data) => {
-                        console.log(data);
-                    }
-                });
             }
             this.$apply();
             utils.ajax({
