@@ -78,7 +78,7 @@
                 </view>
             </view>
             <view class="weui-flex__item">
-                <view class="placeholder content">
+                <view class="placeholder content" style="color: {{item.row4 === '待确认' ? '#C4261D' : '#262626'}}">
                     {{item.row4}}
                 </view>
             </view>
@@ -97,8 +97,12 @@
         methods = {
             confirm(id, info) {
                 this.$emit('confirm', id, info);
-                console.log(info);
                 if (info === '待确认') {
+                    this.tableValueList.forEach(e => {
+                        if (e.id === id) {
+                            wx.setStorageSync('historyRemitData', JSON.stringify(e));
+                        }
+                    });
                     wx.navigateTo({
                         url: 'remitConfirm?noHistory=true'
                     });

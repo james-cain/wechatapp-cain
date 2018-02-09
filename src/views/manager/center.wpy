@@ -209,7 +209,6 @@
             this.permission = wx.getStorageSync('permissionType');
             try {
                 this.region = JSON.parse(wx.getStorageSync('userInfo')).region;
-                console.log(JSON.parse(wx.getStorageSync('userInfo')));
             } catch (e) {
                 this.region = '';
             }

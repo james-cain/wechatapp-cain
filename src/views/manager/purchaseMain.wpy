@@ -385,7 +385,6 @@
                     url: `/admin/statistics/${type}/detailed?page=${this.page[idx]}&limit=${this.limit}`,
                     method: 'GET',
                     success: (data) => {
-                        console.log(data);
                         const currentData = data.data || data.page;
                         const currentDataHandle = this.changeCurrentDataList(currentData.list);
                         this.page[idx] += 1;

@@ -21,11 +21,11 @@
         <text style="font-size: 24rpx; color: #403E40;">众恒隆向国礼发起了一笔汇款</text>
     </view>
     <view class="tip-nav" style="margin-top: 40rpx;">
-        <text style="font-size: 56rpx; color: #C4261D; font-weight: bold;">84,300</text>
+        <text style="font-size: 56rpx; color: #C4261D; font-weight: bold;">{{remitConfirmData.row3}}</text>
         <text style="font-size: 24rpx; color: #403E40;">元</text>
     </view>
     <view class="tip-nav" style="margin-top: 40rpx;">
-        <text style="font-size: 24rpx; color: #403E40;">汇款时间：2017年12月22日 09:36</text>
+        <text style="font-size: 24rpx; color: #403E40;">汇款时间：{{remitConfirmData.date}}</text>
     </view>
     <view class="weui-flex" style="margin-top: 200rpx;">
         <button class="weui-btn authenticate-btn" type="default" @tap="ok">确认已到账</button>
@@ -46,14 +46,20 @@
         };
         methods = {
             ok () {
-                wx.showToast({
-                    title: '确认收到汇款',
-                    icon: 'success',
-                    duration: 2000
+                utils.ajax({
+                    url: `/remittance/update/state?id=${this.remitConfirmData.id}`,
+                    method: 'GET',
+                    success: (data) => {
+                        wx.showToast({
+                            title: '确认收到汇款',
+                            icon: 'success',
+                            duration: 2000
+                        });
+                        setTimeout(function changeConfirm() {
+                            wx.navigateBack();
+                        }, 2000);
+                    }
                 });
-                setTimeout(function changeConfirm() {
-                    wx.navigateBack();
-                }, 1000);
             },
             next () {
                 wx.navigateTo({
@@ -62,17 +68,18 @@
             }
         };
         data = {
-            noHistory: false
+            noHistory: false,
+            remitConfirmData: {}
         };
         onLoad(option) {
             this.noHistory = option.noHistory === 'true';
-            utils.ajax({
-                url: '/remittance/list',
-                method: 'GET',
-                success: (data) => {
-                    console.log(data);
+            if (this.noHistory) {
+                try {
+                    this.remitConfirmData = JSON.parse(wx.getStorageSync('historyRemitData'));
+                } catch (e) {
+                    this.remitConfrimData = {};
                 }
-            });
+            }
         }
     }
 </script>

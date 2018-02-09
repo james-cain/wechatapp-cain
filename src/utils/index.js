@@ -29,6 +29,8 @@ class Utils {
             return date.getFullYear() + mStr + dayStr + hoursStr + minutesStr + secondsStr;
         } else if (format === 'YYYY-MM-dd HH:mm:ss') {
             return `${date.getFullYear()}-${mStr}-${dayStr} ${hoursStr}:${minutesStr}:${secondsStr}`;
+        } else if (format === 'YYYY年MM月dd日 HH:mm') {
+            return `${date.getFullYear()}年${mStr}月${dayStr}日 ${hoursStr}:${minutesStr}`;
         } else if (format === 'yyyyMMdd') {
             return date.getFullYear() + mStr + dayStr;
         } else if (format === 'yyyy年M月d日') {

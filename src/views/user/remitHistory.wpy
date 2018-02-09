@@ -8,8 +8,12 @@
     <view class="remit-history">
         <view class="weui-tab__panel">
             <view class="weui-tab__content">
-                <HistoryTable :tableList="tableList" :tableValueList="tableValueList"></HistoryTable>
-                <view class="weui-loadmore">
+                <HistoryTable :tableList="tableList" :tableValueList.sync="tableValueList"></HistoryTable>
+                <view class="weui-loadmore" wx:if="{{loading}}">
+                    <view class="weui-loading"></view>
+                    <view class="weui-loadmore__tips weui-loadmore__tips_in-line">正在加载</view>
+                </view>
+                <view class="weui-loadmore" wx:if="{{noBackLog && (page !== 1 && page !== 2)}}">
                     <view class="weui-loadmore__tips weui-loadmore__tips_in-line">没有了，别拉了~</view>
                 </view>
             </view>
@@ -20,6 +24,7 @@
 <script>
 import wepy from 'wepy';
 import HistoryTable from '../../components/historyTable';
+import utils from '../../utils/index';
 
 export default class RemitHistory extends wepy.page {
     config = {
@@ -47,36 +52,55 @@ export default class RemitHistory extends wepy.page {
                 name: '汇款状态'
             },
         ],
-        tableValueList: [
-            {
-                id: 1,
-                row1: '2017/11/08',
-                row2: '09:36',
-                row3: '92,070',
-                row4: '待确认'
-            },
-            {
-                id: 2,
-                row1: '2017/11/08',
-                row2: '09:36',
-                row3: '46,070',
-                row4: '已确认'
-            },
-            {
-                id: 1,
-                row1: '2017/11/08',
-                row2: '09:36',
-                row3: '92,070',
-                row4: '已确认'
-            },
-            {
-                id: 1,
-                row1: '2017/11/08',
-                row2: '09:36',
-                row3: '92,070',
-                row4: '已确认'
-            }
-        ]
+        tableValueList: [],
+        test: [],
+        page: 1,
+        limit: 10,
+        noBackLog: false,
+        loading: false
     };
+    changeDataList(data) {
+        let arr = [];
+        data.forEach(e => {
+            let obj = {};
+            obj.id = e.id;
+            obj.date = utils.formatFunc(new Date(e.createDate), 'YYYY年MM月dd日 HH:mm');
+            obj.row1 = utils.formatFunc(new Date(e.createDate), 'yyyy/MM/dd');
+            obj.row2 = e.createDate.substring(11);
+            obj.row3 = e.amounts;
+            obj.row4 = e.state === '0' ? '待确认' : '已确认';
+            arr.push(obj);
+        });
+        return arr;
+    }
+    // 查询
+    qryHistoryLog() {
+        if (!this.noBackLog) {
+            this.loading = true;
+            utils.ajax({
+                url: `/remittance/list?page=${this.page}&limit=${this.limit}`,
+                method: 'GET',
+                success: (data) => {
+                    const currentData = data.page;
+                    this.tableValueList = this.tableValueList.concat(this.changeDataList(currentData.list));
+                    this.page += 1;
+                    if (this.totalCount <= this.limit || currentData.list.length < this.limit) {
+                        this.noBackLog = true;
+                    }
+                    this.loading = false;
+                    this.$apply();
+                }
+            });
+        }
+    }
+    onShow() {
+        this.page = 1;
+        this.noBackLog = false;
+        this.tableValueList.length = 0;
+        this.qryHistoryLog();
+    }
+    onReachBottom (e) {
+        this.qryHistoryLog();
+    }
 }
 </script>

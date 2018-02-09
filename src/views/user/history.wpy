@@ -85,7 +85,7 @@
     </view>
     <view class="weui-flex title-nav">
         <view class="weui-flex__item selectedAll">
-            <checkbox-group @change="checkboxChange2" style="padding-left: 20rpx;">
+            <checkbox-group @change="allCheckboxChange" style="padding-left: 20rpx;">
                 <checkbox value="{{selectedAll.value}}" checked="{{selectedAll.checked}}"/>
             </checkbox-group>
             <view class="title">全选</view>
@@ -96,7 +96,7 @@
     <view class="weui-flex" wx:for="{{tableValueList}}" wx:key="id">
         <view class="weui-flex__item">
             <view class="placeholder content">
-                <checkbox-group @change="checkboxChange">
+                <checkbox-group @change="checkboxChange({{item.id}})">
                     <checkbox value="{{item.id}}" checked="{{item.row1}}"/>
                 </checkbox-group>
             </view>
@@ -113,13 +113,14 @@
         </view>
     </view>
     <view style="margin: 80rpx auto 0 auto;">
-        <button class="weui-btn send" type="default">发送到邮箱</button>
+        <button class="weui-btn send" type="default" @tap="send">发送到邮箱</button>
     </view>
   </view>
 </template>
 
 <script>
     import wepy from 'wepy';
+    import utils from '../../utils/index';
 
     export default class History extends wepy.page {
         config = {
@@ -129,7 +130,7 @@
             selectedAll: {
                 name: 'selectedAll',
                 value: 'all',
-                checked: 'false'
+                checked: false
             },
             tableList: [
                 {
@@ -145,34 +146,86 @@
                     name: '生成账单日期'
                 }
             ],
-            tableValueList: [
-                {
-                    id: 1,
-                    row1: false,
-                    row2: '2017/11/02-2017/11/08',
-                    row3: '2017/11/08'
-                },
-                {
-                    id: 2,
-                    row1: false,
-                    row2: '2017/11/02-2017/11/08',
-                    row3: '2017/11/08'
-                },
-                {
-                    id: 3,
-                    row1: false,
-                    row2: '2017/11/02-2017/11/08',
-                    row3: '2017/11/08'
-                },
-            ]
+            tableValueList: [],
+            selectedIds: []
         };
         methods = {
-            checkboxChange (e) {
-                // console.log(e.detail.value);
+            checkboxChange (id, e) {
+                if (e.detail.value[0]) {
+                    this.selectedIds.push(e.detail.value[0]);
+                    this.tableValueList.forEach(ele => {
+                        if (ele.id === e.detail.value[0]) {
+                            ele.row1 = true;
+                        }
+                    });
+                } else {
+                    this.tableValueList.forEach(ele => {
+                        if (ele.id === id) {
+                            ele.row1 = false;
+                        }
+                    });
+                    this.selectedIds.splice(this.selectedIds.indexOf(id), 1);
+                }
+                this.selectedAll.checked = this.selectedIds.length === this.tableValueList.length;
             },
-            checkboxChange2 (e) {
-                // console.log(e.detail.value);
+            allCheckboxChange (e) {
+                if (e.detail.value[0] === 'all') {
+                    this.selectedIds.length = 0;
+                    this.tableValueList.forEach(ele => {
+                        ele.row1 = true;
+                        this.selectedIds.push(ele.id);
+                    });
+                } else {
+                    this.tableValueList.forEach(ele => {
+                        ele.row1 = false;
+                    });
+                    this.selectedIds.length = 0;
+                }
+            },
+            send() {
+                if (this.selectedIds.length === 0) {
+                    wx.showToast({
+                        title: '请先选择要发送的对账单',
+                        icon: 'none',
+                        duration: 2000
+                    });
+                } else {
+                    wx.showToast({
+                        title: '历史对账单已经发到了邮箱，请查收',
+                        icon: 'none',
+                        duration: 2000
+                    });
+                    setTimeout(function changeConfirm() {
+                        wx.navigateBack();
+                    }, 2000);
+                }
             }
         };
+        changeBillList(list) {
+            let arr = [];
+            list.forEach(e => {
+                let obj = {};
+                obj.id = e.billId;
+                obj.row1 = false;
+                obj.row2 = e.range;
+                obj.row3 = e.createDate;
+                arr.push(obj);
+            });
+            return arr;
+        }
+        getBillList() {
+            // 获取历史账单
+            utils.ajax({
+                url: '/bill/generate/list',
+                method: 'GET',
+                success: (data) => {
+                    this.tableValueList = this.changeBillList(data.data.list);
+                    this.$apply();
+                }
+            });
+        }
+        onLoad() {
+            this.getBillList();
+        }
     }
 </script>

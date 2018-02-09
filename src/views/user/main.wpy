@@ -65,7 +65,7 @@
         </view>
         <view class="weui-media-box weui-media-box_small-appmsg media-confirm" wx:if="{{permission === 'cw'}}">
             <view class="weui-cells weui-cells_in-small-appmsg">
-                <navigator url="/views/user/remitConfirm" class="weui-cell weui-cell_access" hover-class="weui-cell_active">
+                <navigator url="/views/user/remitHistory" class="weui-cell weui-cell_access" hover-class="weui-cell_active">
                     <view class="weui-cell__hd" style="width: 100rpx;"><text class="title">汇款确认</text></view>
                     <view class="weui-cell__bd weui-cell_primary">
                         <text class="message">{{confirmRecord}}</text>
@@ -335,14 +335,6 @@
                     success: (data) => {
                         this.bannerIntroduce[0].name = data.data + '元';
                         this.$apply();
-                    }
-                });
-                // 获取历史账单
-                utils.ajax({
-                    url: '/bill/generate/list',
-                    method: 'GET',
-                    success: (data) => {
-                        console.log(data);
                     }
                 });
             }

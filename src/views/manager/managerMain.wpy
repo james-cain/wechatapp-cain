@@ -13,14 +13,6 @@
             height: inherit;
         }
     }
-    .tab {
-        position: fixed;
-        top: 172rpx;
-        left: 0;
-        height: 86rpx;
-        background-color: #fff;
-        z-index: 100;
-    }
     .canvas-nav {
         width: 100%;
         height: 100px;
@@ -28,7 +20,7 @@
         float: left;
         .canvas-left {
             padding-top: 30rpx;
-            width: 50%;
+            width: 45%;
             height: 100px;
             text-align: center;
             font-size: 24rpx;
@@ -45,58 +37,107 @@
         width: 50%;
         height: 100px;
         background: #fff;
+        margin-left: 5%;
     }
     .weui-tab__panel {
         position: fixed;
-        top: 260rpx;
+        top: 298rpx;
         left: 0;
         overflow: hidden;
         padding-top: 0px;
         width: 100%;
         height: 400px;
     }
+    .func-button {
+        width: 100rpx;
+        height: 100rpx;
+        position: fixed;
+        z-index: 100;
+        bottom: 104rpx;
+        right: 16rpx;
+        background: #C4261D;
+        color: #fff;
+        font-size: 24rpx;
+        border-radius: 50%;
+        box-shadow: 2rpx 2rpx 4rpx 4rpx rgba(0, 0, 0, .3);
+        .desc {
+            padding: 28rpx 14rpx;
+            width: 76rpx;
+            height: 44rpx;
+            display: block;
+        }
+    }
 }
 </style>
 <template>
-    <view class="manager-main" style="padding-bottom: 40px;">
+    <view class="manager-main" style="height: {{windowH + 'px'}}; background: #fff;">
         <view class="manager-nav">
             <image src="../../images/banner.png" lazy-load="true" class="banner">
         </view>
-        <Tab :activeIndex.sync="activeIndex" :sliderWidth.sync="sliderWidth" :tabs.sync="tabs" class="tab"></Tab>
         <view class="weui-tab__panel">
             <view class="weui-tab__content" hidden="{{activeIndex != 0}}">
                 <view class="canvas-nav">
-                    <view class="canvas-left">
-                        <view><text>4</text>笔</view>
-                        <view>回购笔数</view>
-                    </view>
                     <canvas canvas-id="columnCanvas" class="canvas" disable-scroll="{{true}}"></canvas>
+                    <view class="canvas-left">
+                        <view><text>{{sumary1}}</text>笔</view>
+                        <view>今日回购笔数</view>
+                    </view>
                 </view>
                 <view class="canvas-nav">
-                    <view class="canvas-left">
-                        <view><text>600</text>克</view>
-                        <view>回购重量</view>
-                    </view>
                     <canvas canvas-id="columnCanvas2" class="canvas" disable-scroll="{{true}}"></canvas>
+                    <view class="canvas-left">
+                        <view><text>{{sumary2}}</text>克</view>
+                        <view>今日回购重量</view>
+                    </view>
                 </view>
                 <view class="canvas-nav">
-                    <view class="canvas-left">
-                        <view><text>25.4</text>万元</view>
-                        <view>回购金额</view>
-                    </view>
                     <canvas canvas-id="columnCanvas3" class="canvas" disable-scroll="{{true}}"></canvas>
+                    <view class="canvas-left">
+                        <view><text>{{sumary3}}</text>万元</view>
+                        <view>今日回购金额</view>
+                    </view>
                 </view>
                 <view class="canvas-nav">
-                    <view class="canvas-left">
-                        <view><text>0.92</text>万元</view>
-                        <view>毛利润</view>
-                    </view>
                     <canvas canvas-id="columnCanvas4" class="canvas" disable-scroll="{{true}}"></canvas>
+                    <view class="canvas-left">
+                        <view><text>{{sumary4}}</text>万元</view>
+                        <view>今日毛利润</view>
+                    </view>
                 </view>
             </view>
             <view class="weui-tab__content" hidden="{{activeIndex != 1}}">
-                <!-- <canvas canvas-id="columnCanvas" class="canvas"></canvas> -->
+                <view class="canvas-nav">
+                    <canvas canvas-id="columnCanvas5" class="canvas" disable-scroll="{{true}}"></canvas>
+                    <view class="canvas-left">
+                        <view><text>{{sumary5}}</text>笔</view>
+                        <view>本周回购笔数</view>
+                    </view>
+                </view>
+                <view class="canvas-nav">
+                    <canvas canvas-id="columnCanvas6" class="canvas" disable-scroll="{{true}}"></canvas>
+                    <view class="canvas-left">
+                        <view><text>{{sumary6}}</text>克</view>
+                        <view>本周回购重量</view>
+                    </view>
+                </view>
+                <view class="canvas-nav">
+                    <canvas canvas-id="columnCanvas7" class="canvas" disable-scroll="{{true}}"></canvas>
+                    <view class="canvas-left">
+                        <view><text>{{sumary7}}</text>万元</view>
+                        <view>本周回购金额</view>
+                    </view>
+                </view>
+                <view class="canvas-nav">
+                    <canvas canvas-id="columnCanvas8" class="canvas" disable-scroll="{{true}}"></canvas>
+                    <view class="canvas-left">
+                        <view><text>{{sumary8}}</text>万元</view>
+                        <view>本周毛利润</view>
+                    </view>
+                </view>
             </view>
+        </view>
+        <view class="func-button" @tap="switchEvent">
+            <text class="desc">{{switchName}}</text>
         </view>
         <TabBar :tabBar.sync="tabBarList"></TabBar>
     </view>
@@ -107,15 +148,14 @@
     import TabBar from '../../components/tabBar';
     // import Charts from '../../charts/wxcharts';
     import Charts from '../../charts-source/wxcharts';
-    import Tab from '../../components/tab';
+    import utils from '../../utils/index';
 
     export default class ManagerMain extends wepy.page {
         config = {
             navigationBarTitleText: '黄金回购'
         };
         components = {
-            TabBar: TabBar,
-            Tab: Tab
+            TabBar: TabBar
         };
         data = {
             tabBarList: {
@@ -155,180 +195,136 @@
             columnChart2: null,
             columnChart3: null,
             columnChart4: null,
-            chartData: {
-                main: {
-                    // title: '总成交量',
-                    data: [15, 20, 45, 37, 68, 34, 12],
-                    categories: ['1/26', '1/27', '1/28', '1/29', '1/30', '1/31', '2/1']
-                }
-            },
-            tabs: ['今日回购数据', '本周回购数据'],
+            columnChart5: null,
+            columnChart6: null,
+            columnChart7: null,
+            columnChart8: null,
+            sumary1: 0,
+            sumary2: 0,
+            sumary3: 0,
+            sumary4: 0,
+            sumary5: 0,
+            sumary6: 0,
+            sumary7: 0,
+            sumary8: 0,
+            // chartData: {
+            //     main: {
+            //         // title: '总成交量',
+            //         data: [15, 20, 45, 37, 68, 34, 12],
+            //         categories: ['1/26', '1/27', '1/28', '1/29', '1/30', '1/31', '2/1']
+            //     }
+            // },
+            chartData: [1, 2, 3, 4, 5, 6, 7],
+            categories: [1, 2, 3, 4, 5, 6, 7],
             activeIndex: 0,
-            sliderWidth: 187.5, // 需要设置slider的宽度，用于计算中间位置
+            switchName: '周数据',
+            windowH: 0,
+            windowW: 0
         };
         methods = {
-            launchRepurchase () {
-                if (this.permission === 'ywy') {
-                    wx.navigateTo({
-                        url: 'businessConfirm'
-                    });
+            switchEvent() {
+                if (this.activeIndex === 0) {
+                    this.activeIndex = 1;
+                    this.switchName = '日数据';
                 } else {
-                    wx.navigateTo({
-                        url: 'editPrice'
-                    });
+                    this.activeIndex = 0;
+                    this.switchName = '周数据';
                 }
+                this.$apply();
             }
         };
-        events = {
-            tabChange (id, e) {
-                // console.log(id, e);
-            }
+        objToArr(data) {
+            let arr = [];
+            arr.push(data.x);
+            arr.push(data.x2);
+            arr.push(data.x3);
+            arr.push(data.x4);
+            arr.push(data.x5);
+            arr.push(data.x6);
+            arr.push(data.x7);
+            arr.reverse();
+            return arr;
+        };
+        todayData() {
+            utils.ajax({
+                url: '/admin/statistics/today/survey',
+                method: 'GET',
+                success: (data) => {
+                    const dataObj = data.data;
+                    this.renderChart(this.columnChart, 'columnCanvas', '回购笔数', this.categories, this.objToArr(dataObj[0]));
+                    this.renderChart(this.columnChart2, 'columnCanvas2', '回购重量', this.categories, this.objToArr(dataObj[1]));
+                    this.renderChart(this.columnChart3, 'columnCanvas3', '回购金额', this.categories, this.objToArr(dataObj[2]));
+                    this.renderChart(this.columnChart4, 'columnCanvas4', '毛利润', this.categories, this.objToArr(dataObj[3]));
+                    this.sumary1 = dataObj[0].x;
+                    this.sumary2 = dataObj[1].x;
+                    this.sumary3 = dataObj[2].x;
+                    this.sumary4 = dataObj[3].x;
+                    this.$apply();
+                }
+            });
+        };
+        weekData() {
+            utils.ajax({
+                url: '/admin/statistics/week/survey',
+                method: 'GET',
+                success: (data) => {
+                    const dataObj = data.data;
+                    this.renderChart(this.columnChart5, 'columnCanvas5', '回购笔数', this.categories, this.objToArr(dataObj[0]));
+                    this.renderChart(this.columnChart6, 'columnCanvas6', '回购重量', this.categories, this.objToArr(dataObj[1]));
+                    this.renderChart(this.columnChart7, 'columnCanvas7', '回购金额', this.categories, this.objToArr(dataObj[2]));
+                    this.renderChart(this.columnChart8, 'columnCanvas8', '毛利润', this.categories, this.objToArr(dataObj[3]));
+                    this.sumary5 = dataObj[0].x;
+                    this.sumary6 = dataObj[1].x;
+                    this.sumary7 = dataObj[2].x;
+                    this.sumary8 = dataObj[3].x;
+                    this.$apply();
+                }
+            });
+        };
+        renderChart(chart, canvasId, seriesName, categories, chartData) {
+            chart = new Charts({
+                canvasId: canvasId,
+                type: 'column',
+                animation: true,
+                categories: categories,
+                legend: false,
+                series: [{
+                    name: seriesName,
+                    data: chartData,
+                    format: function (val, name) {
+                        return val;
+                    }
+                }],
+                yAxis: {
+                    format: function (val) {
+                        return val;
+                    },
+                    min: 0,
+                    disabled: true
+                },
+                xAxis: {
+                    disableGrid: false,
+                    type: 'calibration',
+                    disabled: true
+                },
+                extra: {
+                    column: {
+                        width: 15
+                    }
+                },
+                width: this.windowW / 2,
+                height: 100,
+            });
         };
         onShow () {
             this.activeIndex = 0;
         };
         onLoad() {
             this.permission = wx.getStorageSync('permissionType');
-            const windowW = wx.getStorageSync('windowW');
-            this.columnChart = new Charts({
-                canvasId: 'columnCanvas',
-                type: 'column',
-                animation: true,
-                categories: this.chartData.main.categories,
-                legend: false,
-                series: [{
-                    name: '回购笔数',
-                    data: this.chartData.main.data,
-                    format: function (val, name) {
-                        return val;
-                    }
-                }],
-                yAxis: {
-                    format: function (val) {
-                        return val;
-                    },
-                    title: '回购笔数(笔)',
-                    min: 0,
-                    disabled: true
-                },
-                xAxis: {
-                    disableGrid: false,
-                    type: 'calibration',
-                    disabled: true
-                },
-                extra: {
-                    column: {
-                        width: 15
-                    }
-                },
-                width: windowW / 2,
-                height: 100,
-            });
-
-            this.columnChart2 = new Charts({
-                canvasId: 'columnCanvas2',
-                type: 'column',
-                animation: true,
-                categories: this.chartData.main.categories,
-                legend: false,
-                series: [{
-                    name: '回购重量',
-                    data: this.chartData.main.data,
-                    format: function (val, name) {
-                        return val;
-                    }
-                }],
-                yAxis: {
-                    format: function (val) {
-                        return val;
-                    },
-                    title: '回购重量(克)',
-                    min: 0,
-                    disabled: true
-                },
-                xAxis: {
-                    disableGrid: false,
-                    type: 'calibration',
-                    disabled: true
-                },
-                extra: {
-                    column: {
-                        width: 15
-                    }
-                },
-                width: windowW / 2,
-                height: 100,
-            });
-
-            this.columnChart3 = new Charts({
-                canvasId: 'columnCanvas3',
-                type: 'column',
-                animation: true,
-                categories: this.chartData.main.categories,
-                legend: false,
-                series: [{
-                    name: '回购金额',
-                    data: this.chartData.main.data,
-                    format: function (val, name) {
-                        return val;
-                    }
-                }],
-                yAxis: {
-                    format: function (val) {
-                        return val;
-                    },
-                    title: '回购金额(万元)',
-                    min: 0,
-                    disabled: true
-                },
-                xAxis: {
-                    disableGrid: false,
-                    type: 'calibration',
-                    disabled: true
-                },
-                extra: {
-                    column: {
-                        width: 15
-                    }
-                },
-                width: windowW / 2,
-                height: 100,
-            });
-
-            this.columnChart4 = new Charts({
-                canvasId: 'columnCanvas4',
-                type: 'column',
-                animation: true,
-                categories: this.chartData.main.categories,
-                legend: false,
-                series: [{
-                    name: '毛利润',
-                    data: this.chartData.main.data,
-                    format: function (val, name) {
-                        return val;
-                    }
-                }],
-                yAxis: {
-                    format: function (val) {
-                        return val;
-                    },
-                    title: '毛利润(万元)',
-                    min: 0,
-                    disabled: true
-                },
-                xAxis: {
-                    disableGrid: false,
-                    type: 'calibration',
-                    disabled: true
-                },
-                extra: {
-                    column: {
-                        width: 15
-                    }
-                },
-                width: windowW / 2,
-                height: 100,
-            });
+            this.windowW = wx.getStorageSync('windowW');
+            this.windowH = 1 * wx.getStorageSync('windowH') - 45;
+            this.todayData();
+            this.weekData();
         };
     }
 </script>
