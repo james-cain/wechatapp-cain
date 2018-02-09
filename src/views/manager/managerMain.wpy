@@ -157,12 +157,14 @@
                     format: function (val) {
                         return val;
                     },
-                    title: '回购笔数(笔)',
-                    min: 0
+                    // title: '回购笔数(笔)',
+                    min: 0,
+                    disabled: true
                 },
                 xAxis: {
                     disableGrid: false,
-                    type: 'calibration'
+                    type: 'calibration',
+                    disabled: true
                 },
                 extra: {
                     column: {

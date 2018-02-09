@@ -15,6 +15,11 @@ let Charts = function(opts) {
     opts.animation = opts.animation === false ? false : true;
     let config = assign({}, Config);
     config.yAxisTitleWidth = opts.yAxis.disabled !== true && opts.yAxis.title ? config.yAxisTitleWidth : 0;
+    // 去除x轴坐标和series提示
+    // if (typeof opts.xAxis.disabled === 'boolean' && opts.xAxis.disabled) {
+    //     config.xAxisLineHeight = 0;
+    //     config.legendHeight = 0;
+    // }
     config.pieChartLinePadding = opts.dataLabel === false ? 0 : config.pieChartLinePadding;
     config.pieChartTextPadding = opts.dataLabel === false ? 0 : config.pieChartTextPadding;
 
