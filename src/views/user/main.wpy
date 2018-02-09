@@ -326,22 +326,23 @@
                     this.$apply();
                 }
             });
-            
+
             if (this.permission === 'hgy' || this.permission === 'cw' || this.permission === 'zhl') {
                 // 获取当前保证金报错
-                // utils.ajax({
-                //     url: '/bond/current',
-                //     method: 'GET',
-                //     success: (data) => {
-                //         console.log(data);
-                //     }
-                // });
+                utils.ajax({
+                    url: '/bond/current',
+                    method: 'GET',
+                    success: (data) => {
+                        this.bannerIntroduce[0].name = data.data + '元';
+                        this.$apply();
+                    }
+                });
                 // 获取历史账单
                 utils.ajax({
                     url: '/bill/generate/list',
                     method: 'GET',
                     success: (data) => {
-
+                        console.log(data);
                     }
                 });
             }
@@ -386,7 +387,7 @@
             case 'zhl':
                 this.bannerIntroduce.length = 0;
                 this.bannerIntroduce = [{
-                    name: '521,300元',
+                    name: '-元',
                     desc: '当前保证金',
                     url: '/views/user/deposit',
                     imageUrl: '../../images/doc_icon1.png'

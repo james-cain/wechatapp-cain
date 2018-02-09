@@ -73,6 +73,9 @@
         <text>请上传本次付款流水单据</text>
         <text class="iconfont icon-zhaoxiangji" style="color: #C4261D; margin-right: 20rpx;"></text>
     </view>
+    <view wx:for="{{tempFilePaths}}">
+        <image mode="widthFix" src="{{item}}" lazy-load="true" style="width: 100%;">
+    </view>
     <view class="weui-flex" style="padding-bottom: 50rpx;">
         <button class="weui-btn authenticate-btn1" type="default" @tap="finish">确认</button>
     </view>
@@ -119,20 +122,14 @@
                     method: 'POST',
                     params: this.payOrder,
                     success: (data) => {
-                        utils.ajax({
-                            url: `/order/state/change/to/3?orderNo=${this.payOrder.orderNo}`,
-                            method: 'GET',
-                            success: (data) => {
-                                wx.showToast({
-                                    title: '已确认付款，待与客户确认收款',
-                                    icon: 'none',
-                                    duration: 2000
-                                });
-                                setTimeout(() => {
-                                    wx.navigateBack();
-                                }, 2000);
-                            }
+                        wx.showToast({
+                            title: '已确认付款，待与客户确认收款',
+                            icon: 'none',
+                            duration: 2000
                         });
+                        setTimeout(() => {
+                            wx.navigateBack();
+                        }, 2000);
                     }
                 });
             },

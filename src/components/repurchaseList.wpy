@@ -128,7 +128,7 @@
                     <button class="weui-btn mini-btn" type="default" size="mini" wx:if="{{permission === 'hgy' && item.logisticsState == '3'}}" @tap="getCui({{item}})">催收料</button>
                     <button class="weui-btn mini-btn" type="default" size="mini" wx:if="{{permission === 'hgy' && item.logisticsState == '1'}}" @tap="changeLogisticsState({{item}}, 2)">确认签收</button>
                     <button class="weui-btn mini-btn" type="default" size="mini" wx:if="{{permission === 'hgy' && item.logisticsState == '2'}}" @tap="changeLogisticsState({{item}}, 3)">确认发料</button>
-                    <button class="weui-btn mini-btn" type="default" size="mini" wx:if="{{permission === 'hgy' && purchase.state == '-1'}}" @tap="getCui({{item}})">催修改</button>
+                    <button class="weui-btn mini-btn" type="default" size="mini" wx:if="{{permission === 'hgy' && item.state == '-1'}}" @tap="getCui({{item}})">催修改</button>
                     <button class="weui-btn mini-btn" type="default" size="mini" wx:if="{{permission === 'hgy' && item.state == '1'}}" @tap="getCui({{item}})">催财务审核</button>
                     <button class="weui-btn mini-btn" type="default" size="mini" wx:if="{{permission === 'hgy' && item.state == '2'}}" @tap="getCui({{item}})">催打款</button>
                     <button class="weui-btn mini-btn" type="default" size="mini" wx:if="{{permission === 'hgy' && item.state == '3'}}" @tap="getCui({{item}})">催确认收款</button>
@@ -140,7 +140,7 @@
                     <button class="weui-btn mini-btn" type="default" size="mini" wx:if="{{permission === 'cw' && item.logisticsState == '1'}}" @tap="getCui({{item}})">催签收</button>
                     <button class="weui-btn mini-btn" type="default" size="mini" wx:if="{{permission === 'cw' && item.logisticsState == '2'}}" @tap="getCui({{item}})">催发料</button>
                     <button class="weui-btn mini-btn" type="default" size="mini" wx:if="{{permission === 'cw' && item.logisticsState == '3'}}" @tap="getCui({{item}})">催收料</button>
-                    <button class="weui-btn mini-btn" type="default" size="mini" wx:if="{{permission === 'cw' && purchase.state == '-1'}}" @tap="getCui({{item}})">催修改</button>
+                    <button class="weui-btn mini-btn" type="default" size="mini" wx:if="{{permission === 'cw' && item.state == '-1'}}" @tap="getCui({{item}})">催修改</button>
                     <button class="weui-btn mini-btn" type="default" size="mini" wx:if="{{permission === 'cw' && item.state == '0'}}" @tap="getCui({{item}})">催申请付款</button>
                     <button class="weui-btn mini-btn" type="default" size="mini" wx:if="{{permission === 'cw' && item.state == '2'}}" @tap="getCui({{item}})">催打款</button>
                     <button class="weui-btn mini-btn" type="default" size="mini" wx:if="{{permission === 'cw' && item.state == '3'}}" @tap="getCui({{item}})">催确认收款</button>

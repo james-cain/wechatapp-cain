@@ -148,7 +148,7 @@
             <view class="weui-cell__bd">回购单价</view>
             <view class="weui-cell__ft">
                 ￥{{purchase.buybackPrice}}元/克
-                <text class="weui-cell__ld" wx:if="{{permission === 'hgy'}}" @tap="goToUpdate(perPrice)">修改</text>
+                <text class="weui-cell__ld" wx:if="{{permission === 'hgy'}}" @tap.stop="goToUpdate(perPrice)">修改</text>
                 <view class="content__in-access" wx:if="{{permission === 'ywy' && purchase.state == '-1'}}"></view>
             </view>
         </view>
@@ -195,7 +195,7 @@
             <view class="weui-cell__bd">锁价单价</view>
             <view class="weui-cell__ft">
                 {{purchase.lockPrice}}元/克
-                <text class="weui-cell__ld" wx:if="{{permission === 'hgy'}}" @tap="goToUpdate(lockPrice)">修改</text>
+                <text class="weui-cell__ld" wx:if="{{permission === 'hgy'}}" @tap.stop="goToUpdate(lockPrice)">修改</text>
             </view>
         </view>
         <view class="weui-cell" @tap="goToUpdate(payeeName)">
@@ -415,7 +415,9 @@
             },
             changeState (stateType) {
                 let content = '';
-                if (stateType === '1') {
+                if (stateType === '0') {
+                    content = '已确认回购信息修改完成，重新申请？';
+                } else if (stateType === '1') {
                     content = '已确认回购信息无误，申请付款？';
                 } else if (stateType === '2') {
                     content = '确认通过审核？';
