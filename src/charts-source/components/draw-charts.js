@@ -15,7 +15,11 @@ export default function drawCharts (type, opts, config, context) {
     config.yAxisWidth = yAxisWidth;
     if (categories && categories.length) {
         let { xAxisHeight, angle } = calCategoriesData(categories, opts, config);
-        config.xAxisHeight = xAxisHeight;
+        if (typeof opts.xAxis.disabled === 'boolean' && opts.xAxis.disabled) {
+            config.xAxisHeight = 0;
+        } else {
+            config.xAxisHeight = xAxisHeight;
+        }
         config._xAxisTextAngle_ = angle;
     }
     if (type === 'pie' || type === 'ring') {    

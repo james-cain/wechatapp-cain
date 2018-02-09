@@ -271,42 +271,43 @@ export function drawXAxis (categories, opts, config, context) {
     }
     context.closePath();
     context.stroke();
+    if (typeof opts.xAxis.disabled === 'boolean' && !opts.xAxis.disabled) {
+        // 对X轴列表做抽稀处理
+        let validWidth = opts.width - 2 * config.padding - config.yAxisWidth - config.yAxisTitleWidth;
+        let maxXAxisListLength = Math.min(categories.length, Math.ceil(validWidth / config.fontSize / 1.5));
+        let ratio = Math.ceil(categories.length / maxXAxisListLength);
 
-    // 对X轴列表做抽稀处理
-    let validWidth = opts.width - 2 * config.padding - config.yAxisWidth - config.yAxisTitleWidth;
-    let maxXAxisListLength = Math.min(categories.length, Math.ceil(validWidth / config.fontSize / 1.5));
-    let ratio = Math.ceil(categories.length / maxXAxisListLength);
-
-    categories = categories.map((item, index) => {
-        return index % ratio !== 0 ? '' : item;
-    });
-
-    if (config._xAxisTextAngle_ === 0) {
-        context.beginPath();
-        context.setFontSize(config.fontSize);
-        context.setFillStyle(opts.xAxis.fontColor || '#666666');
-        categories.forEach(function(item, index) {
-            let offset = eachSpacing / 2 - measureText(item) / 2;
-            context.fillText(item, xAxisPoints[index] + offset, startY + config.fontSize + 5);
+        categories = categories.map((item, index) => {
+            return index % ratio !== 0 ? '' : item;
         });
-        context.closePath();
-        context.stroke();
-    } else {
-        categories.forEach(function(item, index) {
-            context.save();
+
+        if (config._xAxisTextAngle_ === 0) {
             context.beginPath();
             context.setFontSize(config.fontSize);
             context.setFillStyle(opts.xAxis.fontColor || '#666666');
-            let textWidth = measureText(item);
-            let offset = eachSpacing / 2 - textWidth;
-            let { transX, transY }  = calRotateTranslate(xAxisPoints[index] + eachSpacing / 2, startY + config.fontSize / 2 + 5, opts.height);
-            context.rotate(-1 * config._xAxisTextAngle_);
-            context.translate(transX, transY);
-            context.fillText(item, xAxisPoints[index] + offset, startY + config.fontSize + 5);
+            categories.forEach(function(item, index) {
+                let offset = eachSpacing / 2 - measureText(item) / 2;
+                context.fillText(item, xAxisPoints[index] + offset, startY + config.fontSize + 5);
+            });
             context.closePath();
             context.stroke();
-            context.restore();
-        });
+        } else {
+            categories.forEach(function(item, index) {
+                context.save();
+                context.beginPath();
+                context.setFontSize(config.fontSize);
+                context.setFillStyle(opts.xAxis.fontColor || '#666666');
+                let textWidth = measureText(item);
+                let offset = eachSpacing / 2 - textWidth;
+                let { transX, transY }  = calRotateTranslate(xAxisPoints[index] + eachSpacing / 2, startY + config.fontSize / 2 + 5, opts.height);
+                context.rotate(-1 * config._xAxisTextAngle_);
+                context.translate(transX, transY);
+                context.fillText(item, xAxisPoints[index] + offset, startY + config.fontSize + 5);
+                context.closePath();
+                context.stroke();
+                context.restore();
+            });
+        }
     }
 
     context.restore();

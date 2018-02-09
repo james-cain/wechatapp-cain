@@ -15,20 +15,45 @@
     }
     .tab {
         position: fixed;
-        top: 258rpx;
+        top: 172rpx;
         left: 0;
         height: 86rpx;
         background-color: #fff;
         z-index: 100;
     }
+    .canvas-nav {
+        width: 100%;
+        height: 100px;
+        background: #fff;
+        float: left;
+        .canvas-left {
+            padding-top: 30rpx;
+            width: 50%;
+            height: 100px;
+            text-align: center;
+            font-size: 24rpx;
+            color: #7a777a;
+            float: left;
+            text {
+                font-size: 56rpx;
+                color: #101010;
+            }
+        }
+    }
     .canvas {
+        float: left;
         width: 50%;
         height: 100px;
         background: #fff;
     }
     .weui-tab__panel {
+        position: fixed;
+        top: 260rpx;
+        left: 0;
+        overflow: hidden;
         padding-top: 0px;
-        margin-top: 364rpx;
+        width: 100%;
+        height: 400px;
     }
 }
 </style>
@@ -38,12 +63,36 @@
             <image src="../../images/banner.png" lazy-load="true" class="banner">
         </view>
         <Tab :activeIndex.sync="activeIndex" :sliderWidth.sync="sliderWidth" :tabs.sync="tabs" class="tab"></Tab>
-        <view class="weui-tab__panel" style="height: 200px">
+        <view class="weui-tab__panel">
             <view class="weui-tab__content" hidden="{{activeIndex != 0}}">
-                <canvas canvas-id="columnCanvas" class="canvas"></canvas>
-                <canvas canvas-id="columnCanvas2" class="canvas"></canvas>
-                <canvas canvas-id="columnCanvas3" class="canvas"></canvas>
-                <canvas canvas-id="columnCanvas4" class="canvas"></canvas>
+                <view class="canvas-nav">
+                    <view class="canvas-left">
+                        <view><text>4</text>笔</view>
+                        <view>回购笔数</view>
+                    </view>
+                    <canvas canvas-id="columnCanvas" class="canvas" disable-scroll="{{true}}"></canvas>
+                </view>
+                <view class="canvas-nav">
+                    <view class="canvas-left">
+                        <view><text>600</text>克</view>
+                        <view>回购重量</view>
+                    </view>
+                    <canvas canvas-id="columnCanvas2" class="canvas" disable-scroll="{{true}}"></canvas>
+                </view>
+                <view class="canvas-nav">
+                    <view class="canvas-left">
+                        <view><text>25.4</text>万元</view>
+                        <view>回购金额</view>
+                    </view>
+                    <canvas canvas-id="columnCanvas3" class="canvas" disable-scroll="{{true}}"></canvas>
+                </view>
+                <view class="canvas-nav">
+                    <view class="canvas-left">
+                        <view><text>0.92</text>万元</view>
+                        <view>毛利润</view>
+                    </view>
+                    <canvas canvas-id="columnCanvas4" class="canvas" disable-scroll="{{true}}"></canvas>
+                </view>
             </view>
             <view class="weui-tab__content" hidden="{{activeIndex != 1}}">
                 <!-- <canvas canvas-id="columnCanvas" class="canvas"></canvas> -->
@@ -146,18 +195,19 @@
                 type: 'column',
                 animation: true,
                 categories: this.chartData.main.categories,
+                legend: false,
                 series: [{
                     name: '回购笔数',
                     data: this.chartData.main.data,
                     format: function (val, name) {
-                        return val + '笔';
+                        return val;
                     }
                 }],
                 yAxis: {
                     format: function (val) {
                         return val;
                     },
-                    // title: '回购笔数(笔)',
+                    title: '回购笔数(笔)',
                     min: 0,
                     disabled: true
                 },
@@ -176,99 +226,108 @@
             });
 
             this.columnChart2 = new Charts({
-                canvasId: 'columnCanvas4',
-                type: 'column',
-                animation: true,
-                categories: this.chartData.main.categories,
-                series: [{
-                    name: '回购笔数',
-                    data: this.chartData.main.data,
-                    format: function (val, name) {
-                        return val + '笔';
-                    }
-                }],
-                yAxis: {
-                    format: function (val) {
-                        return val;
-                    },
-                    title: '回购笔数(笔)',
-                    min: 0
-                },
-                xAxis: {
-                    disableGrid: false,
-                    type: 'calibration'
-                },
-                extra: {
-                    column: {
-                        width: 15
-                    }
-                },
-                width: windowW,
-                height: 200,
-            });
-
-            this.columnChart3 = new Charts({
                 canvasId: 'columnCanvas2',
                 type: 'column',
                 animation: true,
                 categories: this.chartData.main.categories,
+                legend: false,
                 series: [{
-                    name: '回购笔数',
+                    name: '回购重量',
                     data: this.chartData.main.data,
                     format: function (val, name) {
-                        return val + '笔';
+                        return val;
                     }
                 }],
                 yAxis: {
                     format: function (val) {
                         return val;
                     },
-                    title: '回购笔数(笔)',
-                    min: 0
+                    title: '回购重量(克)',
+                    min: 0,
+                    disabled: true
                 },
                 xAxis: {
                     disableGrid: false,
-                    type: 'calibration'
+                    type: 'calibration',
+                    disabled: true
                 },
                 extra: {
                     column: {
                         width: 15
                     }
                 },
-                width: windowW,
-                height: 200,
+                width: windowW / 2,
+                height: 100,
             });
 
-            this.columnChart4 = new Charts({
+            this.columnChart3 = new Charts({
                 canvasId: 'columnCanvas3',
                 type: 'column',
                 animation: true,
                 categories: this.chartData.main.categories,
+                legend: false,
                 series: [{
-                    name: '回购笔数',
+                    name: '回购金额',
                     data: this.chartData.main.data,
                     format: function (val, name) {
-                        return val + '笔';
+                        return val;
                     }
                 }],
                 yAxis: {
                     format: function (val) {
                         return val;
                     },
-                    title: '回购笔数(笔)',
-                    min: 0
+                    title: '回购金额(万元)',
+                    min: 0,
+                    disabled: true
                 },
                 xAxis: {
                     disableGrid: false,
-                    type: 'calibration'
+                    type: 'calibration',
+                    disabled: true
                 },
                 extra: {
                     column: {
                         width: 15
                     }
                 },
-                width: windowW,
-                height: 200,
+                width: windowW / 2,
+                height: 100,
+            });
+
+            this.columnChart4 = new Charts({
+                canvasId: 'columnCanvas4',
+                type: 'column',
+                animation: true,
+                categories: this.chartData.main.categories,
+                legend: false,
+                series: [{
+                    name: '毛利润',
+                    data: this.chartData.main.data,
+                    format: function (val, name) {
+                        return val;
+                    }
+                }],
+                yAxis: {
+                    format: function (val) {
+                        return val;
+                    },
+                    title: '毛利润(万元)',
+                    min: 0,
+                    disabled: true
+                },
+                xAxis: {
+                    disableGrid: false,
+                    type: 'calibration',
+                    disabled: true
+                },
+                extra: {
+                    column: {
+                        width: 15
+                    }
+                },
+                width: windowW / 2,
+                height: 100,
             });
         };
     }
