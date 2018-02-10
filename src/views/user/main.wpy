@@ -82,6 +82,9 @@
         <view class="weui-loadmore" wx:if="{{noBackLog && (page !== 1 && page !== 2)}}">
             <view class="weui-loadmore__tips weui-loadmore__tips_in-line">没有了，别拉了~</view>
         </view>
+        <view class="weui-loadmore" wx:if="{{noBackLog && page === 1}}">
+            <view class="weui-loadmore__tips weui-loadmore__tips_in-line">目前无待处理的订单~</view>
+        </view>
         <view class="func-button" @tap="launchRepurchase" wx:if="{{permission === 'ywy' || permission === 'hgy' || permission === 'zhl'}}">
             <text class="desc">{{funcName}}</text>
         </view>
@@ -304,6 +307,9 @@
                         wx.setStorageSync('backLogList', JSON.stringify(this.backLogList));
                         if (this.totalCount <= this.limit || currentData.list.length < this.limit) {
                             this.noBackLog = true;
+                            if (currentData.totalCount === 0) {
+                                this.page = 1;
+                            }
                         }
                         this.loading = false;
                         this.$apply();

@@ -168,7 +168,7 @@
         <text class="iconfont icon-zhaoxiangji" @tap="openCamera" style="color: #C4261D; margin-right: 20rpx;"></text>
         <text @tap="openCamera">拍摄黄金实物</text>
         <text class="iconfont icon-yulan {{materialAddr !== '' ? '' : 'hide'}}" @tap="read" style="margin-left: 10px; color: #C4261D; font-size: 40rpx;"></text>
-        <text class="iconfont icon-gou {{materialAddr !== '' ? '' : 'hide'}}" style="color: #C4261D;"></text>
+        <text class="{{materialAddr !== '' ? '' : 'hide'}}" style="margin-left: 10px; color: #C4261D;">已上传</text>
     </view>
     <view class="weui-cells__title">收款账号</view>
     <view class="weui-cells weui-cells_after-title">

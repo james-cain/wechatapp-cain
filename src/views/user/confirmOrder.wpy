@@ -48,7 +48,7 @@
         transform: rotate(45deg);
         top: 50%;
         margin-top: -7rpx;
-        right: 10rpx;
+        right: 30rpx;
     }
 }
 </style>
@@ -66,21 +66,21 @@
             <view class="weui-cell__bd">
                 <view class="weui-label">收款户名</view>
             </view>
-            <view class="weui-cell__ft">{{receivablesAccount}}</view>
+            <view class="weui-cell__ft" style="margin-right: 20rpx;">{{receivablesAccount}}</view>
             <view class="content__in-access"></view>
         </view>
         <view class="weui-cell" @tap="goToUpdate(payeeBankName)">
             <view class="weui-cell__bd">
                 <view class="weui-label">收款开户行</view>
             </view>
-            <view class="weui-cell__ft">{{openBank}}</view>
+            <view class="weui-cell__ft" style="margin-right: 20rpx;">{{openBank}}</view>
             <view class="content__in-access"></view>
         </view>
         <view class="weui-cell" @tap="goToUpdate(payeeBankNo)">
             <view class="weui-cell__bd">
                 <view class="weui-label">收款卡号</view>
             </view>
-            <view class="weui-cell__ft">{{cardNumber}}</view>
+            <view class="weui-cell__ft" style="margin-right: 20rpx;">{{cardNumber}}</view>
             <view class="content__in-access"></view>
         </view>
     </view>

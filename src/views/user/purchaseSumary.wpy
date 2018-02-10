@@ -32,6 +32,9 @@
                 <view class="weui-loadmore" wx:if="{{noBackLog1 && (page1 !== 1 && page1 !== 2)}}">
                     <view class="weui-loadmore__tips weui-loadmore__tips_in-line">没有了，别拉了~</view>
                 </view>
+                <view class="weui-loadmore" wx:if="{{noBackLog1 && page1 === 1}}">
+                    <view class="weui-loadmore__tips weui-loadmore__tips_in-line">目前没有回购单明细~</view>
+                </view>
             </view>
             <view class="weui-tab__content" hidden="{{activeIndex != 1}}">
                 <Table2 :tableList="tableList" :tableType="tableType" :tableValueList.sync="detail2"></Table2>
@@ -42,6 +45,9 @@
                 <view class="weui-loadmore" wx:if="{{noBackLog2 && (page2 !== 1 && page2 !== 2)}}">
                     <view class="weui-loadmore__tips weui-loadmore__tips_in-line">没有了，别拉了~</view>
                 </view>
+                <view class="weui-loadmore" wx:if="{{noBackLog2 && page2 === 1}}">
+                    <view class="weui-loadmore__tips weui-loadmore__tips_in-line">目前没有回购单明细~</view>
+                </view>
             </view>
             <view class="weui-tab__content" hidden="{{activeIndex != 2}}">
                 <Table3 :tableList="tableList" :tableType="tableType" :tableValueList.sync="detail3"></Table3>
@@ -51,6 +57,9 @@
                 </view>
                 <view class="weui-loadmore" wx:if="{{noBackLog3 && (page3 !== 1 && page3 !== 2)}}">
                     <view class="weui-loadmore__tips weui-loadmore__tips_in-line">没有了，别拉了~</view>
+                </view>
+                <view class="weui-loadmore" wx:if="{{noBackLog3 && page3 === 1}}">
+                    <view class="weui-loadmore__tips weui-loadmore__tips_in-line">目前没有回购单明细~</view>
                 </view>
             </view>
         </view>
@@ -226,6 +235,9 @@ export default class PurchaseSumary extends wepy.page {
                     this.detail1 = this.detail1.concat(currentDataHandle);
                     if (currentData.totalCount <= this.limit || currentData.list.length < this.limit) {
                         this.noBackLog1 = true;
+                        if (currentData.totalCount === 0) {
+                            this.page1 = 1;
+                        }
                     }
                     this.loading1 = false;
                     this.$apply();
@@ -247,6 +259,9 @@ export default class PurchaseSumary extends wepy.page {
                     this.detail2 = this.detail2.concat(currentDataHandle);
                     if (currentData.totalCount <= this.limit || currentData.list.length < this.limit) {
                         this.noBackLog2 = true;
+                        if (currentData.totalCount === 0) {
+                            this.page2 = 1;
+                        }
                     }
                     this.loading2 = false;
                     this.$apply();
@@ -268,6 +283,9 @@ export default class PurchaseSumary extends wepy.page {
                     this.detail3 = this.detail3.concat(currentDataHandle);
                     if (currentData.totalCount <= this.limit || currentData.list.length < this.limit) {
                         this.noBackLog3 = true;
+                        if (currentData.totalCount === 0) {
+                            this.page3 = 1;
+                        }
                     }
                     this.loading3 = false;
                     this.$apply();
