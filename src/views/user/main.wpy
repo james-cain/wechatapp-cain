@@ -61,6 +61,7 @@
                     <text style="color: #262626; font-size: 28rpx;">待处理事项</text>
                     <view class="weui-badge" style="position: absolute;top: -.4em;right: -1.4em;">{{totalCount}}</view>
                 </view>
+                <view style="color: #E64340; font-size: 28rpx; float: right; flex: 1; display: flex; justify-content: flex-end; margin-right: 20rpx;" @tap="editRemit" wx:if="{{permission === 'zhl'}}">发起汇款</view>
             </view>
         </view>
         <view class="weui-media-box weui-media-box_small-appmsg media-confirm" wx:if="{{permission === 'cw'}}">
@@ -182,7 +183,7 @@
                 } else if (this.permission === 'hgy') {
                     return '发布金价';
                 } else if (this.permission === 'zhl') {
-                    return '发起汇款';
+                    return '发起锁价';
                 }
                 return '';
             },
@@ -279,9 +280,14 @@
                     });
                 } else if (this.permission === 'zhl') {
                     wx.navigateTo({
-                        url: 'editRemit'
+                        url: 'editPrice'
                     });
                 }
+            },
+            editRemit () {
+                wx.navigateTo({
+                    url: 'editRemit'
+                });
             }
         };
         events = {

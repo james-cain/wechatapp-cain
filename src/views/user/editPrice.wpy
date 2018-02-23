@@ -51,7 +51,7 @@
     }
     .unit {
       display: block;
-      width: 20rpx;
+      width: 60rpx;
       margin-left: 20rpx;
       font-size: 24rpx;
       color: #9E8D9E;
@@ -60,8 +60,8 @@
 </style>
 <template>
   <view class="edit-price">
-    <view class="weui-cells__title">回购单价</view>
-    <view class="weui-edit-cells weui-cells_after-title">
+    <view class="weui-cells__title" wx:if="{{permission === 'hgy'}}">回购单价</view>
+    <view class="weui-edit-cells weui-cells_after-title" wx:if="{{permission === 'hgy'}}">
         <view class="weui-cell weui-cell_input">
             <view class="weui-cell__bd flex-bd">
                 <input class="weui-input border-input" type="digit" value="{{purchasePrice}}" placeholder="编辑黄金回购单价" @blur="blurPurchasePrice" @input="inputPurchasePrice" style="flex: 1;"/>
@@ -69,8 +69,8 @@
             </view>
         </view>
     </view>
-    <view class="weui-cells__title">锁价单价</view>
-    <view class="weui-edit-cells weui-cells_after-title">
+    <view class="weui-cells__title" wx:if="{{permission === 'zhl'}}">锁价单价</view>
+    <view class="weui-edit-cells weui-cells_after-title" wx:if="{{permission === 'zhl'}}">
         <view class="weui-cell weui-cell_input">
             <view class="weui-cell__bd flex-bd">
                 <input class="weui-input border-input" type="digit" value="{{lockPrice}}" placeholder="编辑锁价单价" @blur="blurLockPrice" @input="inputLockPrice" style="flex: 1;"/>
@@ -93,15 +93,13 @@
     import utils from '../../utils/index';
 
     export default class EditPrice extends wepy.page {
-        config = {
-            navigationBarTitleText: '发布金价'
-        };
         data = {
             date: '',
             time: '',
             currentTime: '',
             purchasePrice: '',
-            lockPrice: ''
+            lockPrice: '',
+            permission: ''
         };
 
         methods = {
@@ -140,10 +138,17 @@
                 this.lockPrice = '' + e.detail.value;
             },
             finish () {
-                if (!utils.beforeSubmit(this.purchasePrice, '回购单价不能空')) return;
-                if (!utils.beforeSubmit(this.lockPrice, '锁价单价不能空')) return;
+                if (this.permission === 'hgy' && !utils.beforeSubmit(this.purchasePrice, '回购单价不能空')) return;
+                if (this.permission === 'zhl' && !utils.beforeSubmit(this.lockPrice, '锁价单价不能空')) return;
+                let url = '/gold/update?';
+                if (this.permission === 'hgy') {
+                    url += `price=${this.purchasePrice}`;
+                } else if (this.permission === 'zhl') {
+                    url += `lockPrice=${this.lockPrice}`;
+                }
                 utils.ajax({
-                    url: `/gold/update?price=${this.purchasePrice}&&lockPrice=${this.lockPrice}`,
+                    // url: `/gold/update?price=${this.purchasePrice}&&lockPrice=${this.lockPrice}`,
+                    url,
                     method: 'POST',
                     success: (data) => {
                         // 更新金价
@@ -161,6 +166,16 @@
         };
 
         onShow () {
+            this.permission = wx.getStorageSync('permissionType');
+            if (this.permission === 'hgy') {
+                wx.setNavigationBarTitle({
+                    title: '发布金价'
+                });
+            } else if (this.permission === 'zhl') {
+                wx.setNavigationBarTitle({
+                    title: '发布锁价'
+                });
+            }
             this.currentTime = utils.formatFunc(new Date(), 'YYYY-MM-dd HH:mm:ss');
         }
     }
