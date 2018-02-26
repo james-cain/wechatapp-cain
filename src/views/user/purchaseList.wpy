@@ -161,10 +161,11 @@
                     success: (data) => {
                         wx.showToast({
                             title: '已发送催办消息',
+                            icon: 'none',
                             duraction: 2000
                         });
-                        this.currentPurchase.length = 0;
-                        this.getCurrentOrder(orderNo);
+                        // this.currentPurchase.length = 0;
+                        // this.getCurrentOrder(orderNo);
                     }
                 });
             },
@@ -193,6 +194,8 @@
                     // 获取订单信息
                     wx.setStorageSync('currentPurchase', JSON.stringify(data.data));
                     this.currentPurchase.push(data.data);
+                    this.currentPurchase[0].materialImgSrc = `${utils.server_url}/order/view/img/${data.data.materialImg}?token=${wx.getStorageSync('session')}`;
+                    // e.materialImgSrc = `${utils.server_url}/order/view/img/${e.materialImg}?token=${wx.getStorageSync('session')}`;
                     this.progressList.forEach(e => {
                         e.selected = (1 * this.currentPurchase[0].logisticsState) === e.id;
                     });

@@ -160,7 +160,11 @@
                 <view class="weui-label">上传《回购确认书》</view>
             </view>
             <view class="weui-cell__bd">
-                <text class="iconfont icon-zhaoxiangji weui-input" @tap="upload" style="color: #C4261D; margin-right: 54rpx; float: right;"></text>
+                <text class="{{confirmationAddr !== '' ? '' : 'hide'}}" style="color: #C4261D; float: right; line-height: 2.88823529em;">已上传</text>
+                <text class="iconfont icon-yulan {{confirmationAddr !== '' ? '' : 'hide'}}" @tap="readConfirmPic" style="color: #C4261D; float: right; line-height: 2.58823529em;"></text>
+                <text class="iconfont icon-zhaoxiangji weui-input" @tap="openConfirmCamera" style="color: #C4261D; margin-right: 54rpx; float: right;"></text>
+                <!-- 原来的写法 -->
+                <!-- <text class="iconfont icon-zhaoxiangji weui-input" @tap="upload" style="color: #C4261D; margin-right: 54rpx; float: right;"></text> -->
             </view>
         </view>
     </view>
@@ -225,6 +229,8 @@
             realAmountPrice: '',
             chargePerPrice: '',
             chargeAmountPrice: '',
+            // 漏了回购意向书字段
+            xxxAddr: '',
             confirmationAddr: '',
             materialAddr: '',
             payeeName: '',
@@ -232,6 +238,7 @@
             payeeBankNo: '',
             usingCamera: false,
             tempFilePaths: [],
+            tempFileConfirmPaths: [],
 
             beginDate: '',
             endDate: '',
@@ -396,6 +403,19 @@
             blurPayeeBankNo (e) {
                 this.payeeBankNo = e.detail.value;
             },
+            readConfirmPic() {
+                const imgUrl = [`${utils.server_url}/order/view/img/${this.confirmationAddr}?token=${wx.getStorageSync('session')}`];
+                wx.previewImage({
+                    current: `${utils.server_url}/order/view/img/${this.confirmationAddr}?token=${wx.getStorageSync('session')}`,
+                    urls: imgUrl,
+                    fail(e) {
+                        // console.log(e);
+                    },
+                    success(e) {
+                        // console.log(e);
+                    }
+                });
+            },
             read () {
                 // console.log(`${utils.server_url}/order/view/img/${fid}?token=${wx.getStorageSync('session')}`);
                 const imgUrl = [`${utils.server_url}/order/view/img/${this.materialAddr}?token=${wx.getStorageSync('session')}`];
@@ -407,6 +427,52 @@
                     },
                     success(e) {
                         // console.log(e);
+                    }
+                });
+            },
+            openConfirmCamera() {
+                const self = this;
+                this.usingCamera = true;
+                wx.chooseImage({
+                    count: 1,
+                    sizeType: ['compressed'],
+                    success: (res) => {
+                        // 返回选定照片的本地文件路径列表，tempFilePath可以作为img标签的src属性显示图片
+                        self.tempFileConfirmPaths = res.tempFilePaths;
+                        self.usingCamera = false;
+                        wx.showLoading({
+                            title: '正在上传'
+                        });
+                        wx.uploadFile({
+                            url: utils.server_url + '/order/uploadimg',
+                            filePath: self.tempFileConfirmPaths[0],
+                            name: 'file',
+                            header: {
+                                'token': wx.getStorageSync('session'),
+                                'content-type': 'multipart/form-data'
+                            },
+                            success(res) {
+                                wx.hideLoading();
+                                const data = JSON.parse(res.data);
+                                if (data.code === 500) {
+                                    wx.showToast({
+                                        title: data.msg,
+                                        image: '../../images/warn.png',
+                                        duration: 2000
+                                    });
+                                } else {
+                                    let data = JSON.parse(res.data);
+                                    wx.showToast({
+                                        title: '上传成功',
+                                        icon: 'none',
+                                        duration: 2000
+                                    });
+                                    // 回购确认书上传
+                                    self.confirmationAddr = data.fid;
+                                    self.$apply();
+                                }
+                            }
+                        });
                     }
                 });
             },
@@ -444,6 +510,7 @@
                                     let data = JSON.parse(res.data);
                                     wx.showToast({
                                         title: '上传成功',
+                                        icon: 'none',
                                         duration: 2000
                                     });
                                     self.materialAddr = data.fid;
@@ -527,8 +594,8 @@
             // 回购实物黄金总额计算得到
             // this.amountPrice = 1 * this.perPrice * this.weight;
             this.cacheFid = purchaseOrder.fid;
-            // 回购确认书fid
-            this.confirmationAddr = this.cacheFid;
+            // 回购意向书fid
+            this.xxxAddr = this.cacheFid;
             this.cacheNetworkBank = JSON.parse(wx.getStorageSync('networkBank'));
             this.cacheNetworkBank.forEach(element => {
                 this.bankNetType.push(element.name);

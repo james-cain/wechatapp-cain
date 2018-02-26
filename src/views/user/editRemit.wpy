@@ -47,6 +47,8 @@
     .border-input {
       border: 1px solid #9E8D9E;
       border-radius: 6rpx;
+      padding-left: 10rpx;
+      padding-right: 10rpx;
     }
     .unit {
       display: block;
@@ -76,7 +78,7 @@
     <view class="weui-cells__title">本次汇款时间</view>
     <view class="weui-edit-cells weui-cells_after-title time-nav" style="">
         <view class="weui-cell weui-cell_input" style="padding: 0px;">
-            <view class="weui-cell__bd flex-bd">
+            <view class="weui-cell__bd flex-bd" style="padding-left: 10rpx;">
                 <picker mode="date" value="{{date}}" start="{{beginDate}}" end="{{endDate}}" @change="bindDateChange" style="flex: 1;">
                     <view class="weui-input">{{date}}</view>
                 </picker>

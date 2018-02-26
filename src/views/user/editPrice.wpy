@@ -48,6 +48,8 @@
     .border-input {
       border: 1px solid #9E8D9E;
       border-radius: 6rpx;
+      padding-left: 10rpx;
+      padding-right: 10rpx;
     }
     .unit {
       display: block;

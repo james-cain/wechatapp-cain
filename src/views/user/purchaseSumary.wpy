@@ -24,7 +24,7 @@
 
         <view class="weui-tab__panel">
             <view class="weui-tab__content" hidden="{{activeIndex != 0}}">
-                <Table :tableList="tableList" :tableType="tableType" :tableValueList.sync="detail1"></Table>
+                <Table :tableList.sync="tableList" :tableType="tableType" :tableValueList.sync="detail1"></Table>
                 <view class="weui-loadmore" wx:if="{{loading1}}">
                     <view class="weui-loading"></view>
                     <view class="weui-loadmore__tips weui-loadmore__tips_in-line">正在加载</view>
@@ -37,7 +37,7 @@
                 </view>
             </view>
             <view class="weui-tab__content" hidden="{{activeIndex != 1}}">
-                <Table2 :tableList="tableList" :tableType="tableType" :tableValueList.sync="detail2"></Table2>
+                <Table2 :tableList.sync="tableList" :tableType="tableType" :tableValueList.sync="detail2"></Table2>
                 <view class="weui-loadmore" wx:if="{{loading2}}">
                     <view class="weui-loading"></view>
                     <view class="weui-loadmore__tips weui-loadmore__tips_in-line">正在加载</view>
@@ -50,7 +50,7 @@
                 </view>
             </view>
             <view class="weui-tab__content" hidden="{{activeIndex != 2}}">
-                <Table3 :tableList="tableList" :tableType="tableType" :tableValueList.sync="detail3"></Table3>
+                <Table3 :tableList.sync="tableList" :tableType="tableType" :tableValueList.sync="detail3"></Table3>
                 <view class="weui-loadmore" wx:if="{{loading3}}">
                     <view class="weui-loading"></view>
                     <view class="weui-loadmore__tips weui-loadmore__tips_in-line">正在加载</view>
@@ -153,7 +153,8 @@ export default class PurchaseSumary extends wepy.page {
         page1: 1,
         page2: 1,
         page3: 1,
-        limit: 10
+        limit: 10,
+        permission: ''
     };
 
     events = {
@@ -295,6 +296,7 @@ export default class PurchaseSumary extends wepy.page {
     }
 
     onLoad(option) {
+        this.permission = wx.getStorageSync('permissionType');
         this.detail1.length = 0;
         this.detail2.length = 0;
         this.detail3.length = 0;
@@ -314,6 +316,9 @@ export default class PurchaseSumary extends wepy.page {
         wx.setNavigationBarTitle({
             title: this.titleName
         });
+        if (this.permission === 'zhl') {
+            this.tableList[3].name = '应付总额';
+        }
     }
 
     onReachBottom (e) {
