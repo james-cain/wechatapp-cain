@@ -177,15 +177,9 @@
     </view>
     <view class="weui-flex">
         <text class="iconfont icon-zhaoxiangji" @tap="openCamera('identity')" style="color: #C4261D; margin-right: 20rpx;"></text>
-        <text @tap="openCamera('identity')">拍摄身份证</text>
+        <text @tap="openCamera('identity')">拍摄身份证及银行卡</text>
         <text class="iconfont icon-yulan {{identityAddr !== '' ? '' : 'hide'}}" @tap="read('identity')" style="margin-left: 10px; color: #C4261D; font-size: 40rpx;"></text>
         <text class="{{identityAddr !== '' ? '' : 'hide'}}" style="margin-left: 10px; color: #C4261D;">已上传</text>
-    </view>
-    <view class="weui-flex">
-        <text class="iconfont icon-zhaoxiangji" @tap="openCamera('bankCard')" style="color: #C4261D; margin-right: 20rpx;"></text>
-        <text @tap="openCamera('bankCard')">拍摄银行卡</text>
-        <text class="iconfont icon-yulan {{bankCardAddr !== '' ? '' : 'hide'}}" @tap="read('bankCard')" style="margin-left: 10px; color: #C4261D; font-size: 40rpx;"></text>
-        <text class="{{bankCardAddr !== '' ? '' : 'hide'}}" style="margin-left: 10px; color: #C4261D;">已上传</text>
     </view>
     <view class="weui-cells__title">收款账号</view>
     <view class="weui-cells weui-cells_after-title">
@@ -245,7 +239,7 @@
             chargePerPrice: '',
             chargeAmountPrice: '',
             // 漏了回购意向书字段
-            xxxAddr: '',
+            intentAddr: '',
             confirmationAddr: '',
             materialAddr: '',
             identityAddr: '',
@@ -571,7 +565,9 @@
                 if (!utils.beforeSubmit(this.customerId, '身份证不能为空')) return;
                 if (!utils.beforeSubmit(this.buybackDate, '回购日期不能为空')) return;
                 if (!utils.beforeSubmit(this.chargePerPrice, '中收费单价不能为空')) return;
+                if (!utils.beforeSubmit(this.intentAddr, '回购意向书必须拍照')) return;
                 if (!utils.beforeSubmit(this.confirmationAddr, '回购确认书必须拍照')) return;
+                if (!utils.beforeSubmit(this.identityAddr, '身份证及银行卡必须拍照')) return;
                 if (!utils.beforeSubmit(this.materialAddr, '黄金实物必须拍照')) return;
                 if (!utils.beforeSubmit(this.payeeName, '户名不能为空')) return;
                 if (!utils.beforeSubmit(this.payeeBankName, '开户行不能为空')) return;
@@ -594,7 +590,9 @@
                 toSubmitOrder.inChargePrice = this.chargePerPrice;
                 toSubmitOrder.inChargeAmount = this.chargeAmountPrice;
                 toSubmitOrder.confirmationAddr = this.confirmationAddr;
+                toSubmitOrder.intentImg = this.intentAddr;
                 toSubmitOrder.materialImg = this.materialAddr;
+                toSubmitOrder.cardImg = this.identityAddr;
                 toSubmitOrder.receivablesAccount = this.payeeName;
                 toSubmitOrder.openBank = this.payeeBankName;
                 toSubmitOrder.cardNumber = this.payeeBankNo;
@@ -640,7 +638,7 @@
             // this.amountPrice = 1 * this.perPrice * this.weight;
             this.cacheFid = purchaseOrder.fid;
             // 回购意向书fid
-            this.xxxAddr = this.cacheFid;
+            this.intentAddr = this.cacheFid;
             this.cacheNetworkBank = JSON.parse(wx.getStorageSync('networkBank'));
             this.cacheNetworkBank.forEach(element => {
                 this.bankNetType.push(element.name);

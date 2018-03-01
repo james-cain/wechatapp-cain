@@ -194,7 +194,7 @@
                     // 获取订单信息
                     wx.setStorageSync('currentPurchase', JSON.stringify(data.data));
                     this.currentPurchase.push(data.data);
-                    this.currentPurchase[0].materialImgSrc = `${utils.server_url}/order/view/img/${data.data.materialImg}?token=${wx.getStorageSync('session')}`;
+                    this.currentPurchase[0].materialImgSrc = `${utils.server_url}/order/view/img/${data.data.materialImg}/120_120?token=${wx.getStorageSync('session')}`;
                     // e.materialImgSrc = `${utils.server_url}/order/view/img/${e.materialImg}?token=${wx.getStorageSync('session')}`;
                     this.progressList.forEach(e => {
                         e.selected = (1 * this.currentPurchase[0].logisticsState) === e.id;

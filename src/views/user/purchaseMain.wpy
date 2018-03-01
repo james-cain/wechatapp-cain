@@ -466,7 +466,7 @@
                 e.logisticsStateDesc = this.currentLogisticsState(e.logisticsState);
                 e.stateDesc = this.currentState(e.state);
                 e.stateDescDesc = this.currentStateDesc(e.state);
-                e.materialImgSrc = `${utils.server_url}/order/view/img/${e.materialImg}?token=${wx.getStorageSync('session')}`;
+                e.materialImgSrc = `${utils.server_url}/order/view/img/${e.materialImg}/120_120?token=${wx.getStorageSync('session')}`;
             });
             return dataList;
         }

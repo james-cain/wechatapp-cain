@@ -229,7 +229,7 @@
             <view class="weui-cell__ft" style="text-align: right;">
                 <!-- 业务员相关操作流程 -->
                 <button class="weui-btn mini-btn" type="default" size="mini" wx:if="{{permission === 'ywy' && purchase.state == '-1'}}" @tap="invalid">作废订单</button>
-                <button class="weui-btn mini-btn" type="default" size="mini" wx:if="{{permission === 'ywy'}}" @tap="read({{purchase.confirmationAddr}})">查看回购确认书</button>
+                <button class="weui-btn mini-btn" type="default" size="mini" wx:if="{{permission === 'ywy'}}" @tap="read({{purchase.confirmationAddr}})">查看相关资料</button>
                 <button class="weui-btn mini-btn" type="default" size="mini" wx:if="{{permission === 'ywy' && purchase.logisticsState == '1'}}" @tap="getCui">催签收</button>
                 <button class="weui-btn mini-btn" type="default" size="mini" wx:if="{{permission === 'ywy' && purchase.logisticsState == '2'}}" @tap="getCui">催发料</button>
                 <button class="weui-btn mini-btn" type="default" size="mini" wx:if="{{permission === 'ywy' && purchase.logisticsState == '3'}}" @tap="getCui">催收料</button>
@@ -243,7 +243,7 @@
                 <!-- 回购员相关操作流程 -->
                 <button class="weui-btn mini-btn" type="default" size="mini" wx:if="{{permission === 'hgy' && purchase.state == '0'}}" @tap="changeState(-1)">驳回修改</button>
                 <button class="weui-btn mini-btn red2" type="default" size="mini" wx:if="{{permission === 'hgy' && purchase.state == '-1'}}">已驳回修改</button>
-                <button class="weui-btn mini-btn" type="default" size="mini" wx:if="{{permission === 'hgy'}}" @tap="read({{purchase.confirmationAddr}})">查看回购确认书</button>
+                <button class="weui-btn mini-btn" type="default" size="mini" wx:if="{{permission === 'hgy'}}" @tap="read({{purchase.confirmationAddr}})">查看相关资料</button>
                 <button class="weui-btn mini-btn" type="default" size="mini" wx:if="{{permission === 'hgy' && purchase.logisticsState == '0'}}" @tap="getCui">催邮寄</button>
                 <button class="weui-btn mini-btn" type="default" size="mini" wx:if="{{permission === 'hgy' && purchase.logisticsState == '3'}}" @tap="getCui">催收料</button>
                 <button class="weui-btn mini-btn" type="default" size="mini" wx:if="{{permission === 'hgy' && purchase.logisticsState == '1'}}" @tap="changeLogisticsState(2)">确认签收</button>
@@ -257,7 +257,7 @@
                 <!-- 财务员相关操作流程 -->
                 <button class="weui-btn mini-btn" type="default" size="mini" wx:if="{{permission === 'cw' && (purchase.state == '1' || purchase.state == '0')}}" @tap="changeState(-1)">驳回修改</button>
                 <button class="weui-btn mini-btn red2" type="default" size="mini" wx:if="{{permission === 'cw' && purchase.state == '-1'}}">已驳回修改</button>
-                <button class="weui-btn mini-btn" type="default" size="mini" wx:if="{{permission === 'cw'}}" @tap="read({{purchase.confirmationAddr}})">查看回购确认书</button>
+                <button class="weui-btn mini-btn" type="default" size="mini" wx:if="{{permission === 'cw'}}" @tap="read({{purchase.confirmationAddr}})">查看相关资料</button>
                 <button class="weui-btn mini-btn" type="default" size="mini" wx:if="{{permission === 'cw' && purchase.state == '-1'}}" @tap="getCui">催修改</button>
                 <button class="weui-btn mini-btn" type="default" size="mini" wx:if="{{permission === 'cw' && purchase.logisticsState == '0'}}" @tap="getCui">催邮寄</button>
                 <button class="weui-btn mini-btn" type="default" size="mini" wx:if="{{permission === 'cw' && purchase.logisticsState == '1'}}" @tap="getCui">催签收</button>
@@ -269,7 +269,7 @@
                 <button class="weui-btn mini-btn red" type="default" size="mini" wx:if="{{permission === 'cw' && purchase.state == '1'}}" @tap="changeState(2)">审核</button>
                 <!-- 财务员相关操作流程 -->
                 <!-- 众恒隆相关操作流程 -->
-                <button class="weui-btn mini-btn" type="default" size="mini" wx:if="{{permission === 'zhl'}}" @tap="read({{purchase.confirmationAddr}})">查看回购确认书</button>
+                <button class="weui-btn mini-btn" type="default" size="mini" wx:if="{{permission === 'zhl'}}" @tap="read({{purchase.confirmationAddr}})">查看相关资料</button>
                 <!-- <button class="weui-btn mini-btn" type="default" size="mini" wx:if="{{permission === 'zhl' && purchase.logisticsState == '0'}}">催邮寄</button>
                 <button class="weui-btn mini-btn" type="default" size="mini" wx:if="{{permission === 'zhl' && purchase.logisticsState == '1'}}">催签收</button> -->
                 <button class="weui-btn mini-btn" type="default" size="mini" wx:if="{{permission === 'zhl' && purchase.logisticsState == '2'}}" @tap="getCui">催发料</button>

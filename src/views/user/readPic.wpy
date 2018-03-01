@@ -1,0 +1,161 @@
+<style type="less">
+@import '../../style/base/mixin/text.less';
+.confirm {
+    .placeholder{
+        margin: 5px;
+        padding: 0 10px;
+        text-align: center;
+        background-color: #fff;
+        height: 128rpx;
+        line-height: 128rpx;
+        color: #403E40;
+        .hLayout();
+        border-radius: 10rpx;
+    }
+    .item-flex {
+        .hLayout(row, left, center);
+    }
+    .item-flex2 {
+        .hLayout(column, center, left);
+    }
+    .title {
+        color: #262626;
+        font-weight: bold;
+        font-size: 28rpx;
+        height: 32rpx;
+        line-height: 32rpx;
+    }
+    .desc {
+        color: #403E40;
+        font-size: 20rpx;
+        height: 32rpx;
+        line-height: 32rpx;
+    }
+    .red {
+        background-color: #C4261D !important;
+        color: #fff !important;
+    }
+    .btn {
+        width: 106rpx;
+        height: 58rpx;
+        color: #C4261D;
+        font-size: 20rpx;
+        border: 1px solid #C4261D;
+        margin-top: 0px;
+        margin-right: 20rpx;
+    }
+    .input {
+        width: 106rpx;
+        height: 58rpx;
+        min-height: 58rpx;
+        color: #000;
+        font-size: 20rpx;
+        border: 1px solid #000;
+        margin-top: 0px;
+        border-radius: 5px;
+    }
+    .gou-nav {
+        width: 40rpx;
+        text-align: center;
+        line-height: 128rpx;
+        margin: 5px 10px 5px 0;
+    }
+    .next-btn {
+        width: 184rpx;
+        height: 58rpx;
+        color: #878787;
+        border-radius: 1px solid #878787;
+        font-size: 24rpx;
+    }
+    .hide {
+        display: none;
+    }
+}
+</style>
+<template>
+  <view class="confirm">
+    <view class="weui-flex" style="margin-top: 30rpx;">
+        <view class="weui-flex__item" style="margin: 0 auto;">
+            <view class="placeholder">
+                <view class="weui-flex__item item-flex">
+                    <view class="weui-flex__item item-flex2">
+                        <text class="title">身份证及银行卡</text>
+                    </view>
+                    <button class="weui-btn mini-btn btn red" type="default" size="mini" @tap="readPic">查看</button>
+                </view>
+            </view>
+        </view>
+    </view>
+    <view class="weui-flex" style="margin-top: 30rpx;">
+        <view class="weui-flex__item" style="margin: 0 auto;">
+            <view class="placeholder">
+                <view class="weui-flex__item item-flex">
+                    <view class="weui-flex__item item-flex2">
+                        <text class="title">回购确认书</text>
+                    </view>
+                    <button class="weui-btn mini-btn btn red" type="default" size="mini" @tap="readPic">查看</button>
+                </view>
+            </view>
+        </view>
+    </view>
+    <view class="weui-flex" style="margin-top: 30rpx;">
+        <view class="weui-flex__item" style="margin: 0 auto;">
+            <view class="placeholder">
+                <view class="weui-flex__item item-flex">
+                    <view class="weui-flex__item item-flex2">
+                        <text class="title">回购意向书</text>
+                    </view>
+                    <button class="weui-btn mini-btn btn red" type="default" size="mini" @tap="readPic">查看</button>
+                </view>
+            </view>
+        </view>
+    </view>
+  </view>
+</template>
+
+<script>
+    import wepy from 'wepy';
+    import utils from '../../utils/index';
+
+    export default class BusinessConfirm extends wepy.page {
+        config = {
+            navigationBarTitleText: '相关资料查看'
+        };
+        data = {
+            isConfirm: false,
+            isInput: false,
+            isPhoto: false,
+            weight: '',
+            fid: '',
+            tempFilePaths: [],
+            usingCamera: false,
+            intentionAddr: ''
+        };
+        methods = {
+            readPic() {
+                const imgUrl = [`${utils.server_url}/order/view/img/${this.intentionAddr}?token=${wx.getStorageSync('session')}`];
+                this.usingCamera = true;
+                wx.previewImage({
+                    current: `${utils.server_url}/order/view/img/${this.intentionAddr}?token=${wx.getStorageSync('session')}`,
+                    urls: imgUrl,
+                    fail(e) {
+                        // console.log(e);
+                    },
+                    success(e) {
+                        // console.log(e);
+                    }
+                });
+            }
+        }
+        onShow () {
+            if (!this.usingCamera) {
+                this.isConfirm = false;
+                this.isInput = false;
+                this.isPhoto = false;
+                this.weight = '';
+                this.intentionAddr = '';
+                this.tempFilePaths.length = 0;
+            }
+        }
+    }
+</script>
