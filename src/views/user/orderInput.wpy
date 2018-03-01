@@ -93,7 +93,8 @@
             </view>
             <view class="weui-cell__bd flex-bd">
                 <text>￥</text>
-                <input class="weui-input" type="digit" value="{{realPerPrice}}" placeholder="请输入回购单价" @blur="blurPerPrice" disabled style="flex: 1;"/>
+                <input class="weui-input" type="digit" value="{{realPerPrice}}" placeholder="请输入回购单价" @blur="blurPerPrice" disabled="{{permission === 'ywy' ? false : true}}" style="flex: 1;"/>
+                
                 <text>元/克</text>
             </view>
         </view>
@@ -169,10 +170,22 @@
         </view>
     </view>
     <view class="weui-flex">
-        <text class="iconfont icon-zhaoxiangji" @tap="openCamera" style="color: #C4261D; margin-right: 20rpx;"></text>
-        <text @tap="openCamera">拍摄黄金实物</text>
-        <text class="iconfont icon-yulan {{materialAddr !== '' ? '' : 'hide'}}" @tap="read" style="margin-left: 10px; color: #C4261D; font-size: 40rpx;"></text>
+        <text class="iconfont icon-zhaoxiangji" @tap="openCamera('material')" style="color: #C4261D; margin-right: 20rpx;"></text>
+        <text @tap="openCamera('material')">拍摄黄金实物</text>
+        <text class="iconfont icon-yulan {{materialAddr !== '' ? '' : 'hide'}}" @tap="read('material')" style="margin-left: 10px; color: #C4261D; font-size: 40rpx;"></text>
         <text class="{{materialAddr !== '' ? '' : 'hide'}}" style="margin-left: 10px; color: #C4261D;">已上传</text>
+    </view>
+    <view class="weui-flex">
+        <text class="iconfont icon-zhaoxiangji" @tap="openCamera('identity')" style="color: #C4261D; margin-right: 20rpx;"></text>
+        <text @tap="openCamera('identity')">拍摄身份证</text>
+        <text class="iconfont icon-yulan {{identityAddr !== '' ? '' : 'hide'}}" @tap="read('identity')" style="margin-left: 10px; color: #C4261D; font-size: 40rpx;"></text>
+        <text class="{{identityAddr !== '' ? '' : 'hide'}}" style="margin-left: 10px; color: #C4261D;">已上传</text>
+    </view>
+    <view class="weui-flex">
+        <text class="iconfont icon-zhaoxiangji" @tap="openCamera('bankCard')" style="color: #C4261D; margin-right: 20rpx;"></text>
+        <text @tap="openCamera('bankCard')">拍摄银行卡</text>
+        <text class="iconfont icon-yulan {{bankCardAddr !== '' ? '' : 'hide'}}" @tap="read('bankCard')" style="margin-left: 10px; color: #C4261D; font-size: 40rpx;"></text>
+        <text class="{{bankCardAddr !== '' ? '' : 'hide'}}" style="margin-left: 10px; color: #C4261D;">已上传</text>
     </view>
     <view class="weui-cells__title">收款账号</view>
     <view class="weui-cells weui-cells_after-title">
@@ -216,6 +229,7 @@
             navigationBarTitleText: '回购订单录入'
         };
         data = {
+            permission: '',
             customerName: '',
             customerId: '',
             date: '',
@@ -223,6 +237,7 @@
             perPrice: '',
             // 真实的回购单价，当选择99.99%时要扣0.5元/克
             realPerPrice: '',
+            modPriceFlag: false,
             weight: '',
             amountPrice: '',
             // 真实的回购单价，当选择99.99%时要扣0.5元/克
@@ -233,6 +248,8 @@
             xxxAddr: '',
             confirmationAddr: '',
             materialAddr: '',
+            identityAddr: '',
+            bankCardAddr: '',
             payeeName: '',
             payeeBankName: '',
             payeeBankNo: '',
@@ -268,7 +285,7 @@
                 return `${this.date} ${this.time}:00`;
             },
             realPerPrice () {
-                if (this.productIndex === 0) {
+                if (this.productIndex === 0 && !this.modPriceFlag) {
                     return 1 * this.perPrice - 0.5;
                 }
                 return this.perPrice;
@@ -304,6 +321,7 @@
             },
             bindProductChange (e) {
                 this.productIndex = 1 * e.detail.value;
+                this.modPriceFlag = false;
             },
             bindCountsChange (e) {
                 this.countsIndex = e.detail.value;
@@ -329,15 +347,18 @@
                 });
             },
             blurPerPrice (e) {
-                this.perPrice = '' + e.detail.value;
-                const reg = /^[0-9]*(\.[0-9]{1,6})?$/;
-                utils.judge(this.perPrice, reg, '回购单价不合法', () => {
-                    this.perPrice = '';
-                    this.$apply();
-                    this.setData({
-                        perPrice: ''
+                if (this.realPerPrice !== 1 * e.detail.value) {
+                    this.modPriceFlag = true;
+                    this.perPrice = '' + e.detail.value;
+                    const reg = /^[0-9]*(\.[0-9]{1,6})?$/;
+                    utils.judge(this.perPrice, reg, '回购单价不合法', () => {
+                        this.perPrice = '';
+                        this.$apply();
+                        this.setData({
+                            perPrice: ''
+                        });
                     });
-                });
+                }
             },
             blurWeight (e) {
                 this.weight = '' + e.detail.value;
@@ -416,12 +437,25 @@
                     }
                 });
             },
-            read () {
-                // console.log(`${utils.server_url}/order/view/img/${fid}?token=${wx.getStorageSync('session')}`);
-                const imgUrl = [`${utils.server_url}/order/view/img/${this.materialAddr}?token=${wx.getStorageSync('session')}`];
+            read (type) {
+                let imgUrl = '';
+                let imgUrlArr = [];
+                switch (type) {
+                case 'material':
+                    imgUrl = `${utils.server_url}/order/view/img/${this.materialAddr}?token=${wx.getStorageSync('session')}`;
+                    break;
+                case 'identity':
+                    imgUrl = `${utils.server_url}/order/view/img/${this.identityAddr}?token=${wx.getStorageSync('session')}`;
+                    break;
+                case 'bankCard':
+                    imgUrl = `${utils.server_url}/order/view/img/${this.bankCardAddr}?token=${wx.getStorageSync('session')}`;
+                    break;
+                default:
+                }
+                imgUrlArr.push(imgUrl);
                 wx.previewImage({
-                    current: `${utils.server_url}/order/view/img/${this.materialAddr}?token=${wx.getStorageSync('session')}`,
-                    urls: imgUrl,
+                    current: imgUrl,
+                    urls: imgUrlArr,
                     fail(e) {
                         // console.log(e);
                     },
@@ -476,7 +510,7 @@
                     }
                 });
             },
-            openCamera () {
+            openCamera (type) {
                 const self = this;
                 this.usingCamera = true;
                 wx.chooseImage({
@@ -513,7 +547,18 @@
                                         icon: 'none',
                                         duration: 2000
                                     });
-                                    self.materialAddr = data.fid;
+                                    switch (type) {
+                                    case 'material':
+                                        self.materialAddr = data.fid;
+                                        break;
+                                    case 'identity':
+                                        self.identityAddr = data.fid;
+                                        break;
+                                    case 'bankCard':
+                                        self.bankCardAddr = data.fid;
+                                        break;
+                                    default:
+                                    }
                                     self.$apply();
                                 }
                             }
@@ -610,6 +655,7 @@
         }
 
         onLoad() {
+            this.permission = wx.getStorageSync('permissionType');
             this.endDate = utils.formatFunc(new Date());
             this.date = this.endDate;
             const currentYear = (new Date()).getFullYear().toString();

@@ -115,7 +115,8 @@
                         <text class="title">回购意向书</text>
                         <text class="desc">请拍照上传已签署的回购意向书</text>
                     </view>
-                    <text class="iconfont icon-zhaoxiangji" style="color: #C4261D; margin-right: 54rpx;" @tap="openCamera"></text>
+                    <text class="iconfont icon-yulan {{intentionAddr !== '' ? '' : 'hide'}}" @tap="readPic" style="color: #C4261D; font-size: 24px; margin-right: 20rpx;"></text>
+                    <text class="iconfont icon-zhaoxiangji" style="color: #C4261D; margin-right: 24rpx;" @tap="openCamera"></text>
                 </view>
             </view>
         </view>
@@ -145,7 +146,8 @@
             weight: '',
             fid: '',
             tempFilePaths: [],
-            usingCamera: false
+            usingCamera: false,
+            intentionAddr: ''
         };
         computed = {
             isNext () {
@@ -174,6 +176,20 @@
             },
             inputWeight (e) {
                 this.weight = '' + e.detail.value;
+            },
+            readPic() {
+                const imgUrl = [`${utils.server_url}/order/view/img/${this.intentionAddr}?token=${wx.getStorageSync('session')}`];
+                this.usingCamera = true;
+                wx.previewImage({
+                    current: `${utils.server_url}/order/view/img/${this.intentionAddr}?token=${wx.getStorageSync('session')}`,
+                    urls: imgUrl,
+                    fail(e) {
+                        // console.log(e);
+                    },
+                    success(e) {
+                        // console.log(e);
+                    }
+                });
             },
             openCamera () {
                 const self = this;
@@ -209,6 +225,8 @@
                                         title: '上传成功',
                                         duration: 2000
                                     });
+                                    // 回购意向书预览变量
+                                    self.intentionAddr = data.fid;
                                     self.fid = data.fid;
                                     self.isPhoto = true;
                                     self.usingCamera = false;
@@ -242,6 +260,7 @@
                 this.isInput = false;
                 this.isPhoto = false;
                 this.weight = '';
+                this.intentionAddr = '';
                 this.tempFilePaths.length = 0;
             }
         }

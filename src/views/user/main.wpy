@@ -61,10 +61,10 @@
                     <text style="color: #262626; font-size: 28rpx;">待处理事项</text>
                     <view class="weui-badge" style="position: absolute;top: -.4em;right: -1.4em;">{{totalCount}}</view>
                 </view>
-                <view style="color: #E64340; font-size: 28rpx; float: right; flex: 1; display: flex; justify-content: flex-end; margin-right: 30rpx;" @tap="editRemit" wx:if="{{permission === 'zhl'}}">发起汇款</view>
+                <!-- <view style="color: #E64340; font-size: 28rpx; float: right; flex: 1; display: flex; justify-content: flex-end; margin-right: 30rpx;" @tap="editRemit" wx:if="{{permission === 'zhl'}}">发起汇款</view> -->
             </view>
         </view>
-        <view class="weui-media-box weui-media-box_small-appmsg media-confirm" wx:if="{{permission === 'cw'}}">
+        <!-- <view class="weui-media-box weui-media-box_small-appmsg media-confirm" wx:if="{{permission === 'cw'}}">
             <view class="weui-cells weui-cells_in-small-appmsg">
                 <navigator url="/views/user/remitHistory" class="weui-cell weui-cell_access" hover-class="weui-cell_active">
                     <view class="weui-cell__hd" style="width: 100rpx;"><text class="title">汇款确认</text></view>
@@ -74,7 +74,7 @@
                     <view class="weui-cell__ft weui-cell__ft_in-access"></view>
                 </navigator>
             </view>
-        </view>
+        </view> -->
         <Table :tableList.sync="tableList" :tableType.sync="tableType" :tableValueList.sync="tableValueList"></Table>
         <view class="weui-loadmore" wx:if="{{loading}}">
             <view class="weui-loading"></view>

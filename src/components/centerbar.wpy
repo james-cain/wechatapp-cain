@@ -104,7 +104,7 @@
               </view>
               <view class="weui-flex__item">
                   <view class="placeholder content">
-                      <view class="content__name">回购金额（g）</view>
+                      <view class="content__name">回购金额（元）</view>
                       <view class="content__sum">{{sum.weight2}}</view>
                   </view>
               </view>
