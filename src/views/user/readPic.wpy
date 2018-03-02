@@ -2,7 +2,7 @@
 @import '../../style/base/mixin/text.less';
 .confirm {
     .placeholder{
-        margin: 5px;
+        margin: 5px 40px;
         padding: 0 10px;
         text-align: center;
         background-color: #fff;
@@ -43,6 +43,7 @@
         border: 1px solid #C4261D;
         margin-top: 0px;
         margin-right: 20rpx;
+        line-height: 58rpx;
     }
     .input {
         width: 106rpx;
@@ -81,7 +82,7 @@
                     <view class="weui-flex__item item-flex2">
                         <text class="title">身份证及银行卡</text>
                     </view>
-                    <button class="weui-btn mini-btn btn red" type="default" size="mini" @tap="readPic">查看</button>
+                    <button class="weui-btn mini-btn btn red" type="default" size="mini" @tap="readPic('cardImg')">查看</button>
                 </view>
             </view>
         </view>
@@ -93,7 +94,7 @@
                     <view class="weui-flex__item item-flex2">
                         <text class="title">回购确认书</text>
                     </view>
-                    <button class="weui-btn mini-btn btn red" type="default" size="mini" @tap="readPic">查看</button>
+                    <button class="weui-btn mini-btn btn red" type="default" size="mini" @tap="readPic('confirmationAddr')">查看</button>
                 </view>
             </view>
         </view>
@@ -105,7 +106,7 @@
                     <view class="weui-flex__item item-flex2">
                         <text class="title">回购意向书</text>
                     </view>
-                    <button class="weui-btn mini-btn btn red" type="default" size="mini" @tap="readPic">查看</button>
+                    <button class="weui-btn mini-btn btn red" type="default" size="mini" @tap="readPic('intentImg')">查看</button>
                 </view>
             </view>
         </view>
@@ -122,40 +123,60 @@
             navigationBarTitleText: '相关资料查看'
         };
         data = {
-            isConfirm: false,
-            isInput: false,
-            isPhoto: false,
-            weight: '',
-            fid: '',
-            tempFilePaths: [],
-            usingCamera: false,
-            intentionAddr: ''
+            purchase: {}
         };
         methods = {
-            readPic() {
-                const imgUrl = [`${utils.server_url}/order/view/img/${this.intentionAddr}?token=${wx.getStorageSync('session')}`];
-                this.usingCamera = true;
-                wx.previewImage({
-                    current: `${utils.server_url}/order/view/img/${this.intentionAddr}?token=${wx.getStorageSync('session')}`,
-                    urls: imgUrl,
-                    fail(e) {
-                        // console.log(e);
-                    },
-                    success(e) {
-                        // console.log(e);
+            readPic(type) {
+                let imgUrl = '';
+                let imgUrlArr = [];
+                let flag = false;
+                switch (type) {
+                case 'cardImg':
+                    if (this.purchase.cardImg === '') {
+                        flag = true;
+                    } else {
+                        imgUrl = `${utils.server_url}/order/view/img/${this.purchase.cardImg}?token=${wx.getStorageSync('session')}`;
                     }
-                });
+                    break;
+                case 'confirmationAddr':
+                    if (this.purchase.confirmationAddr === '') {
+                        flag = true;
+                    } else {
+                        imgUrl = `${utils.server_url}/order/view/img/${this.purchase.confirmationAddr}?token=${wx.getStorageSync('session')}`;
+                    }
+                    break;
+                case 'intentImg':
+                    if (this.purchase.intentImg === '') {
+                        flag = true;
+                    } else {
+                        imgUrl = `${utils.server_url}/order/view/img/${this.purchase.intentImg}?token=${wx.getStorageSync('session')}`;
+                    }
+                    break;
+                default:
+                }
+                imgUrlArr.push(imgUrl);
+                if (flag) {
+                    wx.showToast({
+                        title: '暂无上传图片',
+                        icon: 'none',
+                        duration: 2000
+                    });
+                } else {
+                    wx.previewImage({
+                        current: imgUrl,
+                        urls: imgUrlArr,
+                        fail(e) {
+                            // console.log(e);
+                        },
+                        success(e) {
+                            // console.log(e);
+                        }
+                    });
+                }
             }
         }
         onShow () {
-            if (!this.usingCamera) {
-                this.isConfirm = false;
-                this.isInput = false;
-                this.isPhoto = false;
-                this.weight = '';
-                this.intentionAddr = '';
-                this.tempFilePaths.length = 0;
-            }
+            this.purchase = JSON.parse(wx.getStorageSync('relatePic'));
         }
     }
 </script>

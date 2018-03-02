@@ -141,6 +141,8 @@ export default class extends wepy.app {
             'views/user/confirmOrderUpdate',
             'views/user/editRemit',
             'views/user/confirmPay',
+            'views/user/readPic',
+            'views/user/searchBank',
 
             'views/manager/managerMain',
             'views/manager/purchaseMain',

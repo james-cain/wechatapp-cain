@@ -1,0 +1,164 @@
+<style type="less">
+.search-nav {
+    height: 48px;
+    .weui-cell{
+        padding: 12px 15px 12px 15px;
+        &:before {
+            border-top: 0px;
+        }
+    }
+    .weui-cells {
+        background-color: #F0F0F0;
+        z-index: 501;
+        &:after {
+            border-bottom: 0px;
+        }
+    }
+    .weui-search-bar {
+        position: fixed;
+        top: 0;
+        width: 100%;
+        z-index: 501;
+    }
+    .weui-search-bar__cancel-btn {
+        color: #C4261D;
+    }
+    .searchbar-result{
+        margin-top: 45px;
+        font-size: 20rpx;
+        color: #403E40;
+    }
+    .searchbar-result:before{
+        display: none;
+    }
+    .icon-nav {
+        width: 48rpx;
+    }
+    .search-title {
+        height: 80rpx;
+        line-height: 80rpx;
+        font-size: 20rpx;
+        color: #403e40;
+        padding-left: 20rpx;
+        text {
+            color: #C4261D;
+        }
+    }
+    .search-no-result {
+        text-align: center;
+        font-size: 24rpx;
+        color: #403e40;
+        padding-top: 140rpx;
+        box-sizing: border-box;
+        text {
+            color: #C4261D;
+        }
+        &__tip {
+            margin-top: 20rpx;
+            color: #101010;
+            font-size: 20rpx;
+        }
+    }
+}
+</style>
+<template>
+    <view class="search-nav">
+        <view class="weui-search-bar">
+            <view class="weui-search-bar__form">
+                <view class="weui-search-bar__box">
+                    <icon class="weui-icon-search_in-box" type="search" size="14"></icon>
+                    <input type="text" class="weui-search-bar__input" placeholder="请输入银行网点" value="{{inputVal}}" focus="{{inputShowed}}" @input="inputTyping" @confirm="inputConfirm" confirm-type="search"/>
+                    <view class="weui-icon-clear" wx:if="{{inputVal.length > 0}}" @tap="clearInput">
+                        <icon type="clear" size="14"></icon>
+                    </view>
+                </view>
+                <label class="weui-search-bar__label" hidden="{{inputShowed}}" @tap="showInput" style="text-align: left; margin-left: 20rpx;">
+                    <icon class="weui-icon-search" type="search" size="14"></icon>
+                    <view class="weui-search-bar__text">请输入银行网点</view>
+                </label>
+            </view>
+            <view class="weui-search-bar__cancel-btn" hidden="{{!inputShowed}}" @tap="hideInput">取消</view>
+        </view>
+        <scroll-view scroll-y class="weui-cells searchbar-result" wx:if="{{inputShowed}}" style="height: {{searchHeight}}px; overflow-y: auto;">
+            <view class="weui-cell" hover-class="weui-cell_active" wx:for="{{searchBankList}}" wx:key="*this">
+                <view class="weui-cell__bd" @tap="searchByHistory({{item.value}})">
+                    <view>{{item.name}}</view>
+                </view>
+            </view>
+        </scroll-view>
+    </view>
+</template>
+
+<script>
+    import wepy from 'wepy';
+    import utils from '../../utils/index';
+
+    export default class SearchBank extends wepy.page {
+
+        data = {
+            inputVal: '',
+            searchHeight: '',
+            inputShowed: false,
+            clear: false,
+            searchBankList: []
+        };
+
+        watch = {
+            clear (newValue) {
+                this.inputVal = newValue ? '' : this.inputVal;
+            }
+        }
+        methods = {
+            showInput () {
+                this.inputShowed = true;
+                this.clear = false;
+            },
+            hideInput () {
+                this.inputVal = '';
+                this.inputShowed = false;
+            },
+            clearInput () {
+                this.inputVal = '';
+            },
+            inputTyping (e) {
+                this.inputVal = e.detail.value;
+            },
+            inputConfirm (e) {
+                this.refreshResult(this.inputVal);
+            }
+        };
+
+        refreshResult(searchCondition) {
+            if (searchCondition === '') {
+                this.defaultResult();
+            } else {
+                utils.ajax({
+                    url: `/sys/config/bank/network/search?key=${searchCondition}`,
+                    method: 'GET',
+                    success: (data) => {
+                        console.log(data);
+                        this.searchBankList = data.data;
+                        this.$apply();
+                    }
+                });
+            }
+        };
+
+        defaultResult() {
+            utils.ajax({
+                url: '/sys/config/bank/network',
+                method: 'GET',
+                success: (data) => {
+                    console.log(data);
+                    this.searchBankList = data.data;
+                    this.$apply();
+                }
+            });
+        };
+
+        onLoad () {
+            this.searchHeight = wx.getStorageSync('windowH') - 45;
+            this.defaultResult();
+        };
+    }
+</script>

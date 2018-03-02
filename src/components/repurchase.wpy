@@ -491,19 +491,23 @@
                 });
             },
             read (fid) {
+                wx.setStorageSync('relatePic', JSON.stringify(this.purchase));
+                wx.navigateTo({
+                    url: 'readPic'
+                });
                 // console.log(wx.getStorageSync('session'));
                 // console.log(`${utils.server_url}/order/view/img/${fid}?token=${wx.getStorageSync('session')}`);
-                const imgUrl = [`${utils.server_url}/order/view/img/${fid}?token=${wx.getStorageSync('session')}`];
-                wx.previewImage({
-                    current: `${utils.server_url}/order/view/img/${fid}?token=${wx.getStorageSync('session')}`,
-                    urls: imgUrl,
-                    fail(e) {
-                        console.log(e);
-                    },
-                    success(e) {
-                        console.log(e);
-                    }
-                });
+                // const imgUrl = [`${utils.server_url}/order/view/img/${fid}?token=${wx.getStorageSync('session')}`];
+                // wx.previewImage({
+                //     current: `${utils.server_url}/order/view/img/${fid}?token=${wx.getStorageSync('session')}`,
+                //     urls: imgUrl,
+                //     fail(e) {
+                //         console.log(e);
+                //     },
+                //     success(e) {
+                //         console.log(e);
+                //     }
+                // });
             },
             goToUpdate(typeName) {
                 if ((this.permission === 'ywy' && this.purchase.state === '-1') || this.permission === 'hgy') {

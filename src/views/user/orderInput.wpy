@@ -39,6 +39,18 @@
         color: #fff;
         font-size: 24rpx;
     }
+    .content__in-access {
+        position: absolute;
+        height: 12rpx;
+        width: 12rpx;
+        border-width: 4rpx 4rpx 0 0;
+        border-color: #C8C8CD;
+        border-style: solid;
+        transform: rotate(45deg);
+        top: 50%;
+        margin-top: -7rpx;
+        right: 30rpx;
+    }
     .hide {
         display: none;
     }
@@ -131,10 +143,11 @@
             <view class="weui-cell__hd weui-cell__hd_in-select-after">
                 <view class="weui-label">回收银行网点</view>
             </view>
-            <view class="weui-cell__bd">
-                <picker @change="bindBankNetChange" value="{{bankNetIndex}}" range="{{bankNetType}}">
+            <view class="weui-cell__bd" style="height: 2.58823529em;">
+                <!-- <picker @change="bindBankNetChange" value="{{bankNetIndex}}" range="{{bankNetType}}">
                     <view class="weui-select weui-select_in-select-after">{{bankNetType[bankNetIndex]}}</view>
-                </picker>
+                </picker> -->
+                <view class="content__in-access" @tap="searchBank"></view>
             </view>
         </view>
         <view class="weui-cell weui-cell_input">
@@ -417,6 +430,11 @@
             },
             blurPayeeBankNo (e) {
                 this.payeeBankNo = e.detail.value;
+            },
+            searchBank() {
+                wx.navigateTo({
+                    url: 'searchBank'
+                });
             },
             readConfirmPic() {
                 const imgUrl = [`${utils.server_url}/order/view/img/${this.confirmationAddr}?token=${wx.getStorageSync('session')}`];
