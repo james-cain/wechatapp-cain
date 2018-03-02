@@ -39,6 +39,18 @@
         color: #fff;
         font-size: 24rpx;
     }
+    .content__in-access {
+        position: absolute;
+        height: 12rpx;
+        width: 12rpx;
+        border-width: 4rpx 4rpx 0 0;
+        border-color: #C8C8CD;
+        border-style: solid;
+        transform: rotate(45deg);
+        top: 50%;
+        margin-top: -7rpx;
+        right: 30rpx;
+    }
 }
 </style>
 <template>
@@ -96,10 +108,12 @@
             <view class="weui-cell__hd weui-cell__hd_in-select-after">
                 <view class="weui-label">回收银行网点</view>
             </view>
-            <view class="weui-cell__bd">
-                <picker @change="bindBankNetChange" value="{{bankNetIndex}}" range="{{bankNetType}}">
+            <view class="weui-cell__bd" style="height: 2.58823529em; line-height: 2.58823529em;">
+                <!-- <picker @change="bindBankNetChange" value="{{bankNetIndex}}" range="{{bankNetType}}">
                     <view class="weui-select weui-select_in-select-after">{{bankNetType[bankNetIndex]}}</view>
-                </picker>
+                </picker> -->
+                <view >{{cacheSelectedBank}}</view>
+                <view class="content__in-access" @tap="searchBank"></view>
             </view>
         </view>
         <view class="weui-cell weui-cell_input" wx:if="{{modifyType === 'chargePerPrice'}}">
@@ -185,6 +199,7 @@
             productIndex: 0,
             oldProductIndex: 0,
 
+            cacheSelectedBank: '',
             bankNetType: [],
             bankNetIndex: 0,
 
@@ -301,6 +316,11 @@
             blurPayeeBankNo (e) {
                 this.payeeBankNo = e.detail.value;
             },
+            searchBank() {
+                wx.navigateTo({
+                    url: 'searchBank'
+                });
+            },
             save () {
                 let toUpdateOrder = {};
                 toUpdateOrder.orderNo = this.orderNo;
@@ -334,12 +354,18 @@
                     }
                     break;
                 case 'bankNetType':
-                    toUpdateOrder.dot = this.bankNetType[this.bankNetIndex];
+                    toUpdateOrder.dot = this.cacheSelectedBank;
                     this.cacheNetworkBank.forEach(element => {
-                        if (this.bankNetType[this.bankNetIndex] === element.name) {
+                        if (this.cacheSelectedBank === element.name) {
                             toUpdateOrder.dotKey = element.id;
                         }
                     });
+                    // toUpdateOrder.dot = this.bankNetType[this.bankNetIndex];
+                    // this.cacheNetworkBank.forEach(element => {
+                    //     if (this.bankNetType[this.bankNetIndex] === element.name) {
+                    //         toUpdateOrder.dotKey = element.id;
+                    //     }
+                    // });
                     break;
                 case 'chargePerPrice':
                     if (!utils.beforeSubmit(this.chargePerPrice, '中收费单价不能为空')) return;
@@ -424,11 +450,12 @@
                 this.weight = purchaseOrder.totalWeight;
                 break;
             case 'bankNetType':
-                this.bankNetType.forEach((e, idx) => {
-                    if (e === purchaseOrder.dot) {
-                        this.bankNetIndex = idx;
-                    }
-                });
+                this.cacheSelectedBank = wx.getStorageSync('selectedBank') !== '' ? wx.getStorageSync('selectedBank') : purchaseOrder.dot;
+                // this.bankNetType.forEach((e, idx) => {
+                //     if (e === purchaseOrder.dot) {
+                //         this.bankNetIndex = idx;
+                //     }
+                // });
                 break;
             case 'chargePerPrice':
                 this.chargePerPrice = purchaseOrder.inChargePrice;
@@ -462,12 +489,14 @@
         }
 
         onLoad(option) {
+            // 清除选择中收银行缓存
+            wx.setStorageSync('selectedBank', '');
             this.modifyType = option.modifyType;
             this.cacheNetworkBank = JSON.parse(wx.getStorageSync('networkBank'));
-            this.cacheNetworkBank.forEach(element => {
-                this.bankNetType.push(element.name);
-                this.$apply();
-            });
+            // this.cacheNetworkBank.forEach(element => {
+            //     this.bankNetType.push(element.name);
+            //     this.$apply();
+            // });
         }
     }
 </script>

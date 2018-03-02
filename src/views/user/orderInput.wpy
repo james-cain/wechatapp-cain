@@ -143,10 +143,11 @@
             <view class="weui-cell__hd weui-cell__hd_in-select-after">
                 <view class="weui-label">回收银行网点</view>
             </view>
-            <view class="weui-cell__bd" style="height: 2.58823529em;">
+            <view class="weui-cell__bd" style="height: 2.58823529em; line-height: 2.58823529em;">
                 <!-- <picker @change="bindBankNetChange" value="{{bankNetIndex}}" range="{{bankNetType}}">
                     <view class="weui-select weui-select_in-select-after">{{bankNetType[bankNetIndex]}}</view>
                 </picker> -->
+                <view >{{cacheSelectedBank}}</view>
                 <view class="content__in-access" @tap="searchBank"></view>
             </view>
         </view>
@@ -270,6 +271,7 @@
             productType: ['99.9%', '99.99%'],
             productIndex: 0,
 
+            cacheSelectedBank: '',
             bankNetType: [],
             bankNetIndex: 0,
 
@@ -582,6 +584,7 @@
                 if (!utils.beforeSubmit(this.customerName, '姓名不能为空')) return;
                 if (!utils.beforeSubmit(this.customerId, '身份证不能为空')) return;
                 if (!utils.beforeSubmit(this.buybackDate, '回购日期不能为空')) return;
+                if (!utils.beforeSubmit(this.cacheSelectedBank, '回收银行网点不能为空')) return;
                 if (!utils.beforeSubmit(this.chargePerPrice, '中收费单价不能为空')) return;
                 if (!utils.beforeSubmit(this.intentAddr, '回购意向书必须拍照')) return;
                 if (!utils.beforeSubmit(this.confirmationAddr, '回购确认书必须拍照')) return;
@@ -599,9 +602,15 @@
                 toSubmitOrder.number = this.counts[this.countsIndex];
                 toSubmitOrder.totalAmount = this.realAmountPrice;
                 toSubmitOrder.totalWeight = this.weight;
-                toSubmitOrder.dot = this.bankNetType[this.bankNetIndex];
+                // toSubmitOrder.dot = this.bankNetType[this.bankNetIndex];
+                toSubmitOrder.dot = this.cacheSelectedBank;
+                // this.cacheNetworkBank.forEach(element => {
+                //     if (this.bankNetType[this.bankNetIndex] === element.name) {
+                //         toSubmitOrder.dotKey = element.id;
+                //     }
+                // });
                 this.cacheNetworkBank.forEach(element => {
-                    if (this.bankNetType[this.bankNetIndex] === element.name) {
+                    if (this.cacheSelectedBank === element.name) {
                         toSubmitOrder.dotKey = element.id;
                     }
                 });
@@ -658,10 +667,11 @@
             // 回购意向书fid
             this.intentAddr = this.cacheFid;
             this.cacheNetworkBank = JSON.parse(wx.getStorageSync('networkBank'));
-            this.cacheNetworkBank.forEach(element => {
-                this.bankNetType.push(element.name);
-                this.$apply();
-            });
+            // this.cacheNetworkBank.forEach(element => {
+            //     this.bankNetType.push(element.name);
+            //     this.$apply();
+            // });
+            this.cacheSelectedBank = wx.getStorageSync('selectedBank');
 
             const minutes = (new Date()).getMinutes();
             const hours = (new Date()).getHours();
@@ -671,6 +681,8 @@
         }
 
         onLoad() {
+            // 清除选择中收银行缓存
+            wx.setStorageSync('selectedBank', '');
             this.permission = wx.getStorageSync('permissionType');
             this.endDate = utils.formatFunc(new Date());
             this.date = this.endDate;

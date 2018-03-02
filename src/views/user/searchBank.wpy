@@ -81,7 +81,7 @@
         </view>
         <scroll-view scroll-y class="weui-cells searchbar-result" wx:if="{{inputShowed}}" style="height: {{searchHeight}}px; overflow-y: auto;">
             <view class="weui-cell" hover-class="weui-cell_active" wx:for="{{searchBankList}}" wx:key="*this">
-                <view class="weui-cell__bd" @tap="searchByHistory({{item.value}})">
+                <view class="weui-cell__bd" @tap="searchByHistory({{item.name}})">
                     <view>{{item.name}}</view>
                 </view>
             </view>
@@ -94,6 +94,9 @@
     import utils from '../../utils/index';
 
     export default class SearchBank extends wepy.page {
+        config = {
+            navigationBarTitleText: '回收银行网点'
+        };
 
         data = {
             inputVal: '',
@@ -125,6 +128,11 @@
             },
             inputConfirm (e) {
                 this.refreshResult(this.inputVal);
+            },
+            searchByHistory (name) {
+                console.log(name);
+                wx.setStorageSync('selectedBank', name);
+                wx.navigateBack();
             }
         };
 
