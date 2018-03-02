@@ -20,7 +20,6 @@
     }
     .title {
         color: #262626;
-        font-weight: bold;
         font-size: 28rpx;
         height: 32rpx;
         line-height: 32rpx;

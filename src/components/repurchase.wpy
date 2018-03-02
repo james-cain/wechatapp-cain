@@ -148,7 +148,7 @@
             <view class="weui-cell__bd">回购单价</view>
             <view class="weui-cell__ft">
                 ￥{{purchase.buybackPrice}}元/克
-                <text class="weui-cell__ld" wx:if="{{permission === 'hgy'}}" @tap.stop="goToUpdate(perPrice)">修改</text>
+                <text class="weui-cell__ld" wx:if="{{(permission === 'ywy' && purchase.state != '-1') || permission === 'hgy'}}" @tap.stop="goToUpdate(perPrice)">修改</text>
                 <view class="content__in-access" wx:if="{{permission === 'ywy' && purchase.state == '-1'}}"></view>
             </view>
         </view>
@@ -286,7 +286,7 @@
 
 <script>
     import wepy from 'wepy';
-    import utils from '../utils/index';
+    // import utils from '../utils/index';
 
     export default class Repurchase extends wepy.component {
         data = {
@@ -510,7 +510,7 @@
                 // });
             },
             goToUpdate(typeName) {
-                if ((this.permission === 'ywy' && this.purchase.state === '-1') || this.permission === 'hgy') {
+                if ((this.permission === 'ywy' && this.purchase.state === '-1') || (this.permission === 'hgy' || this.permission === 'ywy')) {
                     this.$emit('goToUpdate', typeName);
                 }
             }

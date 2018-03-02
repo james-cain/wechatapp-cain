@@ -147,7 +147,8 @@
                 <!-- <picker @change="bindBankNetChange" value="{{bankNetIndex}}" range="{{bankNetType}}">
                     <view class="weui-select weui-select_in-select-after">{{bankNetType[bankNetIndex]}}</view>
                 </picker> -->
-                <view >{{cacheSelectedBank}}</view>
+                <input class="weui-input" value="{{cacheSelectedBank}}" placeholder="请选择银行网点" disabled @tap="searchBank"/>
+                <!-- <view >{{cacheSelectedBank}}</view> -->
                 <view class="content__in-access" @tap="searchBank"></view>
             </view>
         </view>
