@@ -142,11 +142,11 @@
             finish () {
                 if (this.permission === 'hgy' && !utils.beforeSubmit(this.purchasePrice, '回购单价不能空')) return;
                 if (this.permission === 'zhl' && !utils.beforeSubmit(this.lockPrice, '锁价单价不能空')) return;
-                let url = '/gold/update?';
+                let url = '';
                 if (this.permission === 'hgy') {
-                    url += `price=${this.purchasePrice}`;
+                    url += `/gold/update?price=${this.purchasePrice}`;
                 } else if (this.permission === 'zhl') {
-                    url += `lockPrice=${this.lockPrice}`;
+                    url += `/lockPrice/update?lockPrice=${this.lockPrice}`;
                 }
                 utils.ajax({
                     // url: `/gold/update?price=${this.purchasePrice}&&lockPrice=${this.lockPrice}`,

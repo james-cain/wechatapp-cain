@@ -2,7 +2,7 @@ class Utils {
     constructor () {
         this.wechatAccount = wx.getStorageSync('weChatAccount') ? JSON.parse(wx.getStorageSync('weChatAccount')) : '';
         this.session = wx.getStorageSync('session');
-        this.server_url = 'https://eim.online/buyback';
+        this.server_url = 'https://wap.btglsc.com/buyback';
         this.ajax = this.ajax.bind(this);
         this.auth = this.auth.bind(this);
         this.checkSession = this.checkSession.bind(this);

@@ -1,5 +1,5 @@
 <template>
-    <web-view src="https://eim.online/explain.html"></web-view>
+    <web-view src="https://wap.btglsc.com/explain.html"></web-view>
 </template>
 <script>
     import wepy from 'wepy';
