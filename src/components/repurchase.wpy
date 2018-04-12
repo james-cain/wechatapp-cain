@@ -140,7 +140,7 @@
         </view>
         <view class="weui-media-box__bd weui-media-box__bd_in-appmsg" style="flex: 2;">
             <view class="weui-media-box__desc fr">黄金重量：{{purchase.totalWeight}}g</view>
-            <view class="weui-media-box__desc fr">合计：<text class="unit">￥</text><text class="price">{{purchase.totalAmount}}</text></view>
+            <view class="weui-media-box__desc fr">合计：<text class="unit">￥</text><text class="price">{{purchase.totalAmountFmt}}</text></view>
         </view>
     </view>
     <view class="weui-cells weui-cells_after-title">
@@ -148,7 +148,7 @@
             <view class="weui-cell__bd">回购单价</view>
             <view class="weui-cell__ft">
                 ￥{{purchase.buybackPrice}}元/克
-                <text class="weui-cell__ld" wx:if="{{(permission === 'ywy' && purchase.state == '0') || (permission === 'hgy' && purchase.state == '0')}}" @tap.stop="goToUpdate(perPrice)">修改</text>
+                <text class="weui-cell__ld" wx:if="{{(permission === 'ywy' && purchase.state == '0') || (permission === 'hgy' && purchase.state == '0')}}" @tap.stop="goToUpdate(perPrice, 'special')">修改</text>
                 <view class="content__in-access" wx:if="{{permission === 'ywy' && purchase.state == '-1'}}"></view>
             </view>
         </view>
@@ -509,8 +509,10 @@
                 //     }
                 // });
             },
-            goToUpdate(typeName) {
-                if ((this.permission === 'ywy' && this.purchase.state === '-1') || (this.permission === 'hgy' || this.permission === 'ywy' && this.purchase.state == '0')) {
+            goToUpdate(typeName, flag) {
+                if (flag === 'special' && ((this.permission === 'ywy' && this.purchase.state == '0') || (this.permission === 'hgy' && this.purchase.state == '0'))) {
+                    this.$emit('goToUpdate', typeName);
+                } else if ((this.permission === 'ywy' && this.purchase.state == '-1') || (this.permission === 'hgy' && this.purchase.state == '0')) {
                     this.$emit('goToUpdate', typeName);
                 }
             }

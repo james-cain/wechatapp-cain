@@ -202,7 +202,7 @@
                     tmp.date = date;
                     tmp.row1 = e.name;
                     tmp.row2 = e.totalWeight;
-                    tmp.row3 = e.totalAmount;
+                    tmp.row3 = e.totalAmountFmt;
                     if (userType === '3' || userType === '4') {
                         tmp.row3 = e.salesman;
                     }

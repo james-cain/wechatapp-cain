@@ -72,7 +72,6 @@ class Utils {
                     'content-type': param.contentType
                 },
                 success: (data) => {
-                    // console.log(data);
                     wx.hideLoading();
                     if (data.data.code === 401) {
                         wx.showToast({

@@ -112,6 +112,16 @@
             </view>
         </view>
     </view>
+    <view class="weui-loadmore" wx:if="{{loading1}}">
+        <view class="weui-loading"></view>
+        <view class="weui-loadmore__tips weui-loadmore__tips_in-line">正在加载</view>
+    </view>
+    <view class="weui-loadmore" wx:if="{{noBackLog && (page !== 1 && page !== 2)}}">
+        <view class="weui-loadmore__tips weui-loadmore__tips_in-line">没有了，别拉了~</view>
+    </view>
+    <view class="weui-loadmore" wx:if="{{noBackLog && page === 1}}">
+        <view class="weui-loadmore__tips weui-loadmore__tips_in-line">目前没有历史对账单~</view>
+    </view>
     <view style="margin: 80rpx auto 0 auto;">
         <button class="weui-btn send" type="default" @tap="send">发送到邮箱</button>
     </view>
@@ -147,7 +157,11 @@
                 }
             ],
             tableValueList: [],
-            selectedIds: []
+            selectedIds: [],
+            noBackLog: false,
+            loading: false,
+            page: 1,
+            limit: 10,
         };
         methods = {
             checkboxChange (id, e) {
@@ -190,14 +204,21 @@
                         duration: 2000
                     });
                 } else {
-                    wx.showToast({
-                        title: '历史对账单已经发到了邮箱，请查收',
-                        icon: 'none',
-                        duration: 2000
+                    utils.ajax({
+                        url: '/bill/generate/send/mail',
+                        method: 'POST',
+                        params: JSON.stringify(this.selectedIds),
+                        success: (data) => {
+                            wx.showToast({
+                                title: '历史对账单已经发到了邮箱，请查收',
+                                icon: 'none',
+                                duration: 2000
+                            });
+                            setTimeout(function changeConfirm() {
+                                wx.navigateBack();
+                            }, 2000);
+                        }
                     });
-                    setTimeout(function changeConfirm() {
-                        wx.navigateBack();
-                    }, 2000);
                 }
             }
         };
@@ -215,16 +236,32 @@
         }
         getBillList() {
             // 获取历史账单
-            utils.ajax({
-                url: '/bill/generate/list',
-                method: 'GET',
-                success: (data) => {
-                    this.tableValueList = this.changeBillList(data.data.list);
-                    this.$apply();
-                }
-            });
+            if (!this.noBackLog) {
+                this.loading = true;
+                utils.ajax({
+                    url: `/bill/generate/list?page=${this.page}&limit=${this.limit}`,
+                    method: 'GET',
+                    success: (data) => {
+                        const currentData = data.data;
+                        const currentDataHandle = this.changeBillList(currentData.list);
+                        this.page += 1;
+                        this.tableValueList = this.tableValueList.concat(currentDataHandle);
+                        if (currentData.totalCount <= this.limit || currentData.list.length < this.limit) {
+                            this.noBackLog = true;
+                            if (currentData.totalCount === 0) {
+                                this.page = 1;
+                            }
+                        }
+                        this.loading = false;
+                        this.$apply();
+                    }
+                });
+            }
         }
         onLoad() {
+            this.getBillList();
+        }
+        onReachBottom (e) {
             this.getBillList();
         }
     }
