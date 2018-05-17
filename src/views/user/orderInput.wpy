@@ -361,6 +361,19 @@
                     this.modPriceFlag = true;
                     this.perPrice = '' + e.detail.value;
                     const reg = /^[0-9]*(\.[0-9]{1,6})?$/;
+                    if (1 * this.perPrice > 1 * this.realPerPrice) {
+                        wx.showToast({
+                            title: '回购单价不能高于发布单价',
+                            icon: 'none',
+                            duration: 2000
+                        });
+                        this.perPrice = '';
+                        this.$apply();
+                        this.setData({
+                            perPrice: ''
+                        });
+                        return;
+                    }
                     utils.judge(this.perPrice, reg, '回购单价不合法', () => {
                         this.perPrice = '';
                         this.$apply();
@@ -394,7 +407,21 @@
             },
             blurChargePerPrice (e) {
                 this.chargePerPrice = '' + e.detail.value;
+                const maxChargePerPrice = 1 * this.realPerPrice * 0.25;
                 const reg = /^[0-9]*(\.[0-9]{1,6})?$/;
+                if (maxChargePerPrice < 1 * e.detail.value) {
+                    wx.showToast({
+                        title: '中收费单价不能高于回购单价的25%',
+                        icon: 'none',
+                        duration: 2000
+                    });
+                    this.chargePerPrice = '';
+                    this.$apply();
+                    this.setData({
+                        chargePerPrice: ''
+                    });
+                    return;
+                }
                 utils.judge(this.chargePerPrice, reg, '中收费单价不合法', () => {
                     this.chargePerPrice = '';
                     this.$apply();
@@ -635,7 +662,7 @@
             if (data !== '' && !reg.test(data)) {
                 wx.showToast({
                     title,
-                    image: '../../images/warn.png',
+                    icon: 'none',
                     duration: 2000
                 });
                 cb();
@@ -646,7 +673,7 @@
             if (!data) {
                 wx.showToast({
                     title,
-                    image: '../../images/warn.png',
+                    icon: 'none',
                     duration: 2000
                 });
                 return false;

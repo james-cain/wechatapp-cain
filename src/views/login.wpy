@@ -88,7 +88,7 @@
                     <view class="weui-label">密码</view>
                 </view>
                 <view class="login__nav-bd">
-                    <input class="weui-input" password maxlength="10" value="{{password}}" placeholder="请输入6位数密码" @blur="blurPassword" @confirm="confirmPassword" @input="inputPassword"/>
+                    <input class="weui-input" password maxlength="10" value="{{password}}" placeholder="请输入密码" @blur="blurPassword" @confirm="confirmPassword" @input="inputPassword"/>
                 </view>
             </view>
         </view>

@@ -98,7 +98,7 @@
                         <text class="title">黄金称重</text>
                         <text class="desc">请进行称重并输入重量</text>
                     </view>
-                    <input class="input" type="digit" value="{{weight}}" placeholder="黄金重量" confirm-type="done" @blur="blurWeight" @input="inputWeight"/>
+                    <input class="input" type="digit" value="{{weight}}" placeholder="黄金重量" maxlength="7" confirm-type="done" @blur="blurWeight" @input="inputWeight"/>
                     <text style="color: #403E40; font-size: 24rpx;">g</text>
                 </view>
             </view>

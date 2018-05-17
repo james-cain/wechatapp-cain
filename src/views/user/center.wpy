@@ -81,6 +81,7 @@
         <Centerbar3 :title="allTitle" :time.sync="allTime" :sum.sync="allSum" type="3" :lastGridName.sync="lastGridName"></Centerbar3>
 
         <button class="weui-btn unbind-btn red2" type="primary" @tap="unBundle">解绑</button>
+        <button class="weui-btn unbind-btn red2" type="primary" @tap="logout">退出</button>
 
         <view class="weui-footer" style="bottom: 65px; display: absolute; margin-top: 20rpx; margin-bottom: 20rpx;">
             <view class="weui-footer__links">
@@ -184,6 +185,19 @@
             unBundle() {
                 utils.ajax({
                     url: `/app/unbundle?openid=${this.account.id}`,
+                    method: 'GET',
+                    success: (data) => {
+                        wx.setStorageSync('weChatAccount', '');
+                        wx.setStorageSync('session', '');
+                        wx.redirectTo({
+                            url: '/views/login'
+                        });
+                    }
+                });
+            },
+            logout() {
+                utils.ajax({
+                    url: '/app/logout',
                     method: 'GET',
                     success: (data) => {
                         wx.setStorageSync('weChatAccount', '');

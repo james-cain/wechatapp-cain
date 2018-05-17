@@ -1,4 +1,5 @@
 <style type="less">
+@import '../style/base/mixin/text.less';
 .list {
     .weui-flex {
         padding: 0px 24rpx;
@@ -21,6 +22,7 @@
         font-size: 20rpx;
         height: 116rpx;
         line-height: 116rpx;
+        .ellipsis(176rpx);
         &__name {
             line-height: 90rpx;
             color: 24rpx;
