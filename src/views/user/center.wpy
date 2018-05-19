@@ -80,8 +80,8 @@
         <Centerbar2 :title="monthTitle" :showRank.sync="showRank" :time.sync="monthTime" :sum.sync="monthSum" type="2" :lastGridName.sync="lastGridName"></Centerbar2>
         <Centerbar3 :title="allTitle" :time.sync="allTime" :sum.sync="allSum" type="3" :lastGridName.sync="lastGridName"></Centerbar3>
 
-        <!-- <button class="weui-btn unbind-btn red2" type="primary" @tap="unBundle">解绑</button> -->
-        <button class="weui-btn unbind-btn red2" type="primary" @tap="logout">退出</button>
+        <button class="weui-btn unbind-btn red2" type="primary" @tap="unBundle">退出</button>
+        <!-- <button class="weui-btn unbind-btn red2" type="primary" @tap="logout">退出</button> -->
 
         <view class="weui-footer" style="bottom: 65px; display: absolute; margin-top: 20rpx; margin-bottom: 20rpx;">
             <view class="weui-footer__links">

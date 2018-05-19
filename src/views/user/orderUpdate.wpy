@@ -23,6 +23,9 @@
             border-right: 0px;
         }
     }
+    .limit {
+        .ellipsis(400rpx);
+    }
     .weui-flex {
         margin: 40rpx 0px;
         .hLayout(row, center, center);
@@ -62,7 +65,7 @@
                 <view class="weui-label">客户姓名</view>
             </view>
             <view class="weui-cell__bd">
-                <input class="weui-input" value="{{customerName}}" placeholder="请输入姓名" @confirm="confirmName" @blur="blurName" @input="inputName"/>
+                <input class="weui-input limit" value="{{customerName}}" placeholder="请输入姓名" @confirm="confirmName" @blur="blurName" @input="inputName"/>
             </view>
         </view>
         <view class="weui-cell weui-cell_input weui-cell_vcode" wx:if="{{modifyType === 'customerId'}}">
@@ -70,7 +73,7 @@
                 <view class="weui-label">身份证号码</view>
             </view>
             <view class="weui-cell__bd">
-                <input class="weui-input" value="{{customerId}}" placeholder="请输入身份证号码" @blur="blurId" @input="inputId" />
+                <input class="weui-input limit" value="{{customerId}}" placeholder="请输入身份证号码" @blur="blurId" @input="inputId" />
             </view>
         </view>
         <view class="weui-cell weui-cell_select" wx:if="{{modifyType === 'productType'}}">
@@ -108,11 +111,11 @@
             <view class="weui-cell__hd weui-cell__hd_in-select-after">
                 <view class="weui-label">回收银行网点</view>
             </view>
-            <view class="weui-cell__bd" style="height: 2.58823529em; line-height: 2.58823529em;">
+            <view class="weui-cell__bd limit" style="height: 2.58823529em; line-height: 2.58823529em;">
                 <!-- <picker @change="bindBankNetChange" value="{{bankNetIndex}}" range="{{bankNetType}}">
                     <view class="weui-select weui-select_in-select-after">{{bankNetType[bankNetIndex]}}</view>
                 </picker> -->
-                <view >{{cacheSelectedBank}}</view>
+                <view class="limit">{{cacheSelectedBank}}</view>
                 <view class="content__in-access" @tap="searchBank"></view>
             </view>
         </view>
@@ -149,7 +152,7 @@
                 <view class="weui-label">开户行</view>
             </view>
             <view class="weui-cell__bd">
-                <input class="weui-input" value="{{payeeBankName}}" placeholder="请认真填写开户行信息" @confirm="confirmPayeeBankName" @input="inputPayeeBankName" @blur="blurPayeeBankName"/>
+                <input class="weui-input limit" value="{{payeeBankName}}" placeholder="请认真填写开户行信息" @confirm="confirmPayeeBankName" @input="inputPayeeBankName" @blur="blurPayeeBankName"/>
             </view>
         </view>
         <view class="weui-cell weui-cell_input" wx:if="{{modifyType === 'payeeBankNo'}}">
@@ -157,7 +160,7 @@
                 <view class="weui-label">卡号</view>
             </view>
             <view class="weui-cell__bd">
-                <input class="weui-input" type="number" value="{{payeeBankNo}}" placeholder="收款人储蓄卡号" @input="inputPayeeBankNo" @blur="blurPayeeBankNo"/>
+                <input class="weui-input limit" type="number" value="{{payeeBankNo}}" placeholder="收款人储蓄卡号" @input="inputPayeeBankNo" @blur="blurPayeeBankNo"/>
             </view>
         </view>
     </view>
@@ -523,7 +526,9 @@
             // 清除选择中收银行缓存
             wx.setStorageSync('selectedBank', '');
             this.modifyType = option.modifyType;
-            this.cacheNetworkBank = JSON.parse(wx.getStorageSync('networkBank'));
+            if (this.modifyType === 'bankNetType') {
+                this.cacheNetworkBank = JSON.parse(wx.getStorageSync('networkBank'));
+            }
             // this.cacheNetworkBank.forEach(element => {
             //     this.bankNetType.push(element.name);
             //     this.$apply();
