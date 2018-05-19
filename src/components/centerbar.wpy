@@ -27,6 +27,10 @@
             font-weight: bold;
         }
 
+        .limit {
+            .ellipsis(190rpx);
+        }
+
         .time {
             font-size: 20rpx;
             color: #262626;
@@ -99,19 +103,19 @@
               <view class="weui-flex__item">
                   <view class="placeholder content">
                       <view class="content__name">回购重量（g）</view>
-                      <view class="content__sum">{{sum.weight1}}</view>
+                      <view class="content__sum limit">{{sum.weight1}}</view>
                   </view>
               </view>
               <view class="weui-flex__item">
                   <view class="placeholder content">
                       <view class="content__name">回购金额（元）</view>
-                      <view class="content__sum">{{sum.weight2}}</view>
+                      <view class="content__sum limit">{{sum.weight2}}</view>
                   </view>
               </view>
               <view class="weui-flex__item">
                   <view class="placeholder content">
                       <view class="content__name">{{lastGridName}}</view>
-                      <view class="content__sum">{{sum.weight3}}</view>
+                      <view class="content__sum limit">{{sum.weight3}}</view>
                   </view>
                   <view class="content__in-access"></view>
               </view>

@@ -18,6 +18,9 @@
     .flex-bd {
         .hLayout(row, right, center);
     }
+    .limit {
+        .ellipsis(400rpx);
+    }
     .weui-special {
         .weui-select {
             border-right: 0px;
@@ -65,7 +68,7 @@
                 <view class="weui-label">客户姓名</view>
             </view>
             <view class="weui-cell__bd">
-                <input class="weui-input" value="{{customerName}}" placeholder="请输入姓名" @confirm="confirmName" @blur="blurName" @input="inputName"/>
+                <input class="weui-input limit" value="{{customerName}}" placeholder="请输入姓名" @confirm="confirmName" @blur="blurName" @input="inputName"/>
             </view>
         </view>
         <view class="weui-cell weui-cell_input weui-cell_vcode">
@@ -73,7 +76,7 @@
                 <view class="weui-label">身份证号码</view>
             </view>
             <view class="weui-cell__bd">
-                <input class="weui-input" value="{{customerId}}" placeholder="请输入身份证号码" @blur="blurId" @input="inputId"/>
+                <input class="weui-input limit" value="{{customerId}}" placeholder="请输入身份证号码" @blur="blurId" @input="inputId"/>
             </view>
         </view>
         <view class="weui-cell weui-cell_input">
@@ -147,7 +150,7 @@
                 <!-- <picker @change="bindBankNetChange" value="{{bankNetIndex}}" range="{{bankNetType}}">
                     <view class="weui-select weui-select_in-select-after">{{bankNetType[bankNetIndex]}}</view>
                 </picker> -->
-                <input class="weui-input" value="{{cacheSelectedBank}}" placeholder="请选择银行网点" disabled @tap="searchBank"/>
+                <input class="weui-input limit" value="{{cacheSelectedBank}}" placeholder="请选择银行网点" disabled @tap="searchBank"/>
                 <!-- <view >{{cacheSelectedBank}}</view> -->
                 <view class="content__in-access" @tap="searchBank"></view>
             </view>
@@ -203,7 +206,7 @@
                 <view class="weui-label">户名</view>
             </view>
             <view class="weui-cell__bd">
-                <input class="weui-input" value="{{payeeName}}" placeholder="收款人姓名" @confirm="confirmPayeeName" @blur="blurPayeeName" @input="inputPayeeName"/>
+                <input class="weui-input limit" value="{{payeeName}}" placeholder="收款人姓名" @confirm="confirmPayeeName" @blur="blurPayeeName" @input="inputPayeeName"/>
             </view>
         </view>
         <view class="weui-cell weui-cell_input">
@@ -211,7 +214,7 @@
                 <view class="weui-label">开户行</view>
             </view>
             <view class="weui-cell__bd">
-                <input class="weui-input" value="{{payeeBankName}}" placeholder="请认真填写开户行信息" @confirm="confirmPayeeBankName" @blur="blurPayeeBankName" @input="inputPayeeBankName"/>
+                <input class="weui-input limit" value="{{payeeBankName}}" placeholder="请认真填写开户行信息" @confirm="confirmPayeeBankName" @blur="blurPayeeBankName" @input="inputPayeeBankName"/>
             </view>
         </view>
         <view class="weui-cell weui-cell_input">
@@ -219,7 +222,7 @@
                 <view class="weui-label">卡号</view>
             </view>
             <view class="weui-cell__bd">
-                <input class="weui-input" type="number" value="{{payeeBankNo}}" placeholder="收款人储蓄卡号" @blur="blurPayeeBankNo" @input="inputPayeeBankNo"/>
+                <input class="weui-input limit" type="number" value="{{payeeBankNo}}" placeholder="收款人储蓄卡号" @blur="blurPayeeBankNo" @input="inputPayeeBankNo"/>
             </view>
         </view>
     </view>

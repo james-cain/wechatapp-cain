@@ -26,6 +26,10 @@
             line-height: 34rpx;
             padding: 2rpx;
         }
+        .limit {
+            .ellipsis(300rpx);
+            text-align: right;
+        }
         .weui-cell {
             padding: 0;
         }
@@ -104,8 +108,8 @@
                 </view>
             </view>
             <view class="weui-media-box__bd weui-media-box__bd_in-appmsg right-item" style="flex: 2;">
-                <view class="weui-media-box__desc fr">黄金重量：{{item.totalWeight}}g</view>
-                <view class="weui-media-box__desc fr">合计：<text class="unit">￥</text><text class="price">{{item.totalAmountFmt}}</text></view>
+                <view class="weui-media-box__desc fr limit">黄金重量：{{item.totalWeight}}g</view>
+                <view class="weui-media-box__desc fr limit">合计：<text class="unit">￥</text><text class="price">{{item.totalAmountFmt}}</text></view>
             </view>
         </view>
         <view class="weui-cells weui-cells_after-title">

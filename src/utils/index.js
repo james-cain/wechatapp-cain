@@ -158,6 +158,7 @@ class Utils {
                         userInfo.userId = data.userId;
                         userInfo.userName = data.userName;
                         userInfo.userType = data.userType;
+                        userInfo.headUrl = data.headUrl;
                         wx.setStorageSync('userInfo', JSON.stringify(userInfo));
                         const userType = data.userType;
                         if (userType === '2') {
